@@ -11,6 +11,9 @@ function Prepare(opts) {
   this.data = opts.decoded
   this.zoomCount = opts.zoomEnd - opts.zoomStart
   this.imageSize = opts.imageSize
+  featureCount = typeof opts.featureCount === 'number' ? opts.featureCount : featureCount
+  var propsLineP = typeof opts.propsLineP === 'function' ? opts.propsLineP : identity
+  var propsArea = typeof opts.propsArea === 'function' ? opts.propsArea : identity
   this.indexes = {
     point: new Uint32Array(this.data.point.types.length),
     line: new Uint32Array(this.data.line.types.length),
@@ -140,7 +143,7 @@ function Prepare(opts) {
       imageSize: this.imageSize,
       featureCount
     },
-    lineP: {
+    lineP: propsLineP({
       positions: null,
       types: null,
       id: null,
@@ -153,8 +156,8 @@ function Prepare(opts) {
       style: this.style,
       imageSize: this.imageSize,
       featureCount
-    },
-    area: {
+    }),
+    area: propsArea({
       positions: this.data.area.positions,
       types: this.data.area.types,
       indexes: areaIndexes.indexes,
@@ -166,7 +169,7 @@ function Prepare(opts) {
       style: this.style,
       imageSize: this.imageSize,
       featureCount
-    },
+    }),
     areaT: {
       positions: this.data.area.positions,
       types: this.data.area.types,
@@ -386,3 +389,5 @@ function makeIndexes (ids) {
     indexToId: indexToId
   }
 }
+
+function identity (x) { return x }
