@@ -1,5 +1,5 @@
 {
-  "name": "mixmap-georender",
+  "name": "@rubenrodriguez/mixmap-georender",
   "version": "5.0.0",
   "description": "a mixmap layer for rendering peermaps georender data",
   "main": "index.js",
