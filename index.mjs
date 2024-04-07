@@ -1,7 +1,7 @@
-var glsl = require('glslify')
+import glsl from 'glslify'
 var size = [0,0]
 
-module.exports = function (map) {
+export default function shaders (map) {
   return {
     points: {
       frag: glsl`
@@ -62,7 +62,7 @@ module.exports = function (map) {
             ((p.y - viewbox.y) / (viewbox.w - viewbox.y) * 2.0 - 1.0) * aspect,
             1.0/(1.0+zindex), 1) + vec4(position.x * psizex, position.y * psizey, 0, 0);
           vpos = gl_Position.xy;
-         }
+       }
       `,
       uniforms: {
         size: function (context) {

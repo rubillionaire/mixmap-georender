@@ -1,10 +1,9 @@
-var partition = require('partition-array')
-var featureList = require('georender-pack/features.json')
-var featureCount = featureList.length
+import partition from 'partition-array'
+// TODO replace with @rubenrodriguez scoped package
+import featureList from 'georender-pack/features.json'
+let featureCount = featureList.length
 
-module.exports = Prepare
-
-function Prepare(opts) {
+export default function Prepare(opts) {
   if (!(this instanceof Prepare)) return new Prepare(opts)
   this.style = opts.styleTexture
   this.pixels = opts.stylePixels

@@ -1,11 +1,15 @@
-var QBZF = require('qbzf')
-var Atlas = require('qbzf/atlas')
-var LabelEngine = require('label-placement-engine')
+import QBZF from '@rubenrodriguez/qbzf'
+import Atlas from '@rubenrodriguez/qbzf/atlas'
+import LabelEngine from 'label-placement-engine'
+import labelPresetBbox from 'label-placement-engine/preset/bbox'
+import labelPresetPoint from 'label-placement-engine/preset/point'
+import labelPresetLine from 'label-placement-engine/preset/line'
+import labelPresetArea from 'label-placement-engine/preset/area'
 var labelPreset = {
-  bbox: require('label-placement-engine/preset/bbox'),
-  point: require('label-placement-engine/preset/point'),
-  line: require('label-placement-engine/preset/line'),
-  area: require('label-placement-engine/preset/area'),
+  bbox: labelPresetBbox,
+  point: labelPresetPoint,
+  line: labelPresetLine,
+  area: labelPresetArea,
 }
 var labelTypes = {
   pointP: 'point',
@@ -19,9 +23,7 @@ var uvs = [0,0, 1,0, 1,1, 0,1]
 var padding = [10,10]
 var fontSize = 12
 
-module.exports = Text
-
-function Text(opts) {
+export default function Text(opts) {
   if (!opts) opts = {}
   if (!(this instanceof Text)) return new Text(opts)
   this._qbzf = QBZF(opts.font)
