@@ -934,7 +934,7 @@ vec2 px_coord_1604150559(vec2 p, vec2 size, vec3 dim) {
   return (vec2(x,y)+vec2(0.5)) / dim.xy;
 }
 
-float parse_f32be_1062606552(vec4 rgba) {
+float parse_f32be_1117569599(vec4 rgba) {
   vec4 v = rgba*255.0;
   float s = floor(v.x/128.0);
   float e = mod(v.x,128.0)*2.0 + floor(v.y/128.0) - 127.0;
@@ -961,7 +961,7 @@ QBZF create_qbzf_1535977339(vec2 uv, float n, vec2 size, vec2 units, vec3 dim, s
   vec2 i1 = px_coord_1604150559(qbzf.pc + vec2(1,0), qbzf.qsize, qbzf.dim);
   vec4 g0 = texture2D(grid_tex, i0);
   vec4 g1 = texture2D(grid_tex, i1);
-  vec2 ra = vec2(parse_f32be_1062606552(g0), parse_f32be_1062606552(g1));
+  vec2 ra = vec2(parse_f32be_1117569599(g0), parse_f32be_1117569599(g1));
   float rax = mix(
     1.0 - min(
       min(step(ra.y,qbzf.p.y),step(qbzf.p.y,ra.x)),
@@ -1053,7 +1053,7 @@ vec2 bdist(vec2 b0, vec2 b1, vec2 b2) {
   return bz_0(b0,b1,b2,t);
 }
 
-float parse_i16be_2281831123(vec2 v) {
+float parse_i16be_1062606552(vec2 v) {
   float a = 65280.0, b = 32640.0, s = step(b,v.x*a);
   return (mod(v.x*a,b) + v.y*255.0) * mix(1.0,-1.0,s) + mix(0.0,128.0,s);
 }
@@ -1067,7 +1067,7 @@ vec2 read_bz_1460171947(sampler2D texture, vec2 size, float index, float i) {
     (mod(index,size.x/3.0)*3.0+i+0.5)/size.x,
     (floor(index*3.0/size.x)+0.5)/size.y
   ));
-  return vec2(parse_i16be_2281831123(c.xy),parse_i16be_2281831123(c.zw));
+  return vec2(parse_i16be_1062606552(c.xy),parse_i16be_1062606552(c.zw));
 }
 
 vec4 read_curve_1460171947(QBZF qbzf, sampler2D grid_tex, sampler2D curve_tex, float i) {
@@ -1079,7 +1079,7 @@ vec4 read_curve_1460171947(QBZF qbzf, sampler2D grid_tex, sampler2D curve_tex, f
   vec2 i4 = px_coord_1604150559(qbzf.pc + vec2(4.0+float(i)*3.0,0.0), qbzf.qsize, qbzf.dim);
   vec4 g3 = texture2D(grid_tex, i3);
   vec4 g4 = texture2D(grid_tex, i4);
-  vec2 d = vec2(parse_f32be_1062606552(g3),parse_f32be_1062606552(g4));
+  vec2 d = vec2(parse_f32be_1117569599(g3),parse_f32be_1117569599(g4));
   vec2 b0 = read_bz_1460171947(curve_tex, qbzf.curve_size, index-1.0, 0.0);
   vec2 b1 = read_bz_1460171947(curve_tex, qbzf.curve_size, index-1.0, 1.0);
   vec2 b2 = read_bz_1460171947(curve_tex, qbzf.curve_size, index-1.0, 2.0);

@@ -11,6 +11,11 @@
     "./prepare": "./dist/prepare.mjs",
     "./text": "./dist/text.mjs"
   },
+  "browser": {
+    ".": "./dist/index.cjs",
+    "./prepare": "./dist/prepare.cjs",
+    "./text": "./dist/text.cjs"
+  },
   "scripts": {
     "test": "tape test/*.js",
     "example": "budo ./example/render.js",

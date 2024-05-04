@@ -973,7 +973,7 @@ QBZF create_qbzf_1535977339(vec2 uv, float n, vec2 size, vec2 units, vec2 dim, s
 
         
 
-float bz_1(float a, float b, float c, float t) {
+float bz_0(float a, float b, float c, float t) {
   float t1 = 1.0-t;
   return t1*t1*a + 2.0*t1*t*b + t*t*c;
 }
@@ -986,11 +986,11 @@ float raycast(vec2 p, vec2 b0, vec2 b1, vec2 b2, vec4 bounds, float epsilon) {
   if (s < 0.0 || abs(a) < epsilon) return 0.0;
   float sq = sqrt(s);
   float pt = (-b + sq) / (2.0*a);
-  float px = bz_1(b0.x, b1.x, b2.x, pt);
-  float py = bz_1(b0.y, b1.y, b2.y, pt);
+  float px = bz_0(b0.x, b1.x, b2.x, pt);
+  float py = bz_0(b0.y, b1.y, b2.y, pt);
   float nt = (-b - sq) / (2.0*a);
-  float nx = bz_1(b0.x, b1.x, b2.x, nt);
-  float ny = bz_1(b0.y, b1.y, b2.y, nt);
+  float nx = bz_0(b0.x, b1.x, b2.x, nt);
+  float ny = bz_0(b0.y, b1.y, b2.y, nt);
   float s0 = min(min(step(0.0,pt),step(pt,1.0)),step(p.x,px));
   float s1 = min(min(step(0.0,nt),step(nt,1.0)),step(p.x,nx));
   s0 = min(s0,min(step(bounds.x-epsilon,px),step(px,bounds.z+epsilon)));
@@ -1008,7 +1008,7 @@ float det(vec2 a, vec2 b) {
   return a.x*b.y-b.x*a.y;
 }
 
-vec2 bz_0(vec2 b0, vec2 b1, vec2 b2, float t) {
+vec2 bz_1(vec2 b0, vec2 b1, vec2 b2, float t) {
   return mix(mix(b0,b1,t),mix(b1,b2,t),t);
 }
 
@@ -1040,15 +1040,15 @@ vec2 bdist(vec2 b0, vec2 b1, vec2 b2) {
   vec2 d0p = b0-pp;
   float ap = det(d0p,d20), bp = 2.0*det(d10,d0p);
   float t = clamp((ap+bp)/(2.0*a+b+d), 0.0, 1.0);
-  return bz_0(b0,b1,b2,t);
+  return bz_1(b0,b1,b2,t);
 }
 
-float parse_i16be_1062606552(vec2 v) {
+float parse_i16be_529295689(vec2 v) {
   float a = 65280.0, b = 32640.0, s = step(b,v.x*a);
   return (mod(v.x*a,b) + v.y*255.0) * mix(1.0,-1.0,s) + mix(0.0,128.0,s);
 }
 
-float parse_u24be_2315452051(vec3 v) {
+float parse_u24be_1062606552(vec3 v) {
   return v.x*16711680.0 + v.y*65280.0 + v.z*255.0;
 }
 
@@ -1057,13 +1057,13 @@ vec2 read_bz_1460171947(sampler2D texture, vec2 size, float index, float i) {
     (mod(index,size.x/3.0)*3.0+i+0.5)/size.x,
     (floor(index*3.0/size.x)+0.5)/size.y
   ));
-  return vec2(parse_i16be_1062606552(c.xy),parse_i16be_1062606552(c.zw));
+  return vec2(parse_i16be_529295689(c.xy),parse_i16be_529295689(c.zw));
 }
 
 vec4 read_curve_1460171947(QBZF qbzf, sampler2D grid_tex, sampler2D curve_tex, float i) {
   vec2 i2 = px_coord_1604150559(qbzf.pc + vec2(2.0+float(i)*3.0,0.0), qbzf.qsize, qbzf.dim);
   vec4 g2 = texture2D(grid_tex, i2);
-  float index = parse_u24be_2315452051(g2.xyz);
+  float index = parse_u24be_1062606552(g2.xyz);
   if (index < 0.5) return vec4(0);
   vec2 i3 = px_coord_1604150559(qbzf.pc + vec2(3.0+float(i)*3.0,0.0), qbzf.qsize, qbzf.dim);
   vec2 i4 = px_coord_1604150559(qbzf.pc + vec2(4.0+float(i)*3.0,0.0), qbzf.qsize, qbzf.dim);
