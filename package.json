@@ -32,12 +32,13 @@
   "license": "MIT",
   "dependencies": {
     "@rubenrodriguez/esbuild-plugin-glslify": "^1.0.0",
+    "@rubenrodriguez/qbzf": "^1.1.0",
     "georender-pack": "^4.1.0",
     "glsl-georender-style-texture": "^5.0.0",
     "glslify": "^7.0.0",
+    "int-pack-vec": "^1.0.1",
     "label-placement-engine": "^2.1.0",
-    "partition-array": "^1.0.0",
-    "@rubenrodriguez/qbzf": "^1.1.0"
+    "partition-array": "^1.0.0"
   },
   "devDependencies": {
     "esbuild": "^0.20.2",

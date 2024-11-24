@@ -41,9 +41,113 @@ var require_browser = __commonJS({
   }
 });
 
+// ../../int-pack-vec/index.js
+var require_int_pack_vec = __commonJS({
+  "../../int-pack-vec/index.js"(exports, module) {
+    function packVec2(value) {
+      let v = value + 0;
+      const vec2 = [0, 0];
+      vec2[1] = v % 256;
+      v = Math.floor(v / 256);
+      vec2[0] = v % 256;
+      return vec2.map((n) => n / 255);
+    }
+    function unpackVec2(vec2) {
+      return vec2[0] * 256 + vec2[1];
+    }
+    function packVec3(value) {
+      let v = value + 0;
+      const vec3 = [0, 0, 0];
+      vec3[2] = v % 256;
+      v = Math.floor(v / 256);
+      vec3[1] = v % 256;
+      v = Math.floor(v / 256);
+      vec3[0] = v % 256;
+      return vec3.map((n) => n / 255);
+    }
+    function unpackVec32(vec3) {
+      return vec3[0] * 256 * 256 + vec3[1] * 256 + vec3[2];
+    }
+    function packVec4(value) {
+      let v = value + 0;
+      const vec4 = [0, 0, 0, 0];
+      vec4[3] = v % 256;
+      v = Math.floor(v / 256);
+      vec4[2] = v % 256;
+      v = Math.floor(v / 256);
+      vec4[1] = v % 256;
+      v = Math.floor(v / 256);
+      vec4[0] = v % 256;
+      return vec4.map((n) => n / 255);
+    }
+    function unpackVec4(vec4) {
+      return vec4[0] * 256 * 256 * 256 + vec4[1] * 256 * 256 + vec4[2] * 256 + vec4[3];
+    }
+    module.exports = {
+      packVec2,
+      unpackVec2,
+      packVec3,
+      unpackVec3: unpackVec32,
+      packVec4,
+      unpackVec4
+    };
+  }
+});
+
 // index.mjs
 var import_glslify = __toESM(require_browser(), 1);
+var import_int_pack_vec = __toESM(require_int_pack_vec(), 1);
 var size = [0, 0];
+var pickFrag = `
+                precision highp float;
+#define GLSLIFY 1
+
+  varying float vindex;
+
+  vec2 pack (float value, vec2 r) {
+  float v = value + 0.0;
+  r.y = mod(v, 256.0);
+  v = floor(v / 256.0);
+  r.x = mod(v, 256.0);
+  return r/255.0;
+}
+
+vec3 pack (float value, vec3 r) {
+  float v = value + 0.0;
+  r.z = mod(v, 256.0);
+  v = floor(v / 256.0);
+  r.y = mod(v, 256.0);
+  v = floor(v / 256.0);
+  r.x = mod(v, 256.0);
+  return r/255.0;
+}
+
+vec4 pack (float value, vec4 r) {
+  float v = value + 0.0;
+  r.w = mod(v, 256.0);
+  v = floor(v / 256.0);
+  r.z = mod(v, 256.0);
+  v = floor(v / 256.0);
+  r.y = mod(v, 256.0);
+  v = floor(v / 256.0);
+  r.x = mod(v, 256.0);
+  return r/255.0;
+}
+
+  void main () {
+    vec3 encoded = pack(vindex, vec3(0.));
+    gl_FragColor = vec4(encoded, 1.0);
+  }
+              `;
+var pickfb = {
+  type: "uint8",
+  colorType: "uint8",
+  colorFormat: "rgba",
+  depth: true
+};
+var pickUnpack = (vec4) => {
+  return (0, import_int_pack_vec.unpackVec3)(vec4.slice(0, 3));
+};
 function shaders(map) {
   return {
     points: {
@@ -56,30 +160,7 @@ function shaders(map) {
           gl_FragColor = vcolor;
         }
               `,
-      pickFrag: `
-        precision highp float;
-        uniform vec2 size;
-        varying float vft, vindex;
-        varying vec2 vpos;
-        varying vec4 vcolor;
-        uniform float featureCount;
-        void main () {
-          float n = mod((vpos.x*0.5+0.5)*size.x, 2.0);
-          vec4 pix1 = vec4(
-            floor(vindex/(256.0*256.0)),
-            mod(vindex/256.0, 256.0),
-            mod(vindex, 256.0),
-            255.0) / 255.0;
-          float opacity = floor(min(vcolor.w, 1.0));
-          //vec4 pix2 = vec4((0.0+opacity)/255.0, 0.0, 0.0, 1.0);
-          vec4 pix2 = vec4(10.0/255.0, 0.0, 0.0, 1.0);
-          gl_FragColor = mix(pix1, pix2, step(1.0, n));
-          /*
-          float opacity = floor(min(vcolor.w, 1.0));
-          gl_FragColor = vec4(vindex, vft, opacity, 1.0);
-          */
-        }
-      `,
+      pickFrag,
       vert: `
                 precision highp float;
 #define GLSLIFY 1
@@ -240,29 +321,7 @@ Point readPoint(sampler2D styleTexture, float featureType, float zoom, vec2 imag
           gl_FragColor = vec4(vcolor.xyz, vcolor.w * x);
         }
               `,
-      pickFrag: `
-        precision highp float;
-        uniform vec2 size;
-        varying float vft, vindex;
-        varying vec2 vpos;
-        varying vec4 vcolor;
-        uniform float featureCount;
-        void main () {
-          float n = mod((vpos.x*0.5+0.5)*size.x, 2.0);
-          vec4 pix1 = vec4(
-            floor(vindex/(256.0*256.0)),
-            mod(vindex/256.0, 256.0),
-            mod(vindex, 256.0),
-            255.0) / 255.0;
-          float opacity = floor(min(vcolor.w, 1.0));
-          vec4 pix2 = vec4((2.0+opacity)/255.0, 0.0, 0.0, 1.0);
-          gl_FragColor = mix(pix1, pix2, step(1.0, n));
-          /*
-          float opacity = floor(min(vcolor.w, 1.0));
-          gl_FragColor = vec4(vindex, vft, 2.0+opacity, 1.0);
-          */
-        }
-      `,
+      pickFrag,
       vert: `
                 precision highp float;
 #define GLSLIFY 1
@@ -430,29 +489,7 @@ Line readLine(sampler2D styleTexture, float featureType, float zoom, vec2 imageS
           //gl_FragColor = vec4(mix(vec3(0,1,0), vec3(1,0,0), x), 1.0);
         }
               `,
-      pickFrag: `
-        precision highp float;
-        uniform vec2 size;
-        varying float vft, vindex;
-        varying vec2 vpos;
-        varying vec4 vcolor;
-        uniform float featureCount;
-        void main () {
-          float n = mod((vpos.x*0.5+0.5)*size.x, 2.0);
-          vec4 pix1 = vec4(
-            floor(vindex/(256.0*256.0)),
-            mod(vindex/256.0, 256.0),
-            mod(vindex, 256.0),
-            255.0) / 255.0;
-          float opacity = floor(min(vcolor.w, 1.0));
-          vec4 pix2 = vec4((2.0+opacity)/255.0, 0.0, 0.0, 1.0);
-          gl_FragColor = mix(pix1, pix2, step(1.0, n));
-          /*
-          float opacity = floor(min(vcolor.w, 1.0));
-          gl_FragColor = vec4(vindex, vft, 2.0+opacity, 1.0);
-          */
-        }
-      `,
+      pickFrag,
       vert: `
                 precision highp float;
 #define GLSLIFY 1
@@ -607,26 +644,7 @@ Line readLine(sampler2D styleTexture, float featureType, float zoom, vec2 imageS
           gl_FragColor = vcolor;
         }
               `,
-      pickFrag: `
-        precision highp float;
-        uniform vec2 size;
-        varying float vft, vindex;
-        varying vec2 vpos;
-        varying vec4 vcolor;
-        uniform float featureCount;
-        void main () {
-          float n = mod((vpos.x*0.5+0.5)*size.x, 2.0);
-          vec4 pix1 = vec4(
-            floor(vindex/(256.0*256.0)),
-            mod(vindex/256.0, 256.0),
-            mod(vindex, 256.0),
-            255.0) / 255.0;
-          float opacity = floor(min(vcolor.w, 1.0));
-          vec4 pix2 = vec4((4.0+opacity)/255.0, 0.0, 0.0, 1.0);
-          gl_FragColor = mix(pix1, pix2, step(1.0, n));
-          //gl_FragColor = vec4(vindex, vft, 4.0+opacity, 1.0);
-        }
-      `,
+      pickFrag,
       vert: `
                 precision highp float;
 #define GLSLIFY 1
@@ -765,25 +783,7 @@ Area readArea(sampler2D styleTexture, float featureType, float zoom, vec2 imageS
           gl_FragColor = vec4(vcolor.xyz, vcolor.w * x);
         }
               `,
-      pickFrag: `
-        precision highp float;
-        uniform vec2 size;
-        varying float vft, vindex;
-        varying vec2 vpos;
-        varying vec4 vcolor;
-        uniform float featureCount;
-        void main () {
-          float n = mod((vpos.x*0.5+0.5)*size.x, 2.0);
-          vec4 pix1 = vec4(
-            floor(vindex/(256.0*256.0)),
-            mod(vindex/256.0, 256.0),
-            mod(vindex, 256.0),
-            0.0);
-          float opacity = floor(min(vcolor.w, 1.0));
-          vec4 pix2 = vec4((4.0+opacity)/255.0, 0.0, 0.0, 1.0);
-          gl_FragColor = mix(pix1, pix2, step(n, 1.0));
-        }
-      `,
+      pickFrag,
       vert: `
                 precision highp float;
 #define GLSLIFY 1
@@ -973,7 +973,7 @@ QBZF create_qbzf_1535977339(vec2 uv, float n, vec2 size, vec2 units, vec2 dim, s
 
         
 
-float bz_0(float a, float b, float c, float t) {
+float bz_1(float a, float b, float c, float t) {
   float t1 = 1.0-t;
   return t1*t1*a + 2.0*t1*t*b + t*t*c;
 }
@@ -986,11 +986,11 @@ float raycast(vec2 p, vec2 b0, vec2 b1, vec2 b2, vec4 bounds, float epsilon) {
   if (s < 0.0 || abs(a) < epsilon) return 0.0;
   float sq = sqrt(s);
   float pt = (-b + sq) / (2.0*a);
-  float px = bz_0(b0.x, b1.x, b2.x, pt);
-  float py = bz_0(b0.y, b1.y, b2.y, pt);
+  float px = bz_1(b0.x, b1.x, b2.x, pt);
+  float py = bz_1(b0.y, b1.y, b2.y, pt);
   float nt = (-b - sq) / (2.0*a);
-  float nx = bz_0(b0.x, b1.x, b2.x, nt);
-  float ny = bz_0(b0.y, b1.y, b2.y, nt);
+  float nx = bz_1(b0.x, b1.x, b2.x, nt);
+  float ny = bz_1(b0.y, b1.y, b2.y, nt);
   float s0 = min(min(step(0.0,pt),step(pt,1.0)),step(p.x,px));
   float s1 = min(min(step(0.0,nt),step(nt,1.0)),step(p.x,nx));
   s0 = min(s0,min(step(bounds.x-epsilon,px),step(px,bounds.z+epsilon)));
@@ -1008,7 +1008,7 @@ float det(vec2 a, vec2 b) {
   return a.x*b.y-b.x*a.y;
 }
 
-vec2 bz_1(vec2 b0, vec2 b1, vec2 b2, float t) {
+vec2 bz_0(vec2 b0, vec2 b1, vec2 b2, float t) {
   return mix(mix(b0,b1,t),mix(b1,b2,t),t);
 }
 
@@ -1040,15 +1040,15 @@ vec2 bdist(vec2 b0, vec2 b1, vec2 b2) {
   vec2 d0p = b0-pp;
   float ap = det(d0p,d20), bp = 2.0*det(d10,d0p);
   float t = clamp((ap+bp)/(2.0*a+b+d), 0.0, 1.0);
-  return bz_1(b0,b1,b2,t);
+  return bz_0(b0,b1,b2,t);
 }
 
-float parse_i16be_529295689(vec2 v) {
+float parse_i16be_1062606552(vec2 v) {
   float a = 65280.0, b = 32640.0, s = step(b,v.x*a);
   return (mod(v.x*a,b) + v.y*255.0) * mix(1.0,-1.0,s) + mix(0.0,128.0,s);
 }
 
-float parse_u24be_1062606552(vec3 v) {
+float parse_u24be_2315452051(vec3 v) {
   return v.x*16711680.0 + v.y*65280.0 + v.z*255.0;
 }
 
@@ -1057,13 +1057,13 @@ vec2 read_bz_1460171947(sampler2D texture, vec2 size, float index, float i) {
     (mod(index,size.x/3.0)*3.0+i+0.5)/size.x,
     (floor(index*3.0/size.x)+0.5)/size.y
   ));
-  return vec2(parse_i16be_529295689(c.xy),parse_i16be_529295689(c.zw));
+  return vec2(parse_i16be_1062606552(c.xy),parse_i16be_1062606552(c.zw));
 }
 
 vec4 read_curve_1460171947(QBZF qbzf, sampler2D grid_tex, sampler2D curve_tex, float i) {
   vec2 i2 = px_coord_1604150559(qbzf.pc + vec2(2.0+float(i)*3.0,0.0), qbzf.qsize, qbzf.dim);
   vec4 g2 = texture2D(grid_tex, i2);
-  float index = parse_u24be_1062606552(g2.xyz);
+  float index = parse_u24be_2315452051(g2.xyz);
   if (index < 0.5) return vec4(0);
   vec2 i3 = px_coord_1604150559(qbzf.pc + vec2(3.0+float(i)*3.0,0.0), qbzf.qsize, qbzf.dim);
   vec2 i4 = px_coord_1604150559(qbzf.pc + vec2(4.0+float(i)*3.0,0.0), qbzf.qsize, qbzf.dim);
@@ -1178,5 +1178,8 @@ vec4 read_curve_1460171947(QBZF qbzf, sampler2D grid_tex, sampler2D curve_tex, f
   };
 }
 export {
-  shaders as default
+  shaders as default,
+  pickFrag,
+  pickUnpack,
+  pickfb
 };

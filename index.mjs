@@ -1,5 +1,34 @@
 import glsl from 'glslify'
+import { unpackVec3 } from 'int-pack-vec'
 var size = [0,0]
+
+export const pickFrag = glsl`
+  precision highp float;
+  varying float vindex;
+
+  #pragma glslify: pack = require('int-pack-vec/pack.glsl');
+
+  void main () {
+    vec3 encoded = pack(vindex, vec3(0.));
+    gl_FragColor = vec4(encoded, 1.0);
+  }
+`
+
+export const pickfb = {
+  type: 'uint8',
+  colorType: 'uint8',
+  colorFormat: 'rgba',
+  depth: true,
+}
+
+// assumes
+// - the default map.pick({width:1,height:1})
+// - mix.create({ ...opts, pickfb }) using the pickfb options above
+// - using the provided `pickFrag` above
+// returns the unpacked `vindex` value
+export const pickUnpack = (vec4) => {
+  return unpackVec3(vec4.slice(0, 3))
+}
 
 export default function shaders (map) {
   return {
@@ -11,30 +40,7 @@ export default function shaders (map) {
           gl_FragColor = vcolor;
         }
       `,
-      pickFrag: `
-        precision highp float;
-        uniform vec2 size;
-        varying float vft, vindex;
-        varying vec2 vpos;
-        varying vec4 vcolor;
-        uniform float featureCount;
-        void main () {
-          float n = mod((vpos.x*0.5+0.5)*size.x, 2.0);
-          vec4 pix1 = vec4(
-            floor(vindex/(256.0*256.0)),
-            mod(vindex/256.0, 256.0),
-            mod(vindex, 256.0),
-            255.0) / 255.0;
-          float opacity = floor(min(vcolor.w, 1.0));
-          //vec4 pix2 = vec4((0.0+opacity)/255.0, 0.0, 0.0, 1.0);
-          vec4 pix2 = vec4(10.0/255.0, 0.0, 0.0, 1.0);
-          gl_FragColor = mix(pix1, pix2, step(1.0, n));
-          /*
-          float opacity = floor(min(vcolor.w, 1.0));
-          gl_FragColor = vec4(vindex, vft, opacity, 1.0);
-          */
-        }
-      `,
+      pickFrag,
       vert: glsl`
         precision highp float;
         #pragma glslify: Point = require('glsl-georender-style-texture/point.h');
@@ -44,7 +50,7 @@ export default function shaders (map) {
         attribute float featureType, index;
         uniform vec4 viewbox;
         uniform vec2 offset, size, texSize;
-        uniform float featureCount, aspect, zoom;
+        uniform float aspect, zoom;
         varying float vft, vindex, zindex;
         varying vec2 vpos;
         varying vec4 vcolor;
@@ -71,7 +77,6 @@ export default function shaders (map) {
           return size
         },
         styleTexture: map.prop('style'),
-        featureCount: map.prop('featureCount'),
         texSize: map.prop('imageSize'),
         aspect: function (context) {
           return context.viewportWidth / context.viewportHeight
@@ -126,29 +131,7 @@ export default function shaders (map) {
           gl_FragColor = vec4(vcolor.xyz, vcolor.w * x);
         }
       `,
-      pickFrag: `
-        precision highp float;
-        uniform vec2 size;
-        varying float vft, vindex;
-        varying vec2 vpos;
-        varying vec4 vcolor;
-        uniform float featureCount;
-        void main () {
-          float n = mod((vpos.x*0.5+0.5)*size.x, 2.0);
-          vec4 pix1 = vec4(
-            floor(vindex/(256.0*256.0)),
-            mod(vindex/256.0, 256.0),
-            mod(vindex, 256.0),
-            255.0) / 255.0;
-          float opacity = floor(min(vcolor.w, 1.0));
-          vec4 pix2 = vec4((2.0+opacity)/255.0, 0.0, 0.0, 1.0);
-          gl_FragColor = mix(pix1, pix2, step(1.0, n));
-          /*
-          float opacity = floor(min(vcolor.w, 1.0));
-          gl_FragColor = vec4(vindex, vft, 2.0+opacity, 1.0);
-          */
-        }
-      `,
+      pickFrag,
       vert: glsl`
         precision highp float;
         #pragma glslify: Line = require('glsl-georender-style-texture/line.h');
@@ -157,7 +140,7 @@ export default function shaders (map) {
         attribute float featureType, index;
         uniform vec4 viewbox;
         uniform vec2 offset, size, texSize;
-        uniform float featureCount, aspect, zoom;
+        uniform float aspect, zoom;
         uniform sampler2D styleTexture;
         varying float vft, vindex, zindex, vdashLength, vdashGap;
         varying vec2 vpos, vnorm, vdist;
@@ -189,7 +172,6 @@ export default function shaders (map) {
           return size
         },
         styleTexture: map.prop('style'),
-        featureCount: map.prop('featureCount'),
         texSize: map.prop('imageSize')
       },
       attributes: {
@@ -233,29 +215,7 @@ export default function shaders (map) {
           //gl_FragColor = vec4(mix(vec3(0,1,0), vec3(1,0,0), x), 1.0);
         }
       `,
-      pickFrag: `
-        precision highp float;
-        uniform vec2 size;
-        varying float vft, vindex;
-        varying vec2 vpos;
-        varying vec4 vcolor;
-        uniform float featureCount;
-        void main () {
-          float n = mod((vpos.x*0.5+0.5)*size.x, 2.0);
-          vec4 pix1 = vec4(
-            floor(vindex/(256.0*256.0)),
-            mod(vindex/256.0, 256.0),
-            mod(vindex, 256.0),
-            255.0) / 255.0;
-          float opacity = floor(min(vcolor.w, 1.0));
-          vec4 pix2 = vec4((2.0+opacity)/255.0, 0.0, 0.0, 1.0);
-          gl_FragColor = mix(pix1, pix2, step(1.0, n));
-          /*
-          float opacity = floor(min(vcolor.w, 1.0));
-          gl_FragColor = vec4(vindex, vft, 2.0+opacity, 1.0);
-          */
-        }
-      `,
+      pickFrag,
       vert: glsl`
         precision highp float;
         #pragma glslify: Line = require('glsl-georender-style-texture/line.h');
@@ -264,7 +224,7 @@ export default function shaders (map) {
         attribute float featureType, index;
         uniform vec4 viewbox;
         uniform vec2 offset, size, texSize;
-        uniform float featureCount, aspect, zoom;
+        uniform float aspect, zoom;
         uniform sampler2D styleTexture;
         varying float vft, vindex, zindex, vdashLength, vdashGap;
         varying vec2 vpos, vnorm, vdist;
@@ -295,7 +255,6 @@ export default function shaders (map) {
           return size
         },
         styleTexture: map.prop('style'),
-        featureCount: map.prop('featureCount'),
         texSize: map.prop('imageSize')
       },
       attributes: {
@@ -327,26 +286,7 @@ export default function shaders (map) {
           gl_FragColor = vcolor;
         }
       `,
-      pickFrag: `
-        precision highp float;
-        uniform vec2 size;
-        varying float vft, vindex;
-        varying vec2 vpos;
-        varying vec4 vcolor;
-        uniform float featureCount;
-        void main () {
-          float n = mod((vpos.x*0.5+0.5)*size.x, 2.0);
-          vec4 pix1 = vec4(
-            floor(vindex/(256.0*256.0)),
-            mod(vindex/256.0, 256.0),
-            mod(vindex, 256.0),
-            255.0) / 255.0;
-          float opacity = floor(min(vcolor.w, 1.0));
-          vec4 pix2 = vec4((4.0+opacity)/255.0, 0.0, 0.0, 1.0);
-          gl_FragColor = mix(pix1, pix2, step(1.0, n));
-          //gl_FragColor = vec4(vindex, vft, 4.0+opacity, 1.0);
-        }
-      `,
+      pickFrag,
       vert: glsl`
         precision highp float;
         #pragma glslify: Area = require('glsl-georender-style-texture/area.h');
@@ -355,7 +295,7 @@ export default function shaders (map) {
         attribute float featureType, index;
         uniform vec4 viewbox;
         uniform vec2 offset, size, texSize;
-        uniform float aspect, featureCount, zoom;
+        uniform float aspect, zoom;
         uniform sampler2D styleTexture;
         varying float vft, vindex, zindex;
         varying vec2 vpos;
@@ -380,14 +320,13 @@ export default function shaders (map) {
           size[1] = context.viewportHeight
           return size
         },
-        featureCount: map.prop('featureCount'),
         texSize: map.prop('imageSize'),
         styleTexture: map.prop('style')
       },
       attributes: {
         position: map.prop('positions'),
         featureType: map.prop('types'),
-        index: map.prop('indexes')
+        index: map.prop('indexes'),
       },
       elements: map.prop('cells'),
       primitive: "triangles",
@@ -420,25 +359,7 @@ export default function shaders (map) {
           gl_FragColor = vec4(vcolor.xyz, vcolor.w * x);
         }
       `,
-      pickFrag: `
-        precision highp float;
-        uniform vec2 size;
-        varying float vft, vindex;
-        varying vec2 vpos;
-        varying vec4 vcolor;
-        uniform float featureCount;
-        void main () {
-          float n = mod((vpos.x*0.5+0.5)*size.x, 2.0);
-          vec4 pix1 = vec4(
-            floor(vindex/(256.0*256.0)),
-            mod(vindex/256.0, 256.0),
-            mod(vindex, 256.0),
-            0.0);
-          float opacity = floor(min(vcolor.w, 1.0));
-          vec4 pix2 = vec4((4.0+opacity)/255.0, 0.0, 0.0, 1.0);
-          gl_FragColor = mix(pix1, pix2, step(n, 1.0));
-        }
-      `,
+      pickFrag,
       vert: glsl`
         precision highp float;
         #pragma glslify: AreaBorder = require('glsl-georender-style-texture/areaborder.h');
@@ -447,7 +368,7 @@ export default function shaders (map) {
         attribute float featureType, index;
         uniform vec4 viewbox;
         uniform vec2 offset, size, texSize;
-        uniform float featureCount, aspect, zoom;
+        uniform float aspect, zoom;
         uniform sampler2D styleTexture;
         varying float vft, vindex, zindex, vdashLength, vdashGap;
         varying vec2 vpos, vnorm, vdist;
@@ -479,7 +400,6 @@ export default function shaders (map) {
           return size
         },
         styleTexture: map.prop('style'),
-        featureCount: map.prop('featureCount'),
         texSize: map.prop('imageSize')
       },
       attributes: {

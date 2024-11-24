@@ -1,5 +1,4 @@
 import partition from 'partition-array'
-// TODO replace with @rubenrodriguez scoped package
 import featureList from 'georender-pack/features.json'
 let featureCount = featureList.length
 
@@ -350,6 +349,11 @@ Prepare.prototype.update = function (zoom) {
   return this.props
 }
 
+// TODO this appears to be buggy, zoomCount should be used for previous feature type
+// ranges, and the current zoom should be used for the current feature type range
+// verify this is a bug and fix. this value is determined in `georender-style2png`
+// so perhaps this package should export a way to getOpacity instead of juggling
+// this data in two packages independently
 Prepare.prototype.getOpacity = function (key, type, zoom) {
   if (key === 'point') {
     var y = zoom * 7
