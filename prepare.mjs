@@ -1,6 +1,6 @@
 import partition from 'partition-array'
-import featureList from 'georender-pack/features.json'
-let featureCount = featureList.length
+import Read from '@rubenrodriguez/georender-style2png/read'
+import { PrepareText } from './text'
 
 export default function Prepare(opts) {
   if (!(this instanceof Prepare)) return new Prepare(opts)
@@ -9,7 +9,12 @@ export default function Prepare(opts) {
   this.data = opts.decoded
   this.zoomCount = opts.zoomEnd - opts.zoomStart
   this.imageSize = opts.imageSize
-  featureCount = typeof opts.featureCount === 'number' ? opts.featureCount : featureCount
+  this.label = opts.label && new PrepareText(opts.label)
+  this.styleRead = Read({
+    pixels: this.pixels,
+    zoomCount: this.zoomCount,
+    imageWidth: this.imageSize[0]
+  })
   var propsLineP = typeof opts.propsLineP === 'function' ? opts.propsLineP : identity
   var propsArea = typeof opts.propsArea === 'function' ? opts.propsArea : identity
   this.indexes = {
@@ -87,7 +92,6 @@ export default function Prepare(opts) {
       labels: this.data.point.labels,
       style: this.style,
       imageSize: this.imageSize,
-      featureCount
     },
     pointT: {
       positions: null,
@@ -99,7 +103,6 @@ export default function Prepare(opts) {
       labels: this.data.point.labels,
       style: this.style,
       imageSize: this.imageSize,
-      featureCount
     },
     pointP: {
       positions: null,
@@ -111,7 +114,6 @@ export default function Prepare(opts) {
       labels: this.data.point.labels,
       style: this.style,
       imageSize: this.imageSize,
-      featureCount
     },
     line: {
       positions: null,
@@ -125,7 +127,6 @@ export default function Prepare(opts) {
       labels: this.data.line.labels,
       style: this.style,
       imageSize: this.imageSize,
-      featureCount,
     },
     lineT: {
       positions: null,
@@ -139,7 +140,6 @@ export default function Prepare(opts) {
       labels: this.data.line.labels,
       style: this.style,
       imageSize: this.imageSize,
-      featureCount
     },
     lineP: propsLineP({
       positions: null,
@@ -153,7 +153,6 @@ export default function Prepare(opts) {
       labels: this.data.line.labels,
       style: this.style,
       imageSize: this.imageSize,
-      featureCount
     }),
     area: propsArea({
       positions: this.data.area.positions,
@@ -166,7 +165,6 @@ export default function Prepare(opts) {
       labels: this.data.area.labels,
       style: this.style,
       imageSize: this.imageSize,
-      featureCount
     }),
     areaT: {
       positions: this.data.area.positions,
@@ -179,7 +177,6 @@ export default function Prepare(opts) {
       labels: this.data.area.labels,
       style: this.style,
       imageSize: this.imageSize,
-      featureCount
     },
     areaP: {
       positions: this.data.area.positions,
@@ -192,7 +189,6 @@ export default function Prepare(opts) {
       labels: this.data.area.labels,
       style: this.style,
       imageSize: this.imageSize,
-      featureCount
     },
     areaBorder: {
       positions: null,
@@ -208,7 +204,6 @@ export default function Prepare(opts) {
       idToIndex: null,
       style: this.style,
       imageSize: this.imageSize,
-      featureCount,
     },
     areaBorderT: {
       positions: null,
@@ -221,7 +216,6 @@ export default function Prepare(opts) {
       idToIndex: null,
       style: this.style,
       imageSize: this.imageSize,
-      featureCount
     },
     areaBorderP: {
       positions: null,
@@ -234,8 +228,12 @@ export default function Prepare(opts) {
       idToIndex: null,
       style: this.style,
       imageSize: this.imageSize,
-      featureCount
     },
+    label: {
+      labelEngine: null,
+      atlas: [],
+      glyphs: [],
+    }
   }
 }
 Prepare.prototype._splitSort = function (key, zoom) {
@@ -243,7 +241,7 @@ Prepare.prototype._splitSort = function (key, zoom) {
   var tkey = key+'T'
   var pkey = key+'P'
   var splitT = partition(this.indexes[key], function (i) {
-    var opacity = self.getOpacity(key, self.data[key].types[i], zoom)
+    var opacity = self.styleRead.opacity(key, self.data[key].types[i], zoom)
     return opacity > 100
   })
 
@@ -330,7 +328,7 @@ Prepare.prototype._splitSortArea = function (key, zoom) {
   var cells = self.data[key].cells
   for (var i=0; i<cells.length; i+=3) {
     var type = self.data[key].types[cells[i]]
-    var opacity = self.getOpacity(key, type, zoom)
+    var opacity = self.styleRead.opacity(key, type, zoom)
     if (opacity < 100) {
       self.props[tkey].cells.push(cells[i], cells[i+1], cells[i+2])
     }
@@ -340,35 +338,17 @@ Prepare.prototype._splitSortArea = function (key, zoom) {
   }
 }
 
-Prepare.prototype.update = function (zoom) {
+Prepare.prototype.update = function (map) {
+  const { zoom } = map
   var self = this
   this._splitSort('point', zoom)
   this._splitSort('line', zoom)
   this._splitSort('areaBorder', zoom)
   this._splitSortArea('area', zoom)
+  if (this.label) {
+    this.props.label = this.label.update(this.props, map, { style: this.pixels })
+  }
   return this.props
-}
-
-// TODO this appears to be buggy, zoomCount should be used for previous feature type
-// ranges, and the current zoom should be used for the current feature type range
-// verify this is a bug and fix. this value is determined in `georender-style2png`
-// so perhaps this package should export a way to getOpacity instead of juggling
-// this data in two packages independently
-Prepare.prototype.getOpacity = function (key, type, zoom) {
-  if (key === 'point') {
-    var y = zoom * 7
-  }
-  else if (key === 'line') {
-    var y = zoom * 7 + this.zoomCount * 8
-  }
-  else if (key === 'area') {
-    var y = zoom * 7 + this.zoomCount * 8 + this.zoomCount * 6
-  }
-  else if (key === 'areaBorder') {
-    var y = zoom * 7 + this.zoomCount * 8 + this.zoomCount * 6 + this.zoomCount * 3
-  }
-  var index = (type + y * this.imageSize[0])*4 + 3
-  return this.pixels[index]
 }
 
 function makeIndexes (ids) { 

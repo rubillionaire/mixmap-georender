@@ -1,17 +1,55 @@
-var __create = Object.create;
 var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __getProtoOf = Object.getPrototypeOf;
+var __defProps = Object.defineProperties;
+var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols = Object.getOwnPropertySymbols;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __propIsEnum = Object.prototype.propertyIsEnumerable;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp.call(b, prop))
+      __defNormalProp(a, prop, b[prop]);
+  if (__getOwnPropSymbols)
+    for (var prop of __getOwnPropSymbols(b)) {
+      if (__propIsEnum.call(b, prop))
+        __defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
+
+// ../tiny-label/dist/index.mjs
+var __create = Object.create;
+var __defProp2 = Object.defineProperty;
+var __defProps2 = Object.defineProperties;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropDescs2 = Object.getOwnPropertyDescriptors;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getOwnPropSymbols2 = Object.getOwnPropertySymbols;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp2 = Object.prototype.hasOwnProperty;
+var __propIsEnum2 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp2 = (obj, key, value) => key in obj ? __defProp2(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues2 = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp2.call(b, prop))
+      __defNormalProp2(a, prop, b[prop]);
+  if (__getOwnPropSymbols2)
+    for (var prop of __getOwnPropSymbols2(b)) {
+      if (__propIsEnum2.call(b, prop))
+        __defNormalProp2(a, prop, b[prop]);
+    }
+  return a;
+};
+var __spreadProps2 = (a, b) => __defProps2(a, __getOwnPropDescs2(b));
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
 var __copyProps = (to, from, except, desc) => {
   if (from && typeof from === "object" || typeof from === "function") {
     for (let key of __getOwnPropNames(from))
-      if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+      if (!__hasOwnProp2.call(to, key) && key !== except)
+        __defProp2(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
   }
   return to;
 };
@@ -20,1010 +58,9 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   // file that has been converted to a CommonJS file using a Babel-
   // compatible transform (i.e. "__esModule" has not been set), then set
   // "default" to the CommonJS "module.exports" for node compatibility.
-  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  isNodeMode || !mod || !mod.__esModule ? __defProp2(target, "default", { value: mod, enumerable: true }) : target,
   mod
 ));
-
-// ../qbzf/node_modules/line-segment-intersect-2d/index.js
-var require_line_segment_intersect_2d = __commonJS({
-  "../qbzf/node_modules/line-segment-intersect-2d/index.js"(exports, module) {
-    module.exports = function lineIntersection(out, a0, a1, b0, b1) {
-      var ax = a1[0] - a0[0];
-      var ay = a1[1] - a0[1];
-      var bx = b1[0] - b0[0];
-      var by = b1[1] - b0[1];
-      var d = ax * by - bx * ay;
-      if (d === 0)
-        return null;
-      var dpos = d > 0;
-      var cx = a0[0] - b0[0];
-      var cy = a0[1] - b0[1];
-      var sn = ax * cy - ay * cx;
-      if (sn < 0 === dpos)
-        return null;
-      var tn = bx * cy - by * cx;
-      if (tn < 0 === dpos)
-        return null;
-      if (sn > d === dpos || tn > d === dpos)
-        return null;
-      var t = tn / d;
-      out[0] = a0[0] + t * ax;
-      out[1] = a0[1] + t * ay;
-      return out;
-    };
-  }
-});
-
-// ../qbzf/node_modules/gl-vec2/set.js
-var require_set = __commonJS({
-  "../qbzf/node_modules/gl-vec2/set.js"(exports, module) {
-    module.exports = set;
-    function set(out, x, y) {
-      out[0] = x;
-      out[1] = y;
-      return out;
-    }
-  }
-});
-
-// ../qbzf/node_modules/gl-vec2/distance.js
-var require_distance = __commonJS({
-  "../qbzf/node_modules/gl-vec2/distance.js"(exports, module) {
-    module.exports = distance;
-    function distance(a, b) {
-      var x = b[0] - a[0], y = b[1] - a[1];
-      return Math.sqrt(x * x + y * y);
-    }
-  }
-});
-
-// ../qbzf/node_modules/varint/encode.js
-var require_encode = __commonJS({
-  "../qbzf/node_modules/varint/encode.js"(exports, module) {
-    module.exports = encode;
-    var MSB = 128;
-    var REST = 127;
-    var MSBALL = ~REST;
-    var INT = Math.pow(2, 31);
-    function encode(num, out, offset) {
-      if (Number.MAX_SAFE_INTEGER && num > Number.MAX_SAFE_INTEGER) {
-        encode.bytes = 0;
-        throw new RangeError("Could not encode varint");
-      }
-      out = out || [];
-      offset = offset || 0;
-      var oldOffset = offset;
-      while (num >= INT) {
-        out[offset++] = num & 255 | MSB;
-        num /= 128;
-      }
-      while (num & MSBALL) {
-        out[offset++] = num & 255 | MSB;
-        num >>>= 7;
-      }
-      out[offset] = num | 0;
-      encode.bytes = offset - oldOffset + 1;
-      return out;
-    }
-  }
-});
-
-// ../qbzf/node_modules/varint/decode.js
-var require_decode = __commonJS({
-  "../qbzf/node_modules/varint/decode.js"(exports, module) {
-    module.exports = read;
-    var MSB = 128;
-    var REST = 127;
-    function read(buf, offset) {
-      var res = 0, offset = offset || 0, shift = 0, counter = offset, b, l = buf.length;
-      do {
-        if (counter >= l || shift > 49) {
-          read.bytes = 0;
-          throw new RangeError("Could not decode varint");
-        }
-        b = buf[counter++];
-        res += shift < 28 ? (b & REST) << shift : (b & REST) * Math.pow(2, shift);
-        shift += 7;
-      } while (b >= MSB);
-      read.bytes = counter - offset;
-      return res;
-    }
-  }
-});
-
-// ../qbzf/node_modules/varint/length.js
-var require_length = __commonJS({
-  "../qbzf/node_modules/varint/length.js"(exports, module) {
-    var N1 = Math.pow(2, 7);
-    var N2 = Math.pow(2, 14);
-    var N3 = Math.pow(2, 21);
-    var N4 = Math.pow(2, 28);
-    var N5 = Math.pow(2, 35);
-    var N6 = Math.pow(2, 42);
-    var N7 = Math.pow(2, 49);
-    var N8 = Math.pow(2, 56);
-    var N9 = Math.pow(2, 63);
-    module.exports = function(value) {
-      return value < N1 ? 1 : value < N2 ? 2 : value < N3 ? 3 : value < N4 ? 4 : value < N5 ? 5 : value < N6 ? 6 : value < N7 ? 7 : value < N8 ? 8 : value < N9 ? 9 : 10;
-    };
-  }
-});
-
-// ../qbzf/node_modules/varint/index.js
-var require_varint = __commonJS({
-  "../qbzf/node_modules/varint/index.js"(exports, module) {
-    module.exports = {
-      encode: require_encode(),
-      decode: require_decode(),
-      encodingLength: require_length()
-    };
-  }
-});
-
-// ../qbzf/lib/magic.js
-var require_magic = __commonJS({
-  "../qbzf/lib/magic.js"(exports, module) {
-    module.exports = [113, 98, 122, 102, 49];
-  }
-});
-
-// ../qbzf/lib/bz.js
-var require_bz = __commonJS({
-  "../qbzf/lib/bz.js"(exports, module) {
-    module.exports = function bz(a, b, c, t) {
-      var t1 = 1 - t;
-      return t1 * t1 * a + 2 * t1 * t * b + t * t * c;
-    };
-  }
-});
-
-// ../qbzf/lib/bzli.js
-var require_bzli = __commonJS({
-  "../qbzf/lib/bzli.js"(exports, module) {
-    var bz = require_bz();
-    var lb = [0, 0, 0, 0];
-    module.exports = function bzli(out, c, l, epsilon) {
-      if (epsilon === void 0)
-        epsilon = 1e-8;
-      var c0 = c[0], c1 = c[1], c2 = c[2], c3 = c[3], c4 = c[4], c5 = c[5];
-      var l0 = l[0], l1 = l[1], l2 = l[2], l3 = l[3];
-      lb[0] = Math.min(l0, l2);
-      lb[1] = Math.min(l1, l3);
-      lb[2] = Math.max(l0, l2);
-      lb[3] = Math.max(l1, l3);
-      var A = l3 - l1;
-      var B = l0 - l2;
-      var C = l1 * l2 - l0 * l3;
-      var qa = A * c0 - 2 * A * c2 + A * c4 + B * c1 - 2 * B * c3 + B * c5;
-      var qb = -2 * A * c0 + 2 * A * c2 - 2 * B * c1 + 2 * B * c3;
-      var qc = A * c0 + B * c1 + C;
-      if (Math.abs(qa) < epsilon)
-        return 0;
-      var qs = qb * qb - 4 * qa * qc;
-      if (qs < 0)
-        return 0;
-      var qsq = Math.sqrt(qs);
-      var t0 = (-qb + qsq) / (2 * qa);
-      var t1 = (-qb - qsq) / (2 * qa);
-      var n = 0;
-      if (0 <= t0 && t0 <= 1) {
-        var x0 = bz(c0, c2, c4, t0);
-        var y0 = bz(c1, c3, c5, t0);
-        if (checkLine(x0, y0, lb, epsilon)) {
-          out[n * 2 + 0] = x0;
-          out[n * 2 + 1] = y0;
-          n++;
-        }
-      }
-      if (0 <= t1 && t1 <= 1) {
-        var x1 = bz(c0, c2, c4, t1);
-        var y1 = bz(c1, c3, c5, t1);
-        if (checkLine(x1, y1, lb, epsilon)) {
-          out[n * 2 + 0] = x1;
-          out[n * 2 + 1] = y1;
-          n++;
-        }
-      }
-      return n;
-    };
-    function checkLine(x, y, lb2, epsilon) {
-      return lb2[0] - epsilon <= x && x <= lb2[2] + epsilon && lb2[1] - epsilon <= y && y <= lb2[3] + epsilon;
-    }
-  }
-});
-
-// ../qbzf/lib/bzri.js
-var require_bzri = __commonJS({
-  "../qbzf/lib/bzri.js"(exports, module) {
-    var bzli = require_bzli();
-    var l0 = [0, 0, 0, 0];
-    var l1 = [0, 0, 0, 0];
-    module.exports = bzRectIntersect;
-    function bzRectIntersect(rect, c, dx, dy, padding2) {
-      if (padding2 === void 0)
-        padding2 = 1e-8;
-      var r0 = rect[0] - dx, r1 = rect[1] - dy, r2 = rect[2] - dx, r3 = rect[3] - dy;
-      if (r0 <= c[0] && c[0] <= r2 && r1 <= c[1] && c[1] <= r3)
-        return true;
-      if (r0 <= c[4] && c[4] <= r2 && r1 <= c[5] && c[5] <= r3)
-        return true;
-      vec4set(l0, r0, r1, r0, r3);
-      var n = bzli(l1, c, l0);
-      if (n > 0)
-        return true;
-      vec4set(l0, r2, r1, r2, r3);
-      var n = bzli(l1, c, l0);
-      if (n > 0)
-        return true;
-      vec4set(l0, r0, r1, r2, r1);
-      var n = bzli(l1, c, l0);
-      if (n > 0)
-        return true;
-      vec4set(l0, r0, r3, r2, r3);
-      var n = bzli(l1, c, l0);
-      if (n > 0)
-        return true;
-      return false;
-    }
-    function vec4set(out, a, b, c, d) {
-      out[0] = a;
-      out[1] = b;
-      out[2] = c;
-      out[3] = d;
-      return out;
-    }
-  }
-});
-
-// ../qbzf/lib/mivxa.js
-var require_mivxa = __commonJS({
-  "../qbzf/lib/mivxa.js"(exports, module) {
-    module.exports = function mivxa(out, pts, range, epsilon) {
-      if (epsilon === void 0)
-        epsilon = 1e-8;
-      pts.sort(cmp);
-      var j = 0;
-      for (var i = 0; i < pts.length; i += 2) {
-        var x0 = pts[i + 0], x1 = pts[i + 1];
-        if (x1 <= range[0])
-          continue;
-        if (x0 >= range[1])
-          break;
-        if (x0 < range[0] && range[0] < x1) {
-          x0 = range[0];
-        }
-        if (x0 < range[1] && range[1] < x1) {
-          x1 = range[1];
-        }
-        if (j > 0 && Math.abs(out[j - 1] - x0) < epsilon) {
-          out[j - 1] = x1;
-        } else if (Math.abs(x0 - x1) > 0) {
-          out[j++] = x0;
-          out[j++] = x1;
-        }
-      }
-      out.length = j;
-      return out;
-    };
-    function cmp(a, b) {
-      return a < b ? -1 : 1;
-    }
-  }
-});
-
-// ../qbzf/lib/raycast.js
-var require_raycast = __commonJS({
-  "../qbzf/lib/raycast.js"(exports, module) {
-    module.exports = function raycast(out, x, b0, b1, b2, epsilon) {
-      if (epsilon === void 0)
-        epsilon = 1e-8;
-      var a = b0 - 2 * b1 + b2;
-      var b = -2 * (b0 - b1);
-      var c = b0 - x;
-      var s = b * b - 4 * a * c;
-      if (s < 0 || Math.abs(a) < epsilon)
-        return 0;
-      var sq = Math.sqrt(s);
-      var pt = (-b + sq) / (2 * a);
-      var nt = (-b - sq) / (2 * a);
-      var n = 0;
-      if (0 <= pt && pt <= 1)
-        out[n++] = pt;
-      if (0 <= nt && nt <= 1)
-        out[n++] = nt;
-      return n;
-    };
-  }
-});
-
-// ../qbzf/node_modules/ieee754/index.js
-var require_ieee754 = __commonJS({
-  "../qbzf/node_modules/ieee754/index.js"(exports) {
-    exports.read = function(buffer, offset, isLE, mLen, nBytes) {
-      var e, m;
-      var eLen = nBytes * 8 - mLen - 1;
-      var eMax = (1 << eLen) - 1;
-      var eBias = eMax >> 1;
-      var nBits = -7;
-      var i = isLE ? nBytes - 1 : 0;
-      var d = isLE ? -1 : 1;
-      var s = buffer[offset + i];
-      i += d;
-      e = s & (1 << -nBits) - 1;
-      s >>= -nBits;
-      nBits += eLen;
-      for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8) {
-      }
-      m = e & (1 << -nBits) - 1;
-      e >>= -nBits;
-      nBits += mLen;
-      for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8) {
-      }
-      if (e === 0) {
-        e = 1 - eBias;
-      } else if (e === eMax) {
-        return m ? NaN : (s ? -1 : 1) * Infinity;
-      } else {
-        m = m + Math.pow(2, mLen);
-        e = e - eBias;
-      }
-      return (s ? -1 : 1) * m * Math.pow(2, e - mLen);
-    };
-    exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
-      var e, m, c;
-      var eLen = nBytes * 8 - mLen - 1;
-      var eMax = (1 << eLen) - 1;
-      var eBias = eMax >> 1;
-      var rt = mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0;
-      var i = isLE ? 0 : nBytes - 1;
-      var d = isLE ? 1 : -1;
-      var s = value < 0 || value === 0 && 1 / value < 0 ? 1 : 0;
-      value = Math.abs(value);
-      if (isNaN(value) || value === Infinity) {
-        m = isNaN(value) ? 1 : 0;
-        e = eMax;
-      } else {
-        e = Math.floor(Math.log(value) / Math.LN2);
-        if (value * (c = Math.pow(2, -e)) < 1) {
-          e--;
-          c *= 2;
-        }
-        if (e + eBias >= 1) {
-          value += rt / c;
-        } else {
-          value += rt * Math.pow(2, 1 - eBias);
-        }
-        if (value * c >= 2) {
-          e++;
-          c /= 2;
-        }
-        if (e + eBias >= eMax) {
-          m = 0;
-          e = eMax;
-        } else if (e + eBias >= 1) {
-          m = (value * c - 1) * Math.pow(2, mLen);
-          e = e + eBias;
-        } else {
-          m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen);
-          e = 0;
-        }
-      }
-      for (; mLen >= 8; buffer[offset + i] = m & 255, i += d, m /= 256, mLen -= 8) {
-      }
-      e = e << mLen | m;
-      eLen += mLen;
-      for (; eLen > 0; buffer[offset + i] = e & 255, i += d, e /= 256, eLen -= 8) {
-      }
-      buffer[offset + i - d] |= s * 128;
-    };
-  }
-});
-
-// ../qbzf/index.js
-var require_qbzf = __commonJS({
-  "../qbzf/index.js"(exports, module) {
-    var lsi = require_line_segment_intersect_2d();
-    var vec2set = require_set();
-    var vec2dist = require_distance();
-    var varint = require_varint();
-    var magic = require_magic();
-    var bzri = require_bzri();
-    var mivxa = require_mivxa();
-    var raycast = require_raycast();
-    var bz = require_bz();
-    var bzli = require_bzli();
-    var ieee754 = require_ieee754();
-    var rect0 = [0, 0, 0, 0];
-    var rect1 = [0, 0, 0, 0];
-    var v0 = [0, 0];
-    var v1 = [0, 0];
-    var v2 = [0, 0];
-    var v3 = [0, 0];
-    var v4 = [0, 0];
-    var l0 = [0, 0, 0, 0];
-    var l1 = [0, 0, 0, 0];
-    var origin = [0, 0];
-    var padding0 = [0, 0, 0, 0];
-    var defaultPadding = [0, 0, 0, 0];
-    var defaultOffset = [0, 0];
-    module.exports = QBZF2;
-    function QBZF2(src, opts) {
-      if (!(this instanceof QBZF2))
-        return new QBZF2(src, opts);
-      if (!opts)
-        opts = {};
-      this._glyphs = /* @__PURE__ */ new Map();
-      this._matches = /* @__PURE__ */ new Map();
-      this._iv = /* @__PURE__ */ new Map();
-      this._cells = /* @__PURE__ */ new Map();
-      this._index = 0;
-      this._density = opts.density !== void 0 ? opts.density : [200, 200];
-      this.unitsPerEm = 0;
-      this._epsilon = opts.epsilon !== void 0 ? opts.epsilon : 1e-8;
-      this._parse(src);
-      this.curves = this._buildCurves();
-    }
-    QBZF2.prototype._parse = function(src) {
-      var offset = 0;
-      for (; offset < src.length && src[offset] !== 10; offset++)
-        ;
-      if (!vcmp(src, 0, offset, magic, 0, magic.length)) {
-        throw new Error("magic number not found. not a valid qbzf1 file.");
-      }
-      offset++;
-      this.unitsPerEm = varint.decode(src, offset);
-      offset += varint.decode.bytes;
-      while (offset < src.length) {
-        var xndigits = varint.decode(src, offset);
-        var ndigits = xndigits >> 1;
-        offset += varint.decode.bytes;
-        var u0 = varint.decode(src, offset);
-        offset += varint.decode.bytes;
-        var u1 = -1;
-        var key = String(u0);
-        if (xndigits % 2 === 1) {
-          u1 = varint.decode(src, offset);
-          offset += varint.decode.bytes;
-          key += "," + String(u1);
-        }
-        var advanceWidth = decode(src, offset);
-        offset += varint.decode.bytes;
-        var leftSideBearing = decode(src, offset);
-        offset += varint.decode.bytes;
-        var xmin = decode(src, offset);
-        offset += varint.decode.bytes;
-        var ymin = decode(src, offset);
-        offset += varint.decode.bytes;
-        var xmax = decode(src, offset);
-        offset += varint.decode.bytes;
-        var ymax = decode(src, offset);
-        offset += varint.decode.bytes;
-        var px = 0, py = 0;
-        var curves = [], indexes = [];
-        for (var n = 0; n < ndigits; n++) {
-          var cx = decode(src, offset);
-          offset += varint.decode.bytes;
-          var cxr = (cx % 3 + 3) % 3;
-          cx = Math.floor(cx / 3);
-          var cy = decode(src, offset);
-          offset += varint.decode.bytes;
-          if (cxr === 0) {
-            px += cx;
-            py += cy;
-          } else if (cxr === 1) {
-            var c0 = px, c1 = py, c2 = cx + px, c3 = cy + py;
-            if (Math.abs(c0 - c2) < this._epsilon && Math.abs(c1 - c3) < this._epsilon)
-              continue;
-            curves.push([c0, c1, c2, c3]);
-            indexes.push(this._index++);
-            px += cx;
-            py += cy;
-          } else if (cxr === 2) {
-            var nx = decode(src, offset);
-            offset += varint.decode.bytes;
-            var ny = decode(src, offset);
-            offset += varint.decode.bytes;
-            curves.push([px, py, cx + px, cy + py, nx + px, ny + py]);
-            indexes.push(this._index++);
-            px += nx;
-            py += ny;
-          }
-        }
-        this._glyphs.set(key, {
-          curves,
-          indexes,
-          leftSideBearing,
-          advanceWidth,
-          bbox: [xmin, ymin, xmax, ymax]
-        });
-      }
-    };
-    QBZF2.prototype._buildCurves = function() {
-      var w = Math.max(90, Math.floor(Math.sqrt(this._index) / 3) * 3);
-      var h = Math.max(1, Math.ceil(this._index / w));
-      var data = new Uint8Array(w * h * 4);
-      for (var [key, g] of this._glyphs) {
-        for (var i = 0; i < g.curves.length; i++) {
-          var c = g.curves[i];
-          var offset = g.indexes[i] * 3 * 4;
-          if (c.length === 4) {
-            writeI16(data, offset + 0, c[0] - g.bbox[0]);
-            writeI16(data, offset + 2, c[1] - g.bbox[1]);
-            writeI16(data, offset + 4, c[0] - g.bbox[0]);
-            writeI16(data, offset + 6, c[1] - g.bbox[1]);
-            writeI16(data, offset + 8, c[2] - g.bbox[0]);
-            writeI16(data, offset + 10, c[3] - g.bbox[1]);
-          } else if (c.length === 6) {
-            writeI16(data, offset + 0, c[0] - g.bbox[0]);
-            writeI16(data, offset + 2, c[1] - g.bbox[1]);
-            writeI16(data, offset + 4, c[2] - g.bbox[0]);
-            writeI16(data, offset + 6, c[3] - g.bbox[1]);
-            writeI16(data, offset + 8, c[4] - g.bbox[0]);
-            writeI16(data, offset + 10, c[5] - g.bbox[1]);
-          }
-        }
-      }
-      return { data, width: w, height: h, size: [w, h] };
-    };
-    QBZF2.prototype.measure = function(opts) {
-      var density = opts.density !== void 0 ? opts.density : this._density;
-      var padding2 = opts.padding !== void 0 ? opts.padding : defaultPadding;
-      var strokeWidth = opts.strokeWidth !== void 0 ? opts.strokeWidth : 0;
-      var xoffset = opts.offset !== void 0 ? opts.offset : defaultOffset;
-      if (padding2.length === 2) {
-        padding2 = vec4set(padding0, padding2[0], padding2[1], padding2[0], padding2[1]);
-      } else {
-        padding2 = vec4set(padding0, padding2[0], padding2[1], padding2[2], padding2[3]);
-      }
-      padding2[0] += strokeWidth;
-      padding2[1] += strokeWidth;
-      padding2[2] += strokeWidth;
-      padding2[3] += strokeWidth;
-      var units = [0, 0];
-      var bbox = [Infinity, Infinity, -Infinity, -Infinity];
-      var text = opts.text !== void 0 ? opts.text : "";
-      for (var i = 0; i < text.length; i++) {
-        var code = text.charCodeAt(i);
-        var g = this._glyphs.get(String(code));
-        bbox[0] = Math.min(bbox[0], units[0] + g.bbox[0]);
-        bbox[2] = Math.max(bbox[2], units[0] + g.bbox[2]);
-        units[0] += g.advanceWidth;
-        bbox[2] = Math.max(bbox[2], units[0]);
-        bbox[1] = Math.min(bbox[1], g.bbox[1]);
-        bbox[3] = Math.max(bbox[3], g.bbox[3]);
-      }
-      units[0] = Math.max(units[0], bbox[2]) - bbox[0] + padding2[0] + padding2[2] + 2;
-      units[1] = bbox[3] - bbox[1] + padding2[1] + padding2[3] + 2;
-      var grid = [Math.ceil(units[0] / density[0]), Math.ceil(units[1] / density[1])];
-      var offset = [xoffset[0] + padding2[0] - bbox[0] + 1, xoffset[1] + padding2[1] - bbox[1] + 1];
-      return Object.assign({}, opts, { units, grid, offset, bbox });
-    };
-    QBZF2.prototype.write = function(opts) {
-      opts = this.measure(opts);
-      var units = opts.units;
-      var grid = opts.grid;
-      var strokeWidth = opts.strokeWidth !== void 0 ? opts.strokeWidth : 0;
-      var text = opts.text;
-      this._matches.clear();
-      var offset = opts.offset || origin;
-      var x = offset[0];
-      var y = offset[1];
-      var cursor = { units, grid, strokeWidth, n: 0 };
-      for (var i = 0; i < text.length; i++) {
-        var c = text.charCodeAt(i);
-        x += this._stamp(c, x, y, cursor);
-      }
-      var n = cursor.n;
-      var q = n * 3 + 2;
-      var l = grid[0] * grid[1] * q;
-      var width = Math.ceil(Math.sqrt(l) / q) * q;
-      var height = Math.ceil(l / width);
-      var length = width * height * 4;
-      var data = opts.data !== void 0 ? opts.data : new Uint8Array(length);
-      if (data.length < length) {
-        throw new Error(`insufficient supplied data in qbzf.write. required: ${length} received: ${data.length}`);
-      }
-      if (data.length > length) {
-        data = data.subarray(0, length);
-      }
-      for (var gy = 0; gy < grid[1]; gy++) {
-        for (var gx = 0; gx < grid[0]; gx++) {
-          var gk = gx + gy * grid[0];
-          var cells = this._cells.get(gk);
-          if (cells !== void 0) {
-            for (var i = 0; i < cells.length; i++) {
-              var offset = (gk * (n * 3 + 2) + 2 + i * 3) * 4;
-              writeU24(data, offset + 0, cells[i][0]);
-              writeF32(data, offset + 4, cells[i][1]);
-              writeF32(data, offset + 8, cells[i][2]);
-            }
-          }
-          var iv = this._iv.get(gk);
-          if (iv !== void 0) {
-            var offset = (gx + gy * grid[0]) * (n * 3 + 2) * 4;
-            writeF32(data, offset + 0, iv[0]);
-            writeF32(data, offset + 4, iv[1]);
-          }
-        }
-      }
-      this._cells.clear();
-      this._iv.clear();
-      return {
-        data,
-        width,
-        height,
-        dimension: [width, height],
-        units,
-        grid,
-        n,
-        strokeWidth
-      };
-    };
-    QBZF2.prototype._stamp = function(code, sx, sy, cursor) {
-      var units = cursor.units, grid = cursor.grid, cells = cursor.cells;
-      var g = this._glyphs.get(String(code));
-      if (g === void 0)
-        throw new Error(`todo: glyph or hook for code not found: ${code}`);
-      var px = sx + g.bbox[0], py = sy + g.bbox[1];
-      var swx = cursor.strokeWidth, swy = cursor.strokeWidth;
-      var xstart = Math.max(0, Math.floor((px + g.bbox[0] - g.leftSideBearing - swx) / units[0] * grid[0]));
-      var xend = Math.ceil((px + g.bbox[2] - g.leftSideBearing + swx) / units[0] * grid[0]);
-      var ystart = Math.max(0, Math.floor((sy + g.bbox[1] - swy) / units[1] * grid[1]));
-      var yend = Math.min(grid[1], Math.ceil((sy + g.bbox[3] + swy) / units[1] * grid[1]));
-      var sg0 = units[0] / grid[0];
-      var sg1 = units[1] / grid[1];
-      for (var gy = ystart; gy < yend; gy++) {
-        for (var gx = xstart; gx < xend; gx++) {
-          rect0[0] = gx / grid[0] * units[0];
-          rect0[1] = gy / grid[1] * units[1];
-          rect0[2] = (gx + 1) / grid[0] * units[0];
-          rect0[3] = (gy + 1) / grid[1] * units[1];
-          var r0 = rect0[0] - px + g.bbox[0];
-          var r1 = rect0[1] - py + g.bbox[1];
-          var r2 = rect0[2] - px + g.bbox[0];
-          var r3 = rect0[3] - py + g.bbox[1];
-          var gk = gx + gy * grid[0];
-          var m = this._matches.get(gk) || 0;
-          var urc = 0;
-          for (var i = 0; i < g.curves.length; i++) {
-            var c = g.curves[i];
-            urc += this._countRaycast(r2, r3, c, units[0] + 1e3);
-          }
-          var rc = [];
-          for (var i = 0; i < g.curves.length; i++) {
-            var c = g.curves[i];
-            if (c.length === 4) {
-              vec2set(v1, c[0], c[1]);
-              vec2set(v2, c[2], c[3]);
-              vec2set(v3, r2, r1);
-              vec2set(v4, r2, r3);
-              if (Math.abs(r2 - c[0]) < this._epsilon || Math.abs(r2 - c[2]) < this._epsilon) {
-                v3[0] += this._epsilon;
-                v4[0] += this._epsilon;
-              }
-              if (lsi(v0, v1, v2, v3, v4)) {
-                rc.push(v0[1] + py - g.bbox[1]);
-              }
-            } else {
-              vec4set(l0, r2, r1, r2, r3);
-              if (Math.abs(r2 - c[0]) < this._epsilon || Math.abs(r2 - c[4]) < this._epsilon) {
-                l0[0] += this._epsilon;
-                l0[2] += this._epsilon;
-              }
-              var ln = bzli(l1, c, l0, 1e-8);
-              for (var j = 0; j < ln; j++) {
-                rc.push(l1[j * 2 + 1] + py - g.bbox[1]);
-              }
-            }
-          }
-          rc.sort(cmp);
-          var iv = this._iv.get(gk) || [];
-          var q = 0;
-          if (urc % 2 === 0 && rc.length === 0) {
-            q = 1;
-          } else if (urc % 2 === 1 && rc.length === 0) {
-            q = 2;
-            iv.push(rect0[1], rect0[3]);
-          } else if (urc % 2 === 0 && rc.length % 2 === 0) {
-            q = 3;
-            iv = iv.concat(rc);
-          } else if (urc % 2 === 0 && rc.length % 2 === 1) {
-            q = 4;
-            iv.push(rect0[1]);
-            iv = iv.concat(rc);
-          } else if (urc % 2 === 1 && rc.length % 2 === 0) {
-            q = 5;
-            iv = iv.concat(rc);
-            iv.push(rect0[1], rect0[3]);
-          } else if (urc % 2 === 1 && rc.length % 2 === 1) {
-            q = 6;
-            iv = iv.concat(rc);
-            iv.push(rect0[3]);
-          }
-          var cells = this._cells.get(gk);
-          if (cells === void 0) {
-            cells = [];
-            this._cells.set(gk, cells);
-          }
-          vec4set(rect1, rect0[0] - swx, rect0[1] - swy, rect0[2] + swx, rect0[3] + swy);
-          for (var i = 0; i < g.curves.length; i++) {
-            var c = g.curves[i];
-            if (!curveRectIntersect(c, rect1, px - g.bbox[0], py - g.bbox[1])) {
-              continue;
-            }
-            cells.push([g.indexes[i] + 1, rect0[0] - px, rect0[1] - py]);
-            cursor.n = Math.max(cursor.n, cells.length);
-            m++;
-          }
-          this._matches.set(gk, m);
-          var y0 = rect0[1], y1 = rect0[1];
-          if (iv.length > 0) {
-            mivxa(iv, iv, vec2set(v0, rect0[1], rect0[3]), 1e-8);
-            if (iv.length === 2) {
-              y0 = iv[0] !== void 0 ? iv[0] : rect0[1];
-              y1 = iv[1] !== void 0 ? iv[1] : rect0[1];
-            } else if (iv.length === 4) {
-              iv.push(rect0[1], rect0[3]);
-              mivxa(iv, iv, vec2set(v0, rect0[1], rect0[3]), 1e-8);
-              y1 = iv[0] !== void 0 ? iv[0] : rect0[1];
-              y0 = iv[1] !== void 0 ? iv[1] : rect0[1];
-            } else if (iv.length > 0) {
-            }
-          }
-          this._iv.set(gk, [y0 - rect0[1], y1 - rect0[1]]);
-        }
-      }
-      return g.advanceWidth;
-    };
-    QBZF2.prototype._countRaycast = function(x, y, c, xfar) {
-      vec2set(v0, x, y);
-      if (c.length === 6 && Math.abs(c[1] - v0[1]) < this._epsilon) {
-        v0[1] += this._epsilon;
-      }
-      if (c.length === 6 && Math.abs(c[5] - v0[1]) < this._epsilon) {
-        v0[1] += this._epsilon;
-      }
-      return countRaycast(v0, c, xfar, this._epsilon);
-    };
-    function decode(src, offset) {
-      var x = varint.decode(src, offset);
-      return x % 2 === 1 ? -(x - 1) / 2 - 1 : x / 2;
-    }
-    function vcmp(a, astart, aend, b, bstart, bend) {
-      if (bend - bstart !== aend - astart)
-        return false;
-      for (var i = 0; i < aend - astart; i++) {
-        if (a[i + astart] !== b[i + bstart])
-          return false;
-      }
-      return true;
-    }
-    function curveRectIntersect(c, rect, dx, dy) {
-      if (c.length === 4) {
-        var c0 = c[0] + dx, c1 = c[1] + dy, c2 = c[2] + dx, c3 = c[3] + dy;
-        if (rect[0] <= c0 && c0 <= rect[2] && rect[1] <= c1 && c1 <= rect[3])
-          return true;
-        if (rect[0] <= c2 && c2 <= rect[2] && rect[1] <= c3 && c3 <= rect[3])
-          return true;
-        vec2set(v1, c0, c1);
-        vec2set(v2, c2, c3);
-        if (lsi(v0, v1, v2, vec2set(v3, rect[0], rect[1]), vec2set(v4, rect[0], rect[3])))
-          return true;
-        if (lsi(v0, v1, v2, vec2set(v3, rect[0], rect[3]), vec2set(v4, rect[2], rect[3])))
-          return true;
-        if (lsi(v0, v1, v2, vec2set(v3, rect[2], rect[3]), vec2set(v4, rect[2], rect[1])))
-          return true;
-        if (lsi(v0, v1, v2, vec2set(v3, rect[2], rect[1]), vec2set(v4, rect[0], rect[1])))
-          return true;
-      } else if (c.length === 6) {
-        return bzri(rect, c, dx, dy, 1e-8);
-      }
-      return false;
-    }
-    function writeI16(out, offset, x) {
-      var ax = Math.abs(x);
-      out[offset + 0] = (ax >> 8) % 128 + (x < 0 ? 128 : 0);
-      out[offset + 1] = ax % 256;
-    }
-    function writeU24(out, offset, x) {
-      out[offset + 0] = (x >> 16) % 256;
-      out[offset + 1] = (x >> 8) % 256;
-      out[offset + 2] = x % 256;
-    }
-    function writeF32(out, offset, x) {
-      ieee754.write(out, x, offset, false, 23, 4);
-    }
-    function countRaycast(p, c, xfar, epsilon) {
-      var x = p[0], y = p[1];
-      var count = 0;
-      if (c.length === 4) {
-        vec2set(v1, c[0], c[1]);
-        vec2set(v2, c[2], c[3]);
-        vec2set(v3, p[0], p[1]);
-        vec2set(v4, xfar, p[1]);
-        if (collinear(v3, v4, v1, epsilon) || collinear(v3, v4, v2, epsilon)) {
-        } else if (lsi(v0, v1, v2, v3, v4))
-          count++;
-      } else {
-        var n = raycast(v0, y, c[1], c[3], c[5]);
-        if (n > 0) {
-          var x0 = bz(c[0], c[2], c[4], v0[0]);
-          if (x0 > x)
-            count++;
-        }
-        if (n > 1) {
-          var x1 = bz(c[0], c[2], c[4], v0[1]);
-          if (x1 > x)
-            count++;
-        }
-      }
-      return count;
-    }
-    function collinear(a, b, c, epsilon) {
-      var ab = vec2dist(a, b);
-      var ac = vec2dist(a, c);
-      var bc = vec2dist(b, c);
-      return Math.abs(ab - ac - bc) < epsilon;
-    }
-    function vec4set(out, a, b, c, d) {
-      out[0] = a;
-      out[1] = b;
-      out[2] = c;
-      out[3] = d;
-      return out;
-    }
-    function cmp(a, b) {
-      return a < b ? -1 : 1;
-    }
-  }
-});
-
-// ../qbzf/atlas.js
-var require_atlas = __commonJS({
-  "../qbzf/atlas.js"(exports, module) {
-    module.exports = Atlas2;
-    function Atlas2(qbzf, opts) {
-      if (!(this instanceof Atlas2))
-        return new Atlas2(qbzf, opts);
-      if (!opts)
-        opts = {};
-      this._qbzf = qbzf;
-      this._attributes = opts.attributes || [];
-      this._id = /* @__PURE__ */ new Map();
-      this._nextId = 0;
-      this._data = {
-        curves: qbzf.curves,
-        grid: {}
-      };
-      this._gridSet = /* @__PURE__ */ new Set();
-      this.grids = [];
-    }
-    Atlas2.prototype.add = function(opts) {
-      var x = opts.offset ? opts.offset[0] : 0, y = opts.offset ? opts.offset[1] : 0;
-      var xopts = Object.assign({}, opts, { offset: void 0 });
-      var m = this._qbzf.measure(xopts);
-      var h = opts.height || 0.1;
-      var ux = h * m.units[0] / this._qbzf.unitsPerEm;
-      var uy = h * m.units[1] / this._qbzf.unitsPerEm;
-      var g = this._qbzf.write(xopts);
-      var d = this._getGrid(g.n);
-      var n = d.positions.length / 2;
-      d.positions.push(x, y, x + ux, y, x + ux, y - uy, x, y - uy);
-      d.uv.push(0, 1, 1, 1, 1, 0, 0, 0);
-      d.cells.push(n + 0, n + 1, n + 2, n + 0, n + 2, n + 3);
-      d.units.push(g.units, g.units, g.units, g.units);
-      d.size.push(g.grid, g.grid, g.grid, g.grid);
-      d.dim.push(g.dimension, g.dimension, g.dimension, g.dimension);
-      var sw = g.strokeWidth;
-      d.strokeWidth.push(sw, sw, sw, sw);
-      for (var i = 0; i < this._attributes.length; i++) {
-        var key = this._attributes[i];
-        var v = opts[key];
-        d[key].push(v, v, v, v);
-      }
-      d.grids.push(g);
-      var p = d.grids[d.grids.length - 2];
-      g.offset = p ? p.offset + p.grid[0] * p.grid[1] * (p.n * 3 + 2) : 0;
-      d.offsets.push(g.offset, g.offset, g.offset, g.offset);
-      var id = opts.id;
-      if (id === void 0) {
-        do {
-          id = this._nextId++;
-        } while (this._id.has(id));
-      }
-      this._id.set(id, g.n);
-      d.ids.push(id);
-      if (!this._gridSet.has(g.n)) {
-        this._gridSet.add(g.n);
-        this.grids.push(g.n);
-      }
-      return id;
-    };
-    Atlas2.prototype.remove = function(id) {
-      var n = this._id.get(id);
-      if (n === void 0)
-        return;
-      var g = this._data.grid[n];
-      if (!g)
-        return;
-      var ix = g.ids.indexOf(id);
-      if (ix >= 0) {
-        g.ids.splice(ix, 1);
-        g.grids.splice(ix, 1);
-      }
-      if (g.ids.length === 0) {
-        delete this._data.grid[n];
-        this._gridSet.delete(n);
-        var ix = this.grids.indexOf(n);
-        if (ix >= 0)
-          this.grids.splice(ix, 1);
-      }
-    };
-    Atlas2.prototype.clear = function() {
-      this.grids = [];
-      this._gridSet.clear();
-      this._id.clear();
-      this._data.grid = {};
-    };
-    Atlas2.prototype._getGrid = function(n) {
-      if (!this._data.grid[n]) {
-        var data = {
-          curves: this._data.curves,
-          positions: [],
-          uv: [],
-          cells: [],
-          offsets: [],
-          units: [],
-          size: [],
-          dim: [],
-          strokeWidth: [],
-          fillColor: [],
-          strokeColor: [],
-          grid: {},
-          grids: [],
-          ids: []
-        };
-        this._data.grid[n] = data;
-        for (var i = 0; i < this._attributes.length; i++) {
-          data[this._attributes[i]] = [];
-        }
-        this.grids.push(n);
-        this._gridSet.add(n);
-      }
-      return this._data.grid[n];
-    };
-    Atlas2.prototype.build = function() {
-      var ns = Object.keys(this._data.grid);
-      var data = {};
-      for (var i = 0; i < ns.length; i++) {
-        var n = ns[i];
-        var d = this._getGrid(n);
-        Object.assign(d.grid, concat(d.grids));
-        data[n] = d;
-      }
-      return data;
-    };
-    function concat(grids) {
-      var len = 0;
-      for (var i = 0; i < grids.length; i++) {
-        var g = grids[i];
-        len += g.grid[0] * g.grid[1] * (g.n * 3 + 2);
-      }
-      var width = Math.ceil(Math.sqrt(len));
-      var height = Math.ceil(len / width);
-      var data = new Uint8Array(width * height * 4);
-      for (var offset = 0, i = 0; i < grids.length; i++) {
-        var g = grids[i], l = g.grid[0] * g.grid[1] * (g.n * 3 + 2) * 4;
-        for (var j = 0; j < l; j++) {
-          data[offset++] = g.data[j];
-        }
-      }
-      return { width, height, data, dimension: [width, height] };
-    }
-  }
-});
-
-// node_modules/point-in-polygon/flat.js
 var require_flat = __commonJS({
   "node_modules/point-in-polygon/flat.js"(exports, module) {
     module.exports = function pointInPolygonFlat(point, vs, start, end) {
@@ -1045,9 +82,7 @@ var require_flat = __commonJS({
     };
   }
 });
-
-// node_modules/line-segment-intersect-2d/index.js
-var require_line_segment_intersect_2d2 = __commonJS({
+var require_line_segment_intersect_2d = __commonJS({
   "node_modules/line-segment-intersect-2d/index.js"(exports, module) {
     module.exports = function lineIntersection(out, a0, a1, b0, b1) {
       var ax = a1[0] - a0[0];
@@ -1075,12 +110,10 @@ var require_line_segment_intersect_2d2 = __commonJS({
     };
   }
 });
-
-// node_modules/polygon-intersect-test/flat.js
 var require_flat2 = __commonJS({
   "node_modules/polygon-intersect-test/flat.js"(exports, module) {
     var pointInPolygon = require_flat();
-    var lineIntersection = require_line_segment_intersect_2d2();
+    var lineIntersection = require_line_segment_intersect_2d();
     var v0 = [0, 0];
     var v1 = [0, 0];
     var v2 = [0, 0];
@@ -1130,8 +163,6 @@ var require_flat2 = __commonJS({
     };
   }
 });
-
-// node_modules/point-in-polygon/nested.js
 var require_nested = __commonJS({
   "node_modules/point-in-polygon/nested.js"(exports, module) {
     module.exports = function pointInPolygonNested(point, vs, start, end) {
@@ -1153,12 +184,10 @@ var require_nested = __commonJS({
     };
   }
 });
-
-// node_modules/polygon-intersect-test/nested.js
 var require_nested2 = __commonJS({
   "node_modules/polygon-intersect-test/nested.js"(exports, module) {
     var pointInPolygon = require_nested();
-    var lineIntersection = require_line_segment_intersect_2d2();
+    var lineIntersection = require_line_segment_intersect_2d();
     var v0 = [0, 0];
     var v1 = [0, 0];
     var v2 = [0, 0];
@@ -1208,8 +237,6 @@ var require_nested2 = __commonJS({
     };
   }
 });
-
-// node_modules/polygon-intersect-test/index.js
 var require_polygon_intersect_test = __commonJS({
   "node_modules/polygon-intersect-test/index.js"(exports, module) {
     var polygonIntersectTestFlat = require_flat2();
@@ -1223,8 +250,6 @@ var require_polygon_intersect_test = __commonJS({
     };
   }
 });
-
-// node_modules/label-placement-engine/index.js
 var require_label_placement_engine = __commonJS({
   "node_modules/label-placement-engine/index.js"(exports, module) {
     var polygonIntersect = require_polygon_intersect_test();
@@ -1363,6 +388,7 @@ var require_label_placement_engine = __commonJS({
           }
           var visible = true;
           if (bstart === bend) {
+            console.log("found=true", f.type);
             bbox[0] = Infinity;
             bbox[1] = Infinity;
             bbox[2] = Infinity;
@@ -1427,8 +453,6 @@ var require_label_placement_engine = __commonJS({
     }
   }
 });
-
-// node_modules/label-placement-engine/preset/bbox.js
 var require_bbox = __commonJS({
   "node_modules/label-placement-engine/preset/bbox.js"(exports, module) {
     var defaultScale = [1, 1];
@@ -1480,8 +504,6 @@ var require_bbox = __commonJS({
     };
   }
 });
-
-// node_modules/label-placement-engine/preset/point.js
 var require_point = __commonJS({
   "node_modules/label-placement-engine/preset/point.js"(exports, module) {
     var defaultScale = [1, 1];
@@ -1628,9 +650,7 @@ var require_point = __commonJS({
     };
   }
 });
-
-// node_modules/gl-vec2/set.js
-var require_set2 = __commonJS({
+var require_set = __commonJS({
   "node_modules/gl-vec2/set.js"(exports, module) {
     module.exports = set;
     function set(out, x, y) {
@@ -1640,8 +660,6 @@ var require_set2 = __commonJS({
     }
   }
 });
-
-// node_modules/bit-twiddle/twiddle.js
 var require_twiddle = __commonJS({
   "node_modules/bit-twiddle/twiddle.js"(exports) {
     "use strict";
@@ -1801,8 +819,6 @@ var require_twiddle = __commonJS({
     };
   }
 });
-
-// node_modules/inorder-tree-layout/inorder.js
 var require_inorder = __commonJS({
   "node_modules/inorder-tree-layout/inorder.js"(exports) {
     "use strict";
@@ -1938,8 +954,6 @@ var require_inorder = __commonJS({
     exports.hi = hiInorder;
   }
 });
-
-// node_modules/bfs-tree-layout/bfs.js
 var require_bfs = __commonJS({
   "node_modules/bfs-tree-layout/bfs.js"(exports) {
     "use strict";
@@ -2030,8 +1044,6 @@ var require_bfs = __commonJS({
     exports.leaf = bfsLeaf;
   }
 });
-
-// node_modules/bfs2inorder/bfs2inorder.js
 var require_bfs2inorder = __commonJS({
   "node_modules/bfs2inorder/bfs2inorder.js"(exports, module) {
     "use strict";
@@ -2059,11 +1071,9 @@ var require_bfs2inorder = __commonJS({
     module.exports = bfs2inorder;
   }
 });
-
-// node_modules/label-placement-engine/preset/line.js
 var require_line = __commonJS({
   "node_modules/label-placement-engine/preset/line.js"(exports, module) {
-    var vec2set = require_set2();
+    var vec2set = require_set();
     var defaultScale = [1, 1];
     var defaultSides = ["left", "right", "center"];
     var order = require_bfs2inorder();
@@ -2179,11 +1189,9 @@ var require_line = __commonJS({
     };
   }
 });
-
-// node_modules/label-placement-engine/preset/area.js
 var require_area = __commonJS({
   "node_modules/label-placement-engine/preset/area.js"(exports, module) {
-    var vec2set = require_set2();
+    var vec2set = require_set();
     var ptest = require_flat2();
     var defaultScale = [1, 1];
     var X = [0, 0, 0, 0, 0, 0, 0, 0];
@@ -2267,34 +1275,1837 @@ var require_area = __commonJS({
     }
   }
 });
-
-// text.mjs
-var import_qbzf = __toESM(require_qbzf(), 1);
-var import_atlas = __toESM(require_atlas(), 1);
+var require_features = __commonJS({
+  "../georender-style2png/node_modules/@rubenrodriguez/georender-pack/features.json"(exports, module) {
+    module.exports = [
+      "aerialway.cable_car",
+      "aerialway.canopy",
+      "aerialway.chair_lift",
+      "aerialway.drag_lift",
+      "aerialway.gondola",
+      "aerialway.goods",
+      "aerialway.j-bar",
+      "aerialway.magic_carpet",
+      "aerialway.mixed_lift",
+      "aerialway.other",
+      "aerialway.platter",
+      "aerialway.pylon",
+      "aerialway.rope_tow",
+      "aerialway.station",
+      "aerialway.t-bar",
+      "aerialway.zip_line",
+      "aeroway.aerodrome",
+      "aeroway.apron",
+      "aeroway.gate",
+      "aeroway.hangar",
+      "aeroway.helipad",
+      "aeroway.heliport",
+      "aeroway.navigationaid",
+      "aeroway.runway",
+      "aeroway.spaceport",
+      "aeroway.taxiway",
+      "aeroway.terminal",
+      "aeroway.windsock",
+      "amenity.animal_boarding",
+      "amenity.animal_shelter",
+      "amenity.arts_centre",
+      "amenity.atm",
+      "amenity.baby_hatch",
+      "amenity.baking_oven",
+      "amenity.bank",
+      "amenity.bar",
+      "amenity.bbq",
+      "amenity.bench",
+      "amenity.bicycle_parking",
+      "amenity.bicycle_rental",
+      "amenity.bicycle_repair_station",
+      "amenity.biergarten",
+      "amenity.boat_rental",
+      "amenity.boat_sharing",
+      "amenity.brothel",
+      "amenity.bureau_de_change",
+      "amenity.bus_station",
+      "amenity.cafe",
+      "amenity.car_rental",
+      "amenity.car_sharing",
+      "amenity.car_wash",
+      "amenity.casino",
+      "amenity.charging_station",
+      "amenity.childcare",
+      "amenity.cinema",
+      "amenity.clinic",
+      "amenity.clock",
+      "amenity.college",
+      "amenity.community_centre",
+      "amenity.conference_centre",
+      "amenity.courthouse",
+      "amenity.coworking_space",
+      "amenity.crematorium",
+      "amenity.crypt",
+      "amenity.dentist",
+      "amenity.dive_centre",
+      "amenity.doctors",
+      "amenity.dojo",
+      "amenity.drinking_water",
+      "amenity.driving_school",
+      "amenity.embassy",
+      "amenity.fast food",
+      "amenity.ferry_terminal",
+      "amenity.fire_station",
+      "amenity.firepit",
+      "amenity.food_court",
+      "amenity.fountain",
+      "amenity.fuel",
+      "amenity.gambling",
+      "amenity.game_feeding",
+      "amenity.give_box",
+      "amenity.grave_yard",
+      "amenity.grit_bin",
+      "amenity.gym",
+      "amenity.hospital",
+      "amenity.hunting_stand",
+      "amenity.ice_cream",
+      "amenity.internet_cafe",
+      "amenity.kindergarten",
+      "amenity.kitchen",
+      "amenity.kneipp_water_cure",
+      "amenity.language_school",
+      "amenity.library",
+      "amenity.marketplace",
+      "amenity.monastery",
+      "amenity.motorcycle_parking",
+      "amenity.music_school",
+      "amenity.nightclub",
+      "amenity.nursing_home",
+      "amenity.other",
+      "amenity.parking",
+      "amenity.parking_entrance",
+      "amenity.parking_space",
+      "amenity.pharmacy",
+      "amenity.photo_booth",
+      "amenity.place_of_worship",
+      "amenity.planetarium",
+      "amenity.police",
+      "amenity.post_box",
+      "amenity.post_office",
+      "amenity.prison",
+      "amenity.pub",
+      "amenity.public_bookcase",
+      "amenity.public_building",
+      "amenity.ranger_station",
+      "amenity.recycling",
+      "amenity.refugee_site",
+      "amenity.rescue_station",
+      "amenity.restaurant",
+      "amenity.sanitary_dump_station",
+      "amenity.sauna",
+      "amenity.school",
+      "amenity.shelter",
+      "amenity.shower",
+      "amenity.social_centre",
+      "amenity.social_facility",
+      "amenity.stripclub",
+      "amenity.studio",
+      "amenity.swingerclub",
+      "amenity.table",
+      "amenity.taxi",
+      "amenity.telephone",
+      "amenity.theatre",
+      "amenity.toilets",
+      "amenity.townhall",
+      "amenity.toy_library",
+      "amenity.university",
+      "amenity.vehicle_inspection",
+      "amenity.vending_machine",
+      "amenity.veterinary",
+      "amenity.waste_basket",
+      "amenity.waste_disposal",
+      "amenity.waste_transfer_station",
+      "amenity.water_point",
+      "amenity.watering_place",
+      "barrier.block",
+      "barrier.bollard",
+      "barrier.border_control",
+      "barrier.bump_gate",
+      "barrier.bus_trap",
+      "barrier.cable_barrier",
+      "barrier.cattle_grid",
+      "barrier.chain",
+      "barrier.city_wall",
+      "barrier.cycle_barrier",
+      "barrier.debris",
+      "barrier.ditch",
+      "barrier.entrance",
+      "barrier.fence",
+      "barrier.full-height_turnstile",
+      "barrier.gate",
+      "barrier.guard_rail",
+      "barrier.hampshire_gate",
+      "barrier.handrail",
+      "barrier.hedge",
+      "barrier.height_restrictor",
+      "barrier.horse_stile",
+      "barrier.jersey_barrier",
+      "barrier.kent_carriage_gap",
+      "barrier.kerb",
+      "barrier.kissing_gate",
+      "barrier.lift_gate",
+      "barrier.log",
+      "barrier.motorcycle_barrier",
+      "barrier.other",
+      "barrier.retaining_wall",
+      "barrier.rope",
+      "barrier.sally_port",
+      "barrier.spikes",
+      "barrier.stile",
+      "barrier.sump_buster",
+      "barrier.swing_gate",
+      "barrier.tank_trap",
+      "barrier.toll_booth",
+      "barrier.turnstile",
+      "barrier.wall",
+      "barrier.yes",
+      "border_type.baseline",
+      "border_type.contiguous",
+      "border_type.eez",
+      "border_type.territorial",
+      "boundary.aboriginal_lands",
+      "boundary.administrative",
+      "boundary.historic",
+      "boundary.maritime",
+      "boundary.marker",
+      "boundary.national_park",
+      "boundary.other",
+      "boundary.political",
+      "boundary.postal_code",
+      "boundary.protected_area",
+      "boundary.religious_administration",
+      "building.apartments",
+      "building.bakehouse",
+      "building.barn",
+      "building.bridge",
+      "building.bungalow",
+      "building.bunker",
+      "building.cabin",
+      "building.carport",
+      "building.cathedral",
+      "building.chapel",
+      "building.church",
+      "building.civic",
+      "building.commercial",
+      "building.conservatory",
+      "building.construction",
+      "building.cowshed",
+      "building.detached",
+      "building.digester",
+      "building.dormitory",
+      "building.farm",
+      "building.farm_auxiliary",
+      "building.fire_station",
+      "building.garage",
+      "building.garages",
+      "building.ger",
+      "building.government",
+      "building.grandstand",
+      "building.greenhouse",
+      "building.hangar",
+      "building.hospital",
+      "building.hotel",
+      "building.house",
+      "building.houseboat",
+      "building.hut",
+      "building.industrial",
+      "building.kindergarten",
+      "building.kiosk",
+      "building.mosque",
+      "building.office",
+      "building.other",
+      "building.parking",
+      "building.pavilion",
+      "building.public",
+      "building.religious",
+      "building.residential",
+      "building.retail",
+      "building.riding_hall",
+      "building.roof",
+      "building.ruins",
+      "building.school",
+      "building.semidetached_house",
+      "building.service",
+      "building.shed",
+      "building.shrine",
+      "building.sports_hall",
+      "building.stable",
+      "building.stadium",
+      "building.static_caravan",
+      "building.sty",
+      "building.supermarket",
+      "building.synagogue",
+      "building.temple",
+      "building.terrace",
+      "building.toilets",
+      "building.train_station",
+      "building.transformer_tower",
+      "building.transportation",
+      "building.tree_house",
+      "building.university",
+      "building.warehouse",
+      "building.water_tower",
+      "building.yes",
+      "busway.lane",
+      "communication.line",
+      "craft.agricultural_engines",
+      "craft.atelier",
+      "craft.bakery",
+      "craft.basket_maker",
+      "craft.beekeeper",
+      "craft.blacksmith",
+      "craft.boatbuilder",
+      "craft.bookbinder",
+      "craft.brewery",
+      "craft.builder",
+      "craft.cabinet_maker",
+      "craft.car_painter",
+      "craft.carpenter",
+      "craft.carpet_layer",
+      "craft.caterer",
+      "craft.chimney_sweeper",
+      "craft.clockmaker",
+      "craft.confectionary",
+      "craft.cooper",
+      "craft.dental_technician",
+      "craft.distillery",
+      "craft.door_construction",
+      "craft.dressmaker",
+      "craft.electrician",
+      "craft.electronics_repair",
+      "craft.embroiderer",
+      "craft.engraver",
+      "craft.floorer",
+      "craft.gardener",
+      "craft.glaziery",
+      "craft.grinding_mill",
+      "craft.handicraft",
+      "craft.hvac",
+      "craft.insulation",
+      "craft.jeweller",
+      "craft.joiner",
+      "craft.key_cutter",
+      "craft.locksmith",
+      "craft.metal_construction",
+      "craft.mint",
+      "craft.musical_instrument",
+      "craft.oil_mill",
+      "craft.optician",
+      "craft.organ_builder",
+      "craft.other",
+      "craft.painter",
+      "craft.parquet_layer",
+      "craft.photographer",
+      "craft.photographic_laboratory",
+      "craft.piano_tuner",
+      "craft.plasterer",
+      "craft.plumber",
+      "craft.pottery",
+      "craft.printer",
+      "craft.printmaker",
+      "craft.rigger",
+      "craft.roofer",
+      "craft.saddler",
+      "craft.sailmaker",
+      "craft.sawmill",
+      "craft.scaffolder",
+      "craft.sculptor",
+      "craft.shoemaker",
+      "craft.signmaker",
+      "craft.stand_builder",
+      "craft.stonemason",
+      "craft.sun_protection",
+      "craft.tailor",
+      "craft.tiler",
+      "craft.tinsmith",
+      "craft.toolmaker",
+      "craft.turner",
+      "craft.upholsterer",
+      "craft.watchmaker",
+      "craft.water_well_drilling",
+      "craft.window_construction",
+      "craft.winery",
+      "cycleway.lane",
+      "cycleway.opposite",
+      "cycleway.opposite_lane",
+      "cycleway.opposite_share_busway",
+      "cycleway.opposite_track",
+      "cycleway.share_busway",
+      "cycleway.shared_lane",
+      "cycleway.track",
+      "emergecy.dry_riser_inlet",
+      "emergency.ambulance_station",
+      "emergency.assembly_point",
+      "emergency.defibrillator",
+      "emergency.drinking_water",
+      "emergency.emergency_ward_entrance",
+      "emergency.fire_alarm_box",
+      "emergency.fire_extinguisher",
+      "emergency.fire_hydrant",
+      "emergency.firehose",
+      "emergency.landing_site",
+      "emergency.life_ring",
+      "emergency.lifeguard",
+      "emergency.lifeguard_base",
+      "emergency.lifeguard_platform",
+      "emergency.lifeguard_tower",
+      "emergency.other",
+      "emergency.phone",
+      "emergency.siren",
+      "emergency.suction_point",
+      "emergency.water_tank",
+      "geological.moraine",
+      "geological.other",
+      "geological.outcrop",
+      "geological.palaeontological_site",
+      "highway.bridleway",
+      "highway.bus_guideway",
+      "highway.bus_stop",
+      "highway.construction",
+      "highway.corridor",
+      "highway.crossing",
+      "highway.cycleway",
+      "highway.elevator",
+      "highway.emergency_access_point",
+      "highway.escape",
+      "highway.footway",
+      "highway.give_way",
+      "highway.living_street",
+      "highway.mini_roundabout",
+      "highway.motorway",
+      "highway.motorway_junction",
+      "highway.motorway_link",
+      "highway.other",
+      "highway.passing_place",
+      "highway.path",
+      "highway.pedestrian",
+      "highway.primary",
+      "highway.primary_link",
+      "highway.proposed",
+      "highway.raceway",
+      "highway.residential",
+      "highway.rest_area",
+      "highway.road",
+      "highway.secondary",
+      "highway.secondary_link",
+      "highway.service",
+      "highway.services",
+      "highway.speed_camera",
+      "highway.steps",
+      "highway.stop",
+      "highway.street_lamp",
+      "highway.tertiary",
+      "highway.tertiary_link",
+      "highway.toll_gantry",
+      "highway.track",
+      "highway.traffic_mirror",
+      "highway.traffic_signals",
+      "highway.trailhead",
+      "highway.trunk",
+      "highway.trunk_link",
+      "highway.turning_circle",
+      "highway.turning_loop",
+      "highway.unclassified",
+      "historic.aircraft",
+      "historic.aqueduct",
+      "historic.archaeological_site",
+      "historic.battlefield",
+      "historic.boundary_stone",
+      "historic.building",
+      "historic.cannon",
+      "historic.castle",
+      "historic.castle_wall",
+      "historic.church",
+      "historic.city_gate",
+      "historic.citywalls",
+      "historic.farm",
+      "historic.fort",
+      "historic.gallows",
+      "historic.highwater_mark",
+      "historic.locomotive",
+      "historic.manor",
+      "historic.memorial",
+      "historic.milestone",
+      "historic.monastery",
+      "historic.monument",
+      "historic.optical_telegraph",
+      "historic.other",
+      "historic.pillory",
+      "historic.railway_car",
+      "historic.ruins",
+      "historic.rune_stone",
+      "historic.ship",
+      "historic.tank",
+      "historic.tomb",
+      "historic.tower",
+      "historic.tree_shrine",
+      "historic.wayside_cross",
+      "historic.wayside_shrine",
+      "historic.wreck",
+      "historic.yes",
+      "landuse.allotments",
+      "landuse.basin",
+      "landuse.brownfield",
+      "landuse.cemetery",
+      "landuse.commercial",
+      "landuse.conservation",
+      "landuse.construction",
+      "landuse.depot",
+      "landuse.farmland",
+      "landuse.farmyard",
+      "landuse.forest",
+      "landuse.garages",
+      "landuse.grass",
+      "landuse.greenfield",
+      "landuse.greenhouse_horticulture",
+      "landuse.industrial",
+      "landuse.landfill",
+      "landuse.meadow",
+      "landuse.military",
+      "landuse.orchard",
+      "landuse.other",
+      "landuse.pasture",
+      "landuse.peat_cutting",
+      "landuse.plant_nursery",
+      "landuse.port",
+      "landuse.quarry",
+      "landuse.railway",
+      "landuse.recreation_ground",
+      "landuse.religious",
+      "landuse.reservoir",
+      "landuse.residential",
+      "landuse.retail",
+      "landuse.salt_pond",
+      "landuse.village_green",
+      "landuse.vineyard",
+      "leisure.adult_gaming_centre",
+      "leisure.amusement_arcade",
+      "leisure.bandstand",
+      "leisure.bird_hide",
+      "leisure.common",
+      "leisure.dance",
+      "leisure.disc_golf_course",
+      "leisure.dog_park",
+      "leisure.escape_game",
+      "leisure.firepit",
+      "leisure.fishing",
+      "leisure.fitness_centre",
+      "leisure.garden",
+      "leisure.hackerspace",
+      "leisure.horse_riding",
+      "leisure.ice_rink",
+      "leisure.marina",
+      "leisure.miniature_golf",
+      "leisure.nature_reserve",
+      "leisure.other",
+      "leisure.park",
+      "leisure.picnic_table",
+      "leisure.pitch",
+      "leisure.playground",
+      "leisure.slipway",
+      "leisure.sports_centre",
+      "leisure.stadium",
+      "leisure.summer_camp",
+      "leisure.swimming_area",
+      "leisure.swimming_pool",
+      "leisure.track",
+      "leisure.water_park",
+      "lesure.beach_resort",
+      "line.bay",
+      "line.busbar",
+      "man_made.adit",
+      "man_made.beacon",
+      "man_made.breakwater",
+      "man_made.bridge",
+      "man_made.bunker_silo",
+      "man_made.carpet_hanger",
+      "man_made.chimney",
+      "man_made.clearcut",
+      "man_made.communications_tower",
+      "man_made.crane",
+      "man_made.cross",
+      "man_made.cutline",
+      "man_made.dovecote",
+      "man_made.dyke",
+      "man_made.embankment",
+      "man_made.flagpole",
+      "man_made.gasometer",
+      "man_made.goods_conveyor",
+      "man_made.groyne",
+      "man_made.kiln",
+      "man_made.lighthouse",
+      "man_made.mast",
+      "man_made.mineshaft",
+      "man_made.monitoring_station",
+      "man_made.obelisk",
+      "man_made.observatory",
+      "man_made.offshore_platform",
+      "man_made.other",
+      "man_made.petroleum_well",
+      "man_made.pier",
+      "man_made.pipeline",
+      "man_made.pumping_station",
+      "man_made.reservoir_covered",
+      "man_made.silo",
+      "man_made.snow_fence",
+      "man_made.snow_net",
+      "man_made.storage_tank",
+      "man_made.street_cabinet",
+      "man_made.surveillance",
+      "man_made.survey_point",
+      "man_made.telescope",
+      "man_made.tower",
+      "man_made.wastewater_plant",
+      "man_made.water_tap",
+      "man_made.water_tower",
+      "man_made.water_well",
+      "man_made.water_works",
+      "man_made.watermill",
+      "man_made.wildlife_crossing",
+      "man_made.windmill",
+      "man_made.works",
+      "military.airfield",
+      "military.barracks",
+      "military.bunker",
+      "military.checkpoint",
+      "military.danger_area",
+      "military.naval_base",
+      "military.nuclear_explosion_site",
+      "military.obstacle_course",
+      "military.office",
+      "military.other",
+      "military.range",
+      "military.training_area",
+      "military.trench",
+      "natural.arete",
+      "natural.bare_rock",
+      "natural.bay",
+      "natural.beach",
+      "natural.blowhole",
+      "natural.cape",
+      "natural.cave_entrance",
+      "natural.cliff",
+      "natural.coastline",
+      "natural.dune",
+      "natural.fell",
+      "natural.geyser",
+      "natural.glacier",
+      "natural.grassland",
+      "natural.heath",
+      "natural.hot_spring",
+      "natural.isthmus",
+      "natural.moor",
+      "natural.mud",
+      "natural.other",
+      "natural.peak",
+      "natural.peninsula",
+      "natural.reef",
+      "natural.ridge",
+      "natural.rock",
+      "natural.saddle",
+      "natural.sand",
+      "natural.scree",
+      "natural.scrub",
+      "natural.shingle",
+      "natural.sinkhole",
+      "natural.spring",
+      "natural.stone",
+      "natural.strait",
+      "natural.tree",
+      "natural.tree_row",
+      "natural.valley",
+      "natural.volcano",
+      "natural.water",
+      "natural.wetland",
+      "natural.wood",
+      "office.accountant",
+      "office.adoption_agency",
+      "office.advertising_agency",
+      "office.architect",
+      "office.association",
+      "office.bail_bond_agent",
+      "office.charity",
+      "office.company",
+      "office.consulting",
+      "office.coworking",
+      "office.diplomatic",
+      "office.educational_institution",
+      "office.employment_agency",
+      "office.energy_supplier",
+      "office.engineer",
+      "office.estate_agent",
+      "office.financial",
+      "office.forestry",
+      "office.foundation",
+      "office.gedesist",
+      "office.government",
+      "office.graphic_design",
+      "office.guide",
+      "office.harbour_master",
+      "office.insurance",
+      "office.it",
+      "office.lawyer",
+      "office.logistics",
+      "office.moving_company",
+      "office.newspaper",
+      "office.ngo",
+      "office.notary",
+      "office.other",
+      "office.political_party",
+      "office.private_investigator",
+      "office.property_management",
+      "office.quango",
+      "office.religion",
+      "office.research",
+      "office.security",
+      "office.surveyor",
+      "office.tax",
+      "office.tax_advisor",
+      "office.telecommunication",
+      "office.union",
+      "office.visa",
+      "office.water_utility",
+      "place.allotments",
+      "place.archipelago",
+      "place.borough",
+      "place.city",
+      "place.city_block",
+      "place.continent",
+      "place.country",
+      "place.county",
+      "place.district",
+      "place.farm",
+      "place.hamlet",
+      "place.island",
+      "place.islet",
+      "place.isolated_dwelling",
+      "place.locality",
+      "place.municipality",
+      "place.neighbourhood",
+      "place.ocean",
+      "place.other",
+      "place.plot",
+      "place.province",
+      "place.quarter",
+      "place.region",
+      "place.sea",
+      "place.square",
+      "place.state",
+      "place.suburb",
+      "place.town",
+      "place.village",
+      "power.cable",
+      "power.catenary_mast",
+      "power.compensator",
+      "power.converter",
+      "power.generator",
+      "power.heliostat",
+      "power.insulator",
+      "power.line",
+      "power.minor_line",
+      "power.other",
+      "power.plant",
+      "power.pole",
+      "power.portal",
+      "power.substation",
+      "power.switchgear",
+      "power.terminal",
+      "power.tower",
+      "power.transformer",
+      "public_transport.other",
+      "public_transport.platform",
+      "public_transport.station",
+      "public_transport.stop_area",
+      "public_transport.stop_position",
+      "railway.abandoned",
+      "railway.buffer_stop",
+      "railway.construction",
+      "railway.crossing",
+      "railway.derail",
+      "railway.disused",
+      "railway.funicular",
+      "railway.halt",
+      "railway.level_crossing",
+      "railway.light_rail",
+      "railway.miniature",
+      "railway.monorail",
+      "railway.narrow_gauge",
+      "railway.other",
+      "railway.platform",
+      "railway.preserved",
+      "railway.rail",
+      "railway.railway_crossing",
+      "railway.roundhouse",
+      "railway.signal",
+      "railway.station",
+      "railway.subway",
+      "railway.subway_entrance",
+      "railway.switch",
+      "railway.tram",
+      "railway.tram_stop",
+      "railway.traverser",
+      "railway.turntable",
+      "railway.wash",
+      "route.bicycle",
+      "route.bus",
+      "route.canoe",
+      "route.detour",
+      "route.ferry",
+      "route.foot",
+      "route.hiking",
+      "route.horse",
+      "route.inline_skates",
+      "route.light_rail",
+      "route.mtb",
+      "route.other",
+      "route.piste",
+      "route.power",
+      "route.railway",
+      "route.road",
+      "route.running",
+      "route.ski",
+      "route.subway",
+      "route.tracks",
+      "route.train",
+      "route.tram",
+      "route.trolleybus",
+      "seamark:type.anchor_berth",
+      "seamark:type.anchorage",
+      "seamark:type.beacon_cardinal",
+      "seamark:type.beacon_isolated_danger",
+      "seamark:type.beacon_lateral",
+      "seamark:type.beacon_safe_water",
+      "seamark:type.beacon_special_purpose",
+      "seamark:type.berth",
+      "seamark:type.bridge",
+      "seamark:type.building",
+      "seamark:type.bunker_station",
+      "seamark:type.buoy_cardinal",
+      "seamark:type.buoy_installation",
+      "seamark:type.buoy_isolated_danger",
+      "seamark:type.buoy_lateral",
+      "seamark:type.buoy_safe_water",
+      "seamark:type.buoy_special_purpose",
+      "seamark:type.cable_area",
+      "seamark:type.cable_overhead",
+      "seamark:type.cable_submarine",
+      "seamark:type.calling-in_point",
+      "seamark:type.causeway",
+      "seamark:type.checkpoint",
+      "seamark:type.coastguard_station",
+      "seamark:type.communication_area",
+      "seamark:type.control_point",
+      "seamark:type.daymark",
+      "seamark:type.distance_mark",
+      "seamark:type.dredged_area",
+      "seamark:type.dumping_ground",
+      "seamark:type.exceptional_structure",
+      "seamark:type.fairway",
+      "seamark:type.ferry_route",
+      "seamark:type.fishing_facility",
+      "seamark:type.fog_signal",
+      "seamark:type.fortified_structure",
+      "seamark:type.gate",
+      "seamark:type.gridirom",
+      "seamark:type.harbour",
+      "seamark:type.harbour_basin",
+      "seamark:type.hulk",
+      "seamark:type.inshore_traffic_zone",
+      "seamark:type.landmark",
+      "seamark:type.light",
+      "seamark:type.light_float",
+      "seamark:type.light_major",
+      "seamark:type.light_minor",
+      "seamark:type.light_vessel",
+      "seamark:type.lock_basin",
+      "seamark:type.marine_farm",
+      "seamark:type.military_area",
+      "seamark:type.mooring",
+      "seamark:type.navigation_line",
+      "seamark:type.notice",
+      "seamark:type.obstruction",
+      "seamark:type.oil_barrier",
+      "seamark:type.pile",
+      "seamark:type.pilot_boarding",
+      "seamark:type.pipeline_area",
+      "seamark:type.pipeline_overhead",
+      "seamark:type.pipeline_submarine",
+      "seamark:type.platform",
+      "seamark:type.pontoon",
+      "seamark:type.precautionary_area",
+      "seamark:type.production_area",
+      "seamark:type.protected_area",
+      "seamark:type.pylon",
+      "seamark:type.radar_line",
+      "seamark:type.radar_range",
+      "seamark:type.radar_reflector",
+      "seamark:type.radar_station",
+      "seamark:type.radar_transponder",
+      "seamark:type.radio_station",
+      "seamark:type.recommended_route_centreline",
+      "seamark:type.recommended_track",
+      "seamark:type.recommended_traffic_lane",
+      "seamark:type.rescue_station",
+      "seamark:type.restricted_area",
+      "seamark:type.retro_reflector",
+      "seamark:type.rock",
+      "seamark:type.sand_waves",
+      "seamark:type.sea_area",
+      "seamark:type.seabed_area",
+      "seamark:type.seaplane_landing_area",
+      "seamark:type.separation_boundary",
+      "seamark:type.separation_crossing",
+      "seamark:type.separation_lane",
+      "seamark:type.separation_line",
+      "seamark:type.separation_roundabout",
+      "seamark:type.separation_zone",
+      "seamark:type.shoreline_construction",
+      "seamark:type.signal_station_traffic",
+      "seamark:type.signal_station_warning",
+      "seamark:type.small_craft_facility",
+      "seamark:type.spring",
+      "seamark:type.submarine_transit_lane",
+      "seamark:type.tank",
+      "seamark:type.topmark",
+      "seamark:type.turning_basin",
+      "seamark:type.two-way_route",
+      "seamark:type.vegetation",
+      "seamark:type.vehicle_transfer",
+      "seamark:type.virtual_aton",
+      "seamark:type.wall",
+      "seamark:type.water_turbulence",
+      "seamark:type.waterway_gauge",
+      "seamark:type.weed",
+      "seamark:type.wreck",
+      "shop.agrarian",
+      "shop.alcohol",
+      "shop.anime",
+      "shop.antiques",
+      "shop.appliance",
+      "shop.art",
+      "shop.atv",
+      "shop.baby_goods",
+      "shop.bag",
+      "shop.bakery",
+      "shop.bathroom_furnishing",
+      "shop.beauty",
+      "shop.bed",
+      "shop.beverages",
+      "shop.bicycle",
+      "shop.boat",
+      "shop.bookmaker",
+      "shop.books",
+      "shop.boutique",
+      "shop.brewing_supplies",
+      "shop.butcher",
+      "shop.camera",
+      "shop.candles",
+      "shop.cannabis",
+      "shop.car",
+      "shop.car_parts",
+      "shop.car_repair",
+      "shop.caravan",
+      "shop.carpet",
+      "shop.charity",
+      "shop.cheese",
+      "shop.chemist",
+      "shop.chocolate",
+      "shop.clothes",
+      "shop.coffee",
+      "shop.collector",
+      "shop.computer",
+      "shop.confectionery",
+      "shop.convenience",
+      "shop.copyshop",
+      "shop.cosmetics",
+      "shop.craft",
+      "shop.curtain",
+      "shop.dairy",
+      "shop.deli",
+      "shop.department_store",
+      "shop.doityourself",
+      "shop.doors",
+      "shop.dry_cleaning",
+      "shop.e-cigarette",
+      "shop.electrical",
+      "shop.electronics",
+      "shop.energy",
+      "shop.erotic",
+      "shop.fabric",
+      "shop.farm",
+      "shop.fashion",
+      "shop.fashion_accessories",
+      "shop.fireplace",
+      "shop.fishing",
+      "shop.flooring",
+      "shop.florist",
+      "shop.frame",
+      "shop.free_flying",
+      "shop.frozen_food",
+      "shop.fuel",
+      "shop.funeral_directors",
+      "shop.furniture",
+      "shop.games",
+      "shop.garden_centre",
+      "shop.garden_furniture",
+      "shop.gas",
+      "shop.general",
+      "shop.gift",
+      "shop.glaziery",
+      "shop.golf",
+      "shop.greengrocer",
+      "shop.hairdresser",
+      "shop.hairdresser_supply",
+      "shop.hardware",
+      "shop.health_food",
+      "shop.hearing_aids",
+      "shop.herbalist",
+      "shop.hifi",
+      "shop.household_linen",
+      "shop.houseware",
+      "shop.hunting",
+      "shop.ice_cream",
+      "shop.interior_decoration",
+      "shop.jetski",
+      "shop.jewelry",
+      "shop.kiosk",
+      "shop.kitchen",
+      "shop.lamps",
+      "shop.laundry",
+      "shop.leather",
+      "shop.lighting",
+      "shop.locksmith",
+      "shop.lottery",
+      "shop.mall",
+      "shop.massage",
+      "shop.medical_supply",
+      "shop.military_surplus",
+      "shop.mobile_phone",
+      "shop.model",
+      "shop.money_lender",
+      "shop.motorcycle",
+      "shop.music",
+      "shop.musical_instrument",
+      "shop.newsagent",
+      "shop.nutrition_supplements",
+      "shop.optician",
+      "shop.organic",
+      "shop.other",
+      "shop.outdoor",
+      "shop.outpost",
+      "shop.paint",
+      "shop.party",
+      "shop.pasta",
+      "shop.pastry",
+      "shop.pawnbroker",
+      "shop.perfumery",
+      "shop.pest_control",
+      "shop.pet",
+      "shop.pet_grooming",
+      "shop.photo",
+      "shop.pyrotechnics",
+      "shop.radiotechnics",
+      "shop.religion",
+      "shop.robot",
+      "shop.scuba_diving",
+      "shop.seafood",
+      "shop.second_hand",
+      "shop.security",
+      "shop.sewing",
+      "shop.shoes",
+      "shop.ski",
+      "shop.snowmobile",
+      "shop.spices",
+      "shop.sports",
+      "shop.stationery",
+      "shop.storage_rental",
+      "shop.supermarket",
+      "shop.swimming_pool",
+      "shop.tailor",
+      "shop.tattoo",
+      "shop.tea",
+      "shop.ticket",
+      "shop.tiles",
+      "shop.tobacco",
+      "shop.toys",
+      "shop.trade",
+      "shop.trailer",
+      "shop.travel_agency",
+      "shop.trophy",
+      "shop.tyres",
+      "shop.vacant",
+      "shop.vacuum_cleaner",
+      "shop.variety_store",
+      "shop.video",
+      "shop.video_games",
+      "shop.watches",
+      "shop.water",
+      "shop.weapons",
+      "shop.wholesale",
+      "shop.window_blind",
+      "shop.wine",
+      "shop.wool",
+      "sport.10pin",
+      "sport.9pin",
+      "sport.aikido",
+      "sport.american_football",
+      "sport.archery",
+      "sport.athletics",
+      "sport.australian_football",
+      "sport.badminton",
+      "sport.bandy",
+      "sport.baseball",
+      "sport.basketball",
+      "sport.beachvolleyball",
+      "sport.biathlon",
+      "sport.billiards",
+      "sport.bmx",
+      "sport.bobsleigh",
+      "sport.boules",
+      "sport.bowls",
+      "sport.boxing",
+      "sport.bullfighting",
+      "sport.canadian_football",
+      "sport.canoe",
+      "sport.chess",
+      "sport.cliff_diving",
+      "sport.climbing",
+      "sport.climbing_adventure",
+      "sport.cockfighting",
+      "sport.cricket",
+      "sport.croquet",
+      "sport.crossfit",
+      "sport.curling",
+      "sport.cycling",
+      "sport.darts",
+      "sport.diving",
+      "sport.dog_agility",
+      "sport.dog_racing",
+      "sport.equestrian",
+      "sport.fencing",
+      "sport.field_hockey",
+      "sport.fitness",
+      "sport.floorball",
+      "sport.football",
+      "sport.free_flying",
+      "sport.futsal",
+      "sport.gaelic_games",
+      "sport.golf",
+      "sport.gymnastics",
+      "sport.handball",
+      "sport.hapkido",
+      "sport.hockey",
+      "sport.horse_racing",
+      "sport.horseshoes",
+      "sport.ice_hockey",
+      "sport.ice_skating",
+      "sport.ice_stock",
+      "sport.judo",
+      "sport.karate",
+      "sport.karting",
+      "sport.kickboxing",
+      "sport.kitesurfing",
+      "sport.korfball",
+      "sport.krachtbal",
+      "sport.lacrosse",
+      "sport.martial_arts",
+      "sport.miniature_golf",
+      "sport.model_aerodrome",
+      "sport.motocross",
+      "sport.motor",
+      "sport.multi",
+      "sport.netball",
+      "sport.obstacle_course",
+      "sport.orienteering",
+      "sport.other",
+      "sport.paddle_tennis",
+      "sport.padel",
+      "sport.parachuting",
+      "sport.paragliding",
+      "sport.parkour",
+      "sport.pelota",
+      "sport.pes\xE4pallo",
+      "sport.pickleball",
+      "sport.pilates",
+      "sport.racquet",
+      "sport.rc_car",
+      "sport.roller_skating",
+      "sport.rowing",
+      "sport.rugby_league",
+      "sport.rugby_union",
+      "sport.running",
+      "sport.safety_training",
+      "sport.sailing",
+      "sport.scuba_diving",
+      "sport.shooting",
+      "sport.shot-put",
+      "sport.skateboard",
+      "sport.skating",
+      "sport.ski_jumping",
+      "sport.skiing",
+      "sport.snooker",
+      "sport.soccer",
+      "sport.speedway",
+      "sport.squash",
+      "sport.sumo",
+      "sport.surfing",
+      "sport.swimming",
+      "sport.table_soccer",
+      "sport.table_tennis",
+      "sport.taekwondo",
+      "sport.tennis",
+      "sport.toboggan",
+      "sport.ultimate",
+      "sport.volleyball",
+      "sport.wakeboarding",
+      "sport.water_polo",
+      "sport.water_ski",
+      "sport.weightlifting",
+      "sport.wrestling",
+      "sport.yoga",
+      "telecom.connection_point",
+      "telecom.data_center",
+      "telecom.distribution_point",
+      "telecom.exchange",
+      "telecom.other",
+      "telecom.service_device",
+      "tourism.alpine_hut",
+      "tourism.apartment",
+      "tourism.aquarium",
+      "tourism.artwork",
+      "tourism.attraction",
+      "tourism.camp_pitch",
+      "tourism.camp_site",
+      "tourism.caravan_site",
+      "tourism.chalet",
+      "tourism.gallery",
+      "tourism.guest_house",
+      "tourism.hostel",
+      "tourism.hotel",
+      "tourism.information",
+      "tourism.motel",
+      "tourism.museum",
+      "tourism.other",
+      "tourism.picnic_site",
+      "tourism.theme_park",
+      "tourism.viewpoint",
+      "tourism.wilderness_hut",
+      "tourism.zoo",
+      "waterway.boatyard",
+      "waterway.canal",
+      "waterway.dam",
+      "waterway.ditch",
+      "waterway.dock",
+      "waterway.drain",
+      "waterway.drystream",
+      "waterway.fairway",
+      "waterway.fuel",
+      "waterway.lock_gate",
+      "waterway.other",
+      "waterway.pressurised",
+      "waterway.river",
+      "waterway.riverbank",
+      "waterway.stream",
+      "waterway.tidal_channel",
+      "waterway.turning_point",
+      "waterway.wadi",
+      "waterway.water_point",
+      "waterway.waterfall",
+      "waterway.weir"
+    ];
+  }
+});
+var require_settings = __commonJS({
+  "../georender-style2png/settings.js"(exports, module) {
+    var features = require_features();
+    module.exports = function() {
+      var zoomStart = 1;
+      var zoomEnd = 21;
+      var zoomCount = zoomEnd - zoomStart + 1;
+      var fbHeights = {
+        point: 7 * zoomCount,
+        line: 8 * zoomCount,
+        area: 6 * zoomCount,
+        areaborder: 3 * zoomCount,
+        spritemeta: 2
+      };
+      var fbTotalHeight = fbHeights.point + fbHeights.line + fbHeights.area + fbHeights.areaborder;
+      var imageWidth = features.length;
+      return {
+        zoomStart,
+        zoomEnd,
+        zoomCount,
+        fbHeights,
+        fbTotalHeight,
+        imageWidth
+      };
+    };
+  }
+});
+var require_read = __commonJS({
+  "../georender-style2png/read.js"(exports, module) {
+    module.exports = read;
+    function read({ pixels, zoomCount, imageWidth }) {
+      return {
+        opacity: (key, type, zoom) => opacity(key, type, zoom, { pixels, imageWidth, zoomCount }),
+        label: (key, type, zoom) => label(key, type, zoom, { pixels, imageWidth, zoomCount })
+      };
+    }
+    function opacity(key, type, zoom, { pixels, imageWidth, zoomCount }) {
+      const y = yOffset(key, zoom, zoomCount);
+      const index = (type + y * imageWidth) * 4 + 3;
+      return pixels[index];
+    }
+    function label(key, type, zoom, { pixels, imageWidth, zoomCount }) {
+      const y = yOffset(key, zoom, zoomCount);
+      const fillColor = [];
+      let fillOpacity;
+      const strokeColor = [];
+      let strokeOpacity;
+      let fontFamily;
+      let fontSize;
+      let priority;
+      let constraints;
+      let strokeWidth;
+      if (key === "point") {
+        let prevFkeyLoops = 3;
+        const x4 = xOffset(type, prevFkeyLoops, imageWidth);
+        const i4 = vec4Index(x4, y, imageWidth);
+        fillColor[0] = pixels[i4 + 0];
+        fillColor[1] = pixels[i4 + 1];
+        fillColor[2] = pixels[i4 + 2];
+        fillOpacity = pixels[i4 + 3];
+        prevFkeyLoops += 1;
+        const x5 = xOffset(type, prevFkeyLoops, imageWidth);
+        const i5 = vec4Index(x5, y, imageWidth);
+        strokeColor[0] = pixels[i5 + 0];
+        strokeColor[1] = pixels[i5 + 1];
+        strokeColor[2] = pixels[i5 + 2];
+        strokeOpacity = pixels[i5 + 3];
+        prevFkeyLoops += 1;
+        const x6 = xOffset(type, prevFkeyLoops, imageWidth);
+        const i6 = vec4Index(x6, y, imageWidth);
+        fontFamily = pixels[i6 + 0];
+        fontSize = pixels[i6 + 1];
+        priority = pixels[i6 + 2];
+        constraints = pixels[i6 + 3];
+        prevFkeyLoops += 1;
+        const x7 = xOffset(type, prevFkeyLoops, imageWidth);
+        const i7 = vec4Index(x7, y, imageWidth);
+        strokeWidth = pixels[i7 + 0];
+      } else if (key === "line") {
+        let prevFkeyLoops = 4;
+        const x5 = xOffset(type, prevFkeyLoops, imageWidth);
+        const i5 = vec4Index(x5, y, imageWidth);
+        fillColor[0] = pixels[i5 + 0];
+        fillColor[1] = pixels[i5 + 1];
+        fillColor[2] = pixels[i5 + 2];
+        fillOpacity = pixels[i5 + 3];
+        prevFkeyLoops += 1;
+        const x6 = xOffset(type, prevFkeyLoops, imageWidth);
+        const i6 = vec4Index(x6, y, imageWidth);
+        strokeColor[0] = pixels[i6 + 0];
+        strokeColor[1] = pixels[i6 + 1];
+        strokeColor[2] = pixels[i6 + 2];
+        strokeOpacity = pixels[i6 + 3];
+        prevFkeyLoops += 1;
+        const x7 = xOffset(type, prevFkeyLoops, imageWidth);
+        const i7 = vec4Index(x7, y, imageWidth);
+        fontFamily = pixels[i7 + 0];
+        fontSize = pixels[i7 + 1];
+        priority = pixels[i7 + 2];
+        constraints = pixels[i7 + 3];
+        prevFkeyLoops += 1;
+        const x8 = xOffset(type, prevFkeyLoops, imageWidth);
+        const i8 = vec4Index(x8, y, imageWidth);
+        strokeWidth = pixels[i8 + 0];
+      } else if (key === "area") {
+        let prevFkeyLoops = 1;
+        const x2 = xOffset(type, prevFkeyLoops, imageWidth);
+        const i2 = vec4Index(x2, y, imageWidth);
+        strokeWidth = pixels[i2 + 1];
+        prevFkeyLoops += 1;
+        const x3 = xOffset(type, prevFkeyLoops, imageWidth);
+        const i3 = vec4Index(x3, y, imageWidth);
+        fillColor[0] = pixels[i3 + 0];
+        fillColor[1] = pixels[i3 + 1];
+        fillColor[2] = pixels[i3 + 2];
+        fillOpacity = pixels[i3 + 3];
+        prevFkeyLoops += 1;
+        const x4 = xOffset(type, prevFkeyLoops, imageWidth);
+        const i4 = vec4Index(x4, y, imageWidth);
+        strokeColor[0] = pixels[i4 + 0];
+        strokeColor[1] = pixels[i4 + 1];
+        strokeColor[2] = pixels[i4 + 2];
+        strokeOpacity = pixels[i4 + 3];
+        prevFkeyLoops += 1;
+        const x5 = xOffset(type, prevFkeyLoops, imageWidth);
+        const i5 = vec4Index(x5, y, imageWidth);
+        fontFamily = pixels[i5 + 0];
+        fontSize = pixels[i5 + 1];
+        priority = pixels[i5 + 2];
+        constraints = pixels[i5 + 3];
+      }
+      return {
+        fillColor,
+        fillOpacity,
+        strokeColor,
+        strokeOpacity,
+        fontFamily,
+        fontSize,
+        priority,
+        constraints,
+        strokeWidth
+      };
+    }
+    function yOffset(key, zoom, zoomCount) {
+      switch (key) {
+        case "point":
+          return zoom * 7;
+        case "line":
+          return zoomCount * 7 + zoom * 8;
+        case "area":
+          return zoomCount * 7 + zoomCount * 8 + zoom * 6;
+        case "areaBorder":
+          return zoomCount * 7 + zoomCount * 8 + zoomCount * 6 + zoom * 3;
+        default:
+          throw new Error("must define a key : point | line | area | areaBorder");
+      }
+    }
+    function xOffset(type, prevFkeyLoops, imageWidth) {
+      return imageWidth * prevFkeyLoops + type;
+    }
+    function vec4Index(x, y, imageWidth) {
+      return (x + y * imageWidth) * 4;
+    }
+  }
+});
+var __defProp22 = Object.defineProperty;
+var __defProps22 = Object.defineProperties;
+var __getOwnPropDescs22 = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols22 = Object.getOwnPropertySymbols;
+var __hasOwnProp22 = Object.prototype.hasOwnProperty;
+var __propIsEnum22 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp22 = (obj, key, value) => key in obj ? __defProp22(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues22 = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp22.call(b, prop))
+      __defNormalProp22(a, prop, b[prop]);
+  if (__getOwnPropSymbols22)
+    for (var prop of __getOwnPropSymbols22(b)) {
+      if (__propIsEnum22.call(b, prop))
+        __defNormalProp22(a, prop, b[prop]);
+    }
+  return a;
+};
+var __spreadProps22 = (a, b) => __defProps22(a, __getOwnPropDescs22(b));
+var INF = 1e20;
+var TinySDF = class {
+  constructor({
+    fontSize = 24,
+    buffer = 3,
+    radius = 8,
+    cutoff = 0.25,
+    fontFamily = "sans-serif",
+    fontWeight = "normal",
+    fontStyle = "normal"
+  } = {}) {
+    this.buffer = buffer;
+    this.cutoff = cutoff;
+    this.radius = radius;
+    const size = this.size = fontSize + buffer * 4;
+    const canvas = this._createCanvas(size);
+    const ctx = this.ctx = canvas.getContext("2d", { willReadFrequently: true });
+    ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
+    ctx.textBaseline = "alphabetic";
+    ctx.textAlign = "left";
+    ctx.fillStyle = "black";
+    this.gridOuter = new Float64Array(size * size);
+    this.gridInner = new Float64Array(size * size);
+    this.f = new Float64Array(size);
+    this.z = new Float64Array(size + 1);
+    this.v = new Uint16Array(size);
+  }
+  _createCanvas(size) {
+    const canvas = document.createElement("canvas");
+    canvas.width = canvas.height = size;
+    return canvas;
+  }
+  draw(char) {
+    const {
+      width: glyphAdvance,
+      actualBoundingBoxAscent,
+      actualBoundingBoxDescent,
+      actualBoundingBoxLeft,
+      actualBoundingBoxRight
+    } = this.ctx.measureText(char);
+    const glyphTop = Math.ceil(actualBoundingBoxAscent);
+    const glyphLeft = 0;
+    const glyphWidth = Math.max(0, Math.min(this.size - this.buffer, Math.ceil(actualBoundingBoxRight - actualBoundingBoxLeft)));
+    const glyphHeight = Math.min(this.size - this.buffer, glyphTop + Math.ceil(actualBoundingBoxDescent));
+    const width = glyphWidth + 2 * this.buffer;
+    const height = glyphHeight + 2 * this.buffer;
+    const len = Math.max(width * height, 0);
+    const data = new Uint8ClampedArray(len);
+    const glyph = { data, width, height, glyphWidth, glyphHeight, glyphTop, glyphLeft, glyphAdvance };
+    if (glyphWidth === 0 || glyphHeight === 0)
+      return glyph;
+    const { ctx, buffer, gridInner, gridOuter } = this;
+    ctx.clearRect(buffer, buffer, glyphWidth, glyphHeight);
+    ctx.fillText(char, buffer, buffer + glyphTop);
+    const imgData = ctx.getImageData(buffer, buffer, glyphWidth, glyphHeight);
+    gridOuter.fill(INF, 0, len);
+    gridInner.fill(0, 0, len);
+    for (let y = 0; y < glyphHeight; y++) {
+      for (let x = 0; x < glyphWidth; x++) {
+        const a = imgData.data[4 * (y * glyphWidth + x) + 3] / 255;
+        if (a === 0)
+          continue;
+        const j = (y + buffer) * width + x + buffer;
+        if (a === 1) {
+          gridOuter[j] = 0;
+          gridInner[j] = INF;
+        } else {
+          const d = 0.5 - a;
+          gridOuter[j] = d > 0 ? d * d : 0;
+          gridInner[j] = d < 0 ? d * d : 0;
+        }
+      }
+    }
+    edt(gridOuter, 0, 0, width, height, width, this.f, this.v, this.z);
+    edt(gridInner, buffer, buffer, glyphWidth, glyphHeight, width, this.f, this.v, this.z);
+    for (let i = 0; i < len; i++) {
+      const d = Math.sqrt(gridOuter[i]) - Math.sqrt(gridInner[i]);
+      data[i] = Math.round(255 - 255 * (d / this.radius + this.cutoff));
+    }
+    return glyph;
+  }
+};
+function edt(data, x0, y0, width, height, gridSize, f, v, z) {
+  for (let x = x0; x < x0 + width; x++)
+    edt1d(data, y0 * gridSize + x, gridSize, height, f, v, z);
+  for (let y = y0; y < y0 + height; y++)
+    edt1d(data, y * gridSize + x0, 1, width, f, v, z);
+}
+function edt1d(grid, offset, stride, length, f, v, z) {
+  v[0] = 0;
+  z[0] = -INF;
+  z[1] = INF;
+  f[0] = grid[offset];
+  for (let q = 1, k = 0, s = 0; q < length; q++) {
+    f[q] = grid[offset + q * stride];
+    const q2 = q * q;
+    do {
+      const r = v[k];
+      s = (f[q] - f[r] + q2 - r * r) / (q - r) / 2;
+    } while (s <= z[k] && --k > -1);
+    k++;
+    v[k] = q;
+    z[k] = s;
+    z[k + 1] = INF;
+  }
+  for (let q = 0, k = 0; q < length; q++) {
+    while (z[k + 1] < q)
+      k++;
+    const r = v[k];
+    const qr = q - r;
+    grid[offset + q * stride] = f[r] + qr * qr;
+  }
+}
+function potpack(boxes) {
+  let area = 0;
+  let maxWidth = 0;
+  for (const box of boxes) {
+    area += box.w * box.h;
+    maxWidth = Math.max(maxWidth, box.w);
+  }
+  boxes.sort((a, b) => b.h - a.h);
+  const startWidth = Math.max(Math.ceil(Math.sqrt(area / 0.95)), maxWidth);
+  const spaces = [{ x: 0, y: 0, w: startWidth, h: Infinity }];
+  let width = 0;
+  let height = 0;
+  for (const box of boxes) {
+    for (let i = spaces.length - 1; i >= 0; i--) {
+      const space = spaces[i];
+      if (box.w > space.w || box.h > space.h)
+        continue;
+      box.x = space.x;
+      box.y = space.y;
+      height = Math.max(height, box.y + box.h);
+      width = Math.max(width, box.x + box.w);
+      if (box.w === space.w && box.h === space.h) {
+        const last = spaces.pop();
+        if (i < spaces.length)
+          spaces[i] = last;
+      } else if (box.h === space.h) {
+        space.x += box.w;
+        space.w -= box.w;
+      } else if (box.w === space.w) {
+        space.y += box.h;
+        space.h -= box.h;
+      } else {
+        spaces.push({
+          x: space.x + box.w,
+          y: space.y,
+          w: space.w - box.w,
+          h: box.h
+        });
+        space.y += box.h;
+        space.h -= box.h;
+      }
+      break;
+    }
+  }
+  return {
+    w: width,
+    // container width
+    h: height,
+    // container height
+    fill: area / (width * height) || 0
+    // space utilization
+  };
+}
+var Atlas = class {
+  constructor(opts) {
+    this._tinySdf = new TinySDF(opts);
+    this._glyphsMap = /* @__PURE__ */ new Map();
+    this._glyphsArray = [];
+    this._labels = [];
+    this._glyphsSize = 0;
+    this._textureProps = null;
+    this._glyphBoxes = [];
+  }
+  clear({ cache = false } = {}) {
+    this._labels = [];
+    this._glyphsSize = 0;
+    this._textureProps = null;
+    this._glyphBoxes = [];
+    if (cache) {
+      this._glyphsMap = /* @__PURE__ */ new Map();
+      this._glyphsArray = [];
+    }
+  }
+  _addGlyph(char) {
+    this._glyphsSize += 1;
+    if (this._glyphsMap.has(char))
+      return this._glyphsMap.get(char);
+    const glyph = this._tinySdf.draw(char);
+    this._glyphsMap.set(char, glyph);
+    this._glyphsArray.push({ char, glyph });
+    return glyph;
+  }
+  addLabel(label) {
+    const chars = label.text.split("");
+    const glyphs = [];
+    for (const char of chars) {
+      const glyph = this._addGlyph(char);
+      glyphs.push(glyph);
+    }
+    this._labels.push(label);
+    return glyphs;
+  }
+  _pack() {
+    const boxes = [];
+    for (const { char, glyph } of this._glyphsArray) {
+      boxes.push({ w: glyph.width, h: glyph.height, char, glyph });
+    }
+    const texSize = potpack(boxes);
+    const data = new Uint8Array(texSize.w * texSize.h);
+    for (const box of boxes) {
+      const { glyph } = box;
+      for (let y = 0; y < glyph.height; y++) {
+        const src = (0 + y) * glyph.width + 0;
+        const dst = (box.y + y) * texSize.w + box.x;
+        for (let x = 0; x < glyph.width; x++) {
+          data[dst + x] = glyph.data[src + x];
+        }
+      }
+    }
+    const glyphBoxes = {};
+    for (const box of boxes) {
+      glyphBoxes[box.char] = box;
+    }
+    const textureProps = {
+      data,
+      width: texSize.w,
+      height: texSize.h,
+      format: "alpha",
+      // use 'alpha' because TinySDF outputs a single-channel bitmap
+      type: "uint8",
+      // ensure this is set correctly for Uint8 arrays
+      mag: "linear",
+      // use linear filtering for smoother results
+      min: "linear"
+    };
+    this._textureProps = textureProps;
+    this._glyphBoxes = glyphBoxes;
+    return { textureProps, glyphBoxes };
+  }
+  measure(label) {
+    const { text } = label;
+  }
+  _prepareInstances({ instances }) {
+    function noop() {
+    }
+    const create = typeof (instances == null ? void 0 : instances.create) === "function" ? instances.create : noop;
+    const onGlyph = typeof (instances == null ? void 0 : instances.onGlyph) === "function" ? instances.onGlyph : noop;
+    const props = {
+      glyphInLabelStringIndex: new Float32Array(this._glyphsSize),
+      glyphInLabelStringOffset: new Float32Array(this._glyphsSize * 2),
+      glyphTexOffset: new Float32Array(this._glyphsSize * 2),
+      glyphTexDim: new Float32Array(this._glyphsSize * 2),
+      glyphRasterDim: new Float32Array(this._glyphsSize * 2),
+      glyphRasterTop: new Float32Array(this._glyphsSize),
+      labelDim: new Float32Array(this._glyphsSize * 2)
+    };
+    create({ props, size: this._glyphsSize });
+    let labelTopMax = -Infinity;
+    let labelBottomMin = Infinity;
+    let glyphIndex = 0;
+    const labels = [];
+    for (let li = 0; li < this._labels.length; li++) {
+      const label = this._labels[li];
+      const chars = label.text.split("");
+      const labelOffset = [0, 0];
+      let labelWidth = 0;
+      let labelRunIndices = [];
+      for (let ci = 0; ci < chars.length; ci++) {
+        const char = chars[ci];
+        const glyphBox = this._glyphBoxes[char];
+        props.glyphInLabelStringIndex[glyphIndex * 1] = ci / chars.length;
+        props.glyphInLabelStringOffset[glyphIndex * 2 + 0] = labelOffset[0];
+        props.glyphInLabelStringOffset[glyphIndex * 2 + 1] = labelOffset[1];
+        props.glyphTexOffset[glyphIndex * 2 + 0] = glyphBox.x;
+        props.glyphTexOffset[glyphIndex * 2 + 1] = glyphBox.y;
+        props.glyphTexDim[glyphIndex * 2 + 0] = glyphBox.w;
+        props.glyphTexDim[glyphIndex * 2 + 1] = glyphBox.h;
+        props.glyphRasterDim[glyphIndex * 2 + 0] = glyphBox.glyph.glyphWidth;
+        props.glyphRasterDim[glyphIndex * 2 + 1] = glyphBox.glyph.glyphHeight;
+        props.glyphRasterTop[glyphIndex] = glyphBox.glyph.glyphTop;
+        onGlyph({
+          props,
+          labelIndex: li,
+          charIndex: ci,
+          glyphIndex
+        });
+        labelRunIndices.push(glyphIndex);
+        glyphIndex += 1;
+        labelOffset[0] += glyphBox.glyph.glyphWidth;
+        labelWidth += glyphBox.glyph.glyphWidth;
+        labelTopMax = Math.max(glyphBox.glyph.glyphTop, labelTopMax);
+        labelBottomMin = Math.min(glyphBox.glyph.glyphTop - glyphBox.glyph.glyphHeight, labelBottomMin);
+      }
+      for (const labelRunIndex of labelRunIndices) {
+        props.labelDim[labelRunIndex * 2 + 0] = labelWidth;
+      }
+      labels.push(__spreadProps22(__spreadValues22({}, label), {
+        glyphIndicies: labelRunIndices
+      }));
+    }
+    const labelHeight = labelTopMax - labelBottomMin;
+    for (let gi = 0; gi < this._glyphsSize; gi++) {
+      props.labelDim[gi * 2 + 1] = labelHeight;
+    }
+    return {
+      texture: this._textureProps,
+      glyphs: props,
+      baselineOffset: [labelTopMax, labelBottomMin],
+      labels
+    };
+  }
+  _prepareObjects() {
+    const labels = [];
+    const glyphs = [];
+    let labelTopMax = -Infinity;
+    let labelBottomMin = Infinity;
+    let glyphIndex = 0;
+    for (const label of this._labels) {
+      const chars = label.text.split("");
+      const labelOffset = [0, 0];
+      let labelWidth = 0;
+      const labelRun = [];
+      let labelRunIndices = [];
+      for (let i = 0; i < chars.length; i++) {
+        const char = chars[i];
+        const glyphBox = this._glyphBoxes[char];
+        labelRun.push(__spreadProps22(__spreadValues22({}, label), {
+          glyphInLabelStringIndex: i / chars.length,
+          glyphInLabelStringOffset: labelOffset.slice(),
+          glyphTexOffset: [glyphBox.x, glyphBox.y],
+          glyphTexDim: [glyphBox.w, glyphBox.h],
+          glyphRasterDim: [glyphBox.glyph.glyphWidth, glyphBox.glyph.glyphHeight],
+          glyphRasterTop: glyphBox.glyph.glyphTop,
+          labelDim: [0, 0]
+        }));
+        labelRunIndices.push(glyphIndex);
+        glyphIndex += 1;
+        labelOffset[0] += glyphBox.glyph.glyphWidth;
+        labelWidth += glyphBox.glyph.glyphWidth;
+        labelTopMax = Math.max(glyphBox.glyph.glyphTop, labelTopMax);
+        labelBottomMin = Math.min(glyphBox.glyph.glyphTop - glyphBox.glyph.glyphHeight, labelBottomMin);
+      }
+      for (const g of labelRun) {
+        g.labelDim[0] = labelWidth;
+        glyphs.push(g);
+      }
+      labels.push(__spreadProps22(__spreadValues22({}, label), {
+        glyphIndicies: labelRunIndices
+      }));
+    }
+    const labelHeight = labelTopMax - labelBottomMin;
+    for (const g of glyphs) {
+      g.labelDim[1] = labelHeight;
+    }
+    return {
+      texture: this._textureProps,
+      glyphs,
+      baselineOffset: [labelTopMax, labelBottomMin],
+      labels
+    };
+  }
+  prepare({ labels, instances = false } = {}) {
+    if (labels) {
+      for (const label of labels) {
+        this.addLabel(label);
+      }
+    }
+    if (!this._textureProps || !this._glyphBoxes) {
+      this._pack();
+    }
+    if (instances)
+      return this._prepareInstances({ instances });
+    else
+      return this._prepareObjects();
+  }
+};
 var import_label_placement_engine = __toESM(require_label_placement_engine(), 1);
 var import_bbox = __toESM(require_bbox(), 1);
 var import_point = __toESM(require_point(), 1);
 var import_line = __toESM(require_line(), 1);
 var import_area = __toESM(require_area(), 1);
+var import_settings = __toESM(require_settings(), 1);
+var import_read = __toESM(require_read(), 1);
 var labelPreset = {
   bbox: import_bbox.default,
   point: import_point.default,
   line: import_line.default,
   area: import_area.default
 };
-var uvs = [0, 0, 1, 0, 1, 1, 0, 1];
-var padding = [10, 10];
-var fontSize = 12;
-function Text(opts) {
-  if (!opts)
-    opts = {};
-  if (!(this instanceof Text))
-    return new Text(opts);
-  this._qbzf = (0, import_qbzf.default)(opts.font);
-  this._atlas = (0, import_atlas.default)(this._qbzf, {
-    attributes: ["fillColor", "strokeColor"]
-  });
-  this._labelEngine = (0, import_label_placement_engine.default)({
+var defaultLabelOpts = {
+  atlas: [{
+    fontSize: 48,
+    buffer: 6,
+    radius: 16,
+    cutoff: 0.25,
+    fontFamily: "Arial"
+  }],
+  labelEngine: {
     types: {
       bbox: labelPreset.bbox(),
       point: labelPreset.point({
@@ -2314,293 +3125,487 @@ function Text(opts) {
         labelMargin: [10, 10]
       })
     }
-  });
-  this._props = {};
-}
-Text.prototype.update = function(props, map) {
-  var viewboxWidthLon = map.viewbox[2] - map.viewbox[0];
-  var viewboxHeightLat = map.viewbox[3] - map.viewbox[1];
-  var labels = [];
-  labels.push({ type: "bbox", bounds: map.viewbox });
-  var ph = 4, pw = 4;
-  this._addPoint(map, labels, props.pointT, pw, ph);
-  this._addPoint(map, labels, props.pointP, pw, ph);
-  this._addLine(map, labels, props.lineT, pw, ph);
-  this._addLine(map, labels, props.lineP, pw, ph);
-  this._addArea(map, labels, props.areaT, pw, ph);
-  this._addArea(map, labels, props.areaP, pw, ph);
-  this._labelEngine.update(labels);
-  this._atlas.clear();
-  var ilabels = {}, idLabels = {};
-  for (var i = 0; i < labels.length; i++) {
-    if (!this._labelEngine.isVisible(i))
-      continue;
-    var l = labels[i];
-    if (l.type !== "point" && l.type !== "line" && l.type !== "area")
-      continue;
-    idLabels[l.id] = l;
-    ilabels[l.id] = i;
-    this._atlas.add({
-      id: l.id,
-      text: l.text,
-      height: l.heightPx,
-      fillColor: [0, 0, 0],
-      strokeColor: [1, 1, 1],
-      strokeWidth: 150,
-      padding
-    });
   }
-  var data = this._atlas.build();
-  var ns = Object.keys(data);
-  this._props = {};
-  var positionMap = new Uint32Array(this._labelEngine.data.positions.length);
-  for (var i = 0; i < ns.length; i++) {
-    var n = ns[i];
-    var d = data[n];
-    if (!d)
-      continue;
-    var psize = 0;
-    for (var j = 0; j < d.ids.length; j++) {
-      var id = d.ids[j];
-      var l = idLabels[id];
-      var ix = ilabels[id];
-      var pstart = this._labelEngine.offsets.positions[ix * 2 + 0];
-      var pend = this._labelEngine.offsets.positions[ix * 2 + 1];
-      psize += pend - pstart;
+};
+var Label = class {
+  constructor(opts = {}) {
+    if (Array.isArray(opts.fontFamily)) {
+      opts.atlas = opts.fontFamily.map((fontFamily) => {
+        return __spreadProps2(__spreadValues2({}, defaultLabelOpts.atlas), {
+          fontFamily
+        });
+      });
     }
-    var props = {
-      positions: new Float32Array(psize),
-      uvs: new Float32Array(psize),
-      cells: null,
-      offsets: new Float32Array(psize / 2),
-      units: new Float32Array(psize),
-      size: new Float32Array(psize),
-      fillColors: new Float32Array(psize / 2 * 3),
-      strokeWidths: new Float32Array(psize / 2),
-      strokeColors: new Float32Array(psize / 2 * 3),
-      pxSize: new Float32Array(psize),
-      curves: d.curves,
-      grid: d.grid
-    };
-    this._props[n] = props;
-    if (!d.curves.texture)
-      d.curves.texture = map.regl.texture(d.curves);
-    if (!d.grid.texture)
-      d.grid.texture = map.regl.texture(d.grid);
-    var pindex = 0;
-    for (var j = 0; j < d.ids.length; j++) {
-      var id = d.ids[j];
-      var l = idLabels[id];
-      var ix = ilabels[id];
-      var pstart = this._labelEngine.offsets.positions[ix * 2 + 0] / 2;
-      var pend = this._labelEngine.offsets.positions[ix * 2 + 1] / 2;
-      for (var k = 0; k < pend - pstart; k++) {
-        props.positions[pindex * 2 + 0] = this._labelEngine.data.positions[(pstart + k) * 2 + 0];
-        props.positions[pindex * 2 + 1] = this._labelEngine.data.positions[(pstart + k) * 2 + 1];
-        positionMap[(pstart + k) * 2 + 0] = Number(n);
+    if (!opts.atlas)
+      opts.atlas = defaultLabelOpts.atlas;
+    this._atlas = opts.atlas.map((atlasOpts) => {
+      const opts2 = __spreadValues2(__spreadValues2({}, defaultLabelOpts.atlas[0]), atlasOpts);
+      const atlas = new Atlas(opts2);
+      return atlas;
+    });
+    this._labelEngine = (0, import_label_placement_engine.default)(__spreadValues2(__spreadValues2({}, defaultLabelOpts.labelEngine), opts.labelEngine));
+    this.style = opts.style;
+    this._props = {};
+  }
+  update(props, map, opts = {}) {
+    const style = opts.style || this.style;
+    for (const index in this._atlas) {
+      this._atlas[index].clear();
+    }
+    const viewboxWidthLon = map.viewbox[2] - map.viewbox[0];
+    const viewboxHeightLat = map.viewbox[3] - map.viewbox[1];
+    const measureLabels = [];
+    this._addPoint(map, style, measureLabels, props.pointT);
+    this._addPoint(map, style, measureLabels, props.pointP);
+    this._addLine(map, style, measureLabels, props.lineT);
+    this._addLine(map, style, measureLabels, props.lineP);
+    this._addArea(map, style, measureLabels, props.areaT);
+    this._addArea(map, style, measureLabels, props.areaP);
+    measureLabels.sort((a, b) => {
+      var _a, _b;
+      const ap = (_a = a.priority) != null ? _a : 1;
+      const bp = (_b = b.priority) != null ? _b : 1;
+      if (ap > bp)
+        return -1;
+      if (ap < bp)
+        return 1;
+      return 0;
+    });
+    const measureIndexToPreparedIndex = {};
+    const prepared = [];
+    for (let i = 0; i < this._atlas.length; i++) {
+      const labels = [];
+      for (let im = 0; im < measureLabels.length; im++) {
+        const label = measureLabels[im];
+        if (i !== label.fontFamilyIndex)
+          continue;
+        measureIndexToPreparedIndex[im] = labels.length;
+        labels.push(measureLabels[im]);
+      }
+      prepared.push(this._atlas[i].prepare({ labels }));
+    }
+    for (let im = 0; im < measureLabels.length; im++) {
+      const label = measureLabels[im];
+      const preparedLabel = prepared[label.fontFamilyIndex].labels[measureIndexToPreparedIndex[im]];
+      switch (label.type) {
+        case "point":
+          this._measurePoint(map, prepared[label.fontFamilyIndex], preparedLabel);
+          break;
+        case "line":
+          this._measureLine(map, prepared[label.fontFamilyIndex], preparedLabel);
+          break;
+        case "area":
+          this._measureArea(map, prepared[label.fontFamilyIndex], preparedLabel);
+          break;
+        default:
+          throw new Error("implement measure for type=", label.type);
+      }
+      Object.assign(label, preparedLabel);
+    }
+    const placedLabels = [{ type: "bbox", bounds: map.viewbox }].concat(measureLabels);
+    this._labelEngine.update(placedLabels);
+    const ilabels = [];
+    const idLabels = {};
+    const atlasTypes = /* @__PURE__ */ new Set(["point", "line", "area"]);
+    const positionMap = new Uint32Array(this._labelEngine.data.positions.length);
+    let pindex = 0;
+    for (let i = 1; i < placedLabels.length; i++) {
+      const pi = i - 1;
+      const l = measureLabels[pi];
+      if (!atlasTypes.has(l.type))
+        continue;
+      idLabels[l.id] = l;
+      ilabels[l.id] = i;
+      const preparedLabelIndex = measureIndexToPreparedIndex[pi];
+      prepared[l.fontFamilyIndex].labels[preparedLabelIndex].isVisible = this._labelEngine.isVisible(i) ? 1 : 0;
+      const pstart = this._labelEngine.offsets.positions[i * 2 + 0];
+      const pend = this._labelEngine.offsets.positions[i * 2 + 1];
+      const psize = pend - pstart;
+      for (let k = 0; k < psize; k++) {
+        positionMap[(pstart + k) * 2 + 0] = i;
         positionMap[(pstart + k) * 2 + 1] = pindex;
-        props.uvs[pindex * 2 + 0] = uvs[k * 2 + 0];
-        props.uvs[pindex * 2 + 1] = uvs[k * 2 + 1];
-        props.offsets[pindex] = d.offsets[j * 4];
-        props.units[pindex * 2 + 0] = d.units[j * 4][0];
-        props.units[pindex * 2 + 1] = d.units[j * 4][1];
-        props.size[pindex * 2 + 0] = d.size[j * 4][0];
-        props.size[pindex * 2 + 1] = d.size[j * 4][1];
-        props.fillColors[pindex * 3 + 0] = d.fillColor[j * 4][0];
-        props.fillColors[pindex * 3 + 1] = d.fillColor[j * 4][1];
-        props.fillColors[pindex * 3 + 2] = d.fillColor[j * 4][2];
-        props.strokeWidths[pindex] = d.strokeWidth[j * 4];
-        props.strokeColors[pindex * 3 + 0] = d.strokeColor[j * 4][0];
-        props.strokeColors[pindex * 3 + 1] = d.strokeColor[j * 4][1];
-        props.strokeColors[pindex * 3 + 2] = d.strokeColor[j * 4][2];
-        props.pxSize[pindex * 2 + 0] = l.widthPx;
-        props.pxSize[pindex * 2 + 1] = l.heightPx;
         pindex++;
       }
+      const positions = this._labelEngine.data.positions.slice(pstart, pend);
+      prepared[l.fontFamilyIndex].labels[preparedLabelIndex].positions = positions;
+      for (let k = 0; k < l.glyphIndicies.length; k++) {
+        const gi = l.glyphIndicies[k];
+        prepared[l.fontFamilyIndex].glyphs[gi].isVisible = prepared[l.fontFamilyIndex].labels[preparedLabelIndex].isVisible;
+        prepared[l.fontFamilyIndex].glyphs[gi].positions = positions;
+      }
+    }
+    const csize = {};
+    const cindex = {};
+    for (let i = 0; i < this._labelEngine.data.cells.length; i++) {
+      const c = this._labelEngine.data.cells[i];
+      const labelEngineIndex = positionMap[c * 2 + 0];
+      const pi = labelEngineIndex - 1;
+      if (csize[pi] === void 0)
+        csize[pi] = 1;
+      else
+        csize[pi]++;
+    }
+    for (let i = 1; i < placedLabels.length; i++) {
+      const pi = i - 1;
+      const l = measureLabels[pi];
+      if (!l)
+        continue;
+      const preparedLabelIndex = measureIndexToPreparedIndex[pi];
+      prepared[l.fontFamilyIndex].labels[preparedLabelIndex].cells = new Uint32Array(csize[pi]);
+    }
+    for (let i = 0; i < this._labelEngine.data.cells.length; i++) {
+      const c = this._labelEngine.data.cells[i];
+      const labelEngineIndex = positionMap[c * 2 + 0];
+      const placedPositionIndex = positionMap[c * 2 + 1];
+      const pi = labelEngineIndex - 1;
+      const l = measureLabels[pi];
+      if (!l || l.isVisible < 0.5)
+        continue;
+      if (cindex[pi] === void 0)
+        cindex[pi] = 0;
+      const preparedLabelIndex = measureIndexToPreparedIndex[pi];
+      prepared[l.fontFamilyIndex].labels[preparedLabelIndex].cells[cindex[pi]++] = placedPositionIndex;
+    }
+    for (let i = 0; i < prepared.length; i++) {
+      for (let pi = 0; pi < prepared[i].labels.length; pi++) {
+        const l = prepared[i].labels[pi];
+        for (let k = 0; k < l.glyphIndicies.length; k++) {
+          const gi = l.glyphIndicies[k];
+          prepared[i].glyphs[gi].cells = prepared[i].labels[pi].cells;
+        }
+      }
+    }
+    return {
+      labelEngine: this._labelEngine,
+      atlas: prepared
+    };
+  }
+  _addPoint(map, style, labels, p) {
+    if (!(p == null ? void 0 : p.positions))
+      return;
+    const styleSettings = (0, import_settings.default)();
+    const read = (0, import_read.default)({ pixels: style.data, zoomCount: styleSettings.zoomCount, imageWidth: styleSettings.imageWidth });
+    const zoom = Math.round(map.getZoom());
+    const y = zoom * 7;
+    for (let ix = 0; ix < p.id.length; ix++) {
+      const id = p.id[ix];
+      if (!p.labels.hasOwnProperty(id) || p.labels[id].length === 0)
+        continue;
+      const text = this._getLabel(p.labels[id]);
+      const lon = p.positions[ix * 2 + 0];
+      const lat = p.positions[ix * 2 + 1];
+      if (map.viewbox[0] > lon || lon > map.viewbox[2])
+        continue;
+      if (map.viewbox[1] > lat || lat > map.viewbox[3])
+        continue;
+      const type = p.types[id];
+      const pointSize = style.data[(type + (y + 2) * style.width) * 4 + 0];
+      const {
+        fillColor,
+        fillOpacity,
+        fontFamily,
+        fontSize,
+        priority,
+        strokeWidth,
+        strokeColor,
+        strokeOpacity
+      } = read.label("point", type, zoom);
+      labels.push({
+        type: "point",
+        point: [lon, lat],
+        pointSizePx: [pointSize, pointSize],
+        id,
+        text,
+        fontFamilyIndex: fontFamily,
+        fontFamily: style.labelFontFamily[fontFamily] || "Arial",
+        fontSize,
+        priority,
+        strokeWidth,
+        // TODO
+        // add to style2png:start
+        letterSpacing: 1,
+        labelMarginPx: [10, 10],
+        pointMarginPx: [10, 10],
+        // add to style2png:end
+        zindex: 2e3,
+        fillColor: fillColor.map((c) => c / 255).concat([fillOpacity / 100]),
+        strokeColor: strokeColor.map((c) => c / 255).concat([strokeOpacity / 100])
+      });
     }
   }
-  var cindex = {}, csize = {};
-  for (var i = 0; i < this._labelEngine.data.cells.length; i++) {
-    var c = this._labelEngine.data.cells[i];
-    var n = positionMap[c * 2 + 0];
-    if (csize[n] === void 0)
-      csize[n] = 1;
-    else
-      csize[n]++;
-  }
-  for (var i = 0; i < ns.length; i++) {
-    var n = Number(ns[i]);
-    if (!this._props[n])
-      continue;
-    this._props[n].cells = new Uint32Array(csize[n]);
-  }
-  for (var i = 0; i < this._labelEngine.data.cells.length; i++) {
-    var c = this._labelEngine.data.cells[i];
-    var n = positionMap[c * 2 + 0], j = positionMap[c * 2 + 1];
-    if (!this._props[n])
-      continue;
-    if (n === 0)
-      continue;
-    if (cindex[n] === void 0)
-      cindex[n] = 0;
-    this._props[n].cells[cindex[n]++] = j;
-  }
-  return this._props;
-};
-Text.prototype._addPoint = function(map, labels, p, pw, ph) {
-  if (!p || !p.positions)
-    return;
-  var aspect = map._size[0] / map._size[1];
-  for (var ix = 0; ix < p.id.length; ix++) {
-    var id = p.id[ix];
-    if (!p.labels.hasOwnProperty(id) || p.labels[id].length === 0)
-      continue;
-    var text = this._getLabel(p.labels[id]);
-    var lon = p.positions[ix * 2 + 0];
-    var lat = p.positions[ix * 2 + 1];
-    if (map.viewbox[0] > lon || lon > map.viewbox[2])
-      continue;
-    if (map.viewbox[1] > lat || lat > map.viewbox[3])
-      continue;
-    var pxToLon = (map.viewbox[2] - map.viewbox[0]) / map._size[0];
-    var pxToLat = (map.viewbox[3] - map.viewbox[1]) / map._size[1];
-    var m = this._qbzf.measure({ text, strokeWidth: 150, padding });
-    var widthPx = Math.round(m.units[0] / this._qbzf.unitsPerEm * fontSize);
-    var heightPx = Math.round(m.units[1] / this._qbzf.unitsPerEm * fontSize);
-    var widthLon = (widthPx + pw + 1) * pxToLon;
-    var heightLat = (heightPx + ph + 1) * pxToLat / aspect;
-    labels.push({
-      type: "point",
-      point: [lon, lat],
-      labelSize: [widthLon, heightLat],
-      labelMargin: [10 / map._size[0] * widthLon, 10 / map._size[1] * heightLat],
-      pointSize: [10 / map._size[0] * widthLon, 10 / map._size[1] * heightLat],
-      pointMargin: [10 / map._size[0] * widthLon, 10 / map._size[1] * heightLat],
-      id,
-      widthPx,
-      heightPx,
-      text
-    });
-  }
-};
-Text.prototype._addLine = function(map, labels, l) {
-  var ph = 4, pw = 4;
-  if (!l || !l.positions)
-    return;
-  var aspect = map._size[0] / map._size[1];
-  var start = 0, prev = null;
-  for (var ix = 0; ix < l.id.length; ix++) {
-    var id = l.id[ix];
-    if ((prev === null || prev === id) && ix !== l.id.length - 1) {
+  _addLine(map, style, labels, p) {
+    if (!(p == null ? void 0 : p.positions))
+      return;
+    let start = 0;
+    let prev = null;
+    const styleSettings = (0, import_settings.default)();
+    const read = (0, import_read.default)({ pixels: style.data, zoomCount: styleSettings.zoomCount, imageWidth: styleSettings.imageWidth });
+    const zoom = Math.round(map.getZoom());
+    for (let ix = 0; ix < p.id.length; ix++) {
+      const id = p.id[ix];
+      if ((prev === null || prev === id) && ix !== p.id.length - 1) {
+        prev = id;
+        continue;
+      }
+      if (!p.labels.hasOwnProperty(id) || p.labels[id].length === 0) {
+        start = ix;
+        continue;
+      }
+      const text = this._getLabel(p.labels[prev]);
       prev = id;
-      continue;
-    }
-    if (!l.labels.hasOwnProperty(id) || l.labels[id].length === 0) {
+      if (text === null)
+        continue;
+      const end = ix;
+      const positions = p.positions.slice(start * 2, end * 2 + 2);
       start = ix;
-      continue;
+      const type = p.types[id];
+      const {
+        fillColor,
+        fillOpacity,
+        fontFamily,
+        fontSize,
+        priority,
+        strokeWidth,
+        strokeColor,
+        strokeOpacity
+      } = read.label("line", type, zoom);
+      labels.push({
+        type: "line",
+        text,
+        positions,
+        fontFamilyIndex: fontFamily,
+        fontFamily: style.labelFontFamily[fontFamily] || "Arial",
+        fontSize,
+        priority,
+        strokeWidth,
+        // add to style2png:start
+        letterSpacing: 1,
+        labelMarginPx: [0, 0],
+        labelLineMarginPx: [0, 0],
+        // add to style2png:end
+        zindex: 2e3,
+        // TODO move colors to glsl
+        fillColor: fillColor.map((c) => c / 255).concat([fillOpacity / 100]),
+        strokeColor: strokeColor.map((c) => c / 255).concat([strokeOpacity / 100])
+      });
     }
-    var text = this._getLabel(l.labels[prev]);
-    prev = id;
-    if (text === null)
-      continue;
-    var end = ix;
-    var vb = map.viewbox;
-    var positions = l.positions.slice(start * 2, end * 2 + 2);
-    start = ix;
-    var pxToLon = (map.viewbox[2] - map.viewbox[0]) / map._size[0];
-    var pxToLat = (map.viewbox[3] - map.viewbox[1]) / map._size[1];
-    var m = this._qbzf.measure({ text, strokeWidth: 150, padding });
-    var widthPx = Math.round(m.units[0] / this._qbzf.unitsPerEm * fontSize);
-    var heightPx = Math.round(m.units[1] / this._qbzf.unitsPerEm * fontSize);
-    var widthLon = (widthPx + pw + 1) * pxToLon;
-    var heightLat = (heightPx + ph + 1) * pxToLat;
-    labels.push({
-      type: "line",
-      positions,
-      labelSize: [widthLon, heightLat],
-      labelMargin: [10 / map._size[0] * widthLon, 10 / map._size[1] * heightLat],
-      lineSize: [10 / map._size[0] * widthLon, 10 / map._size[1] * heightLat],
-      lineMargin: [10 / map._size[0] * widthLon, 10 / map._size[1] * heightLat],
-      id,
-      widthPx,
-      heightPx,
-      text
-    });
   }
-};
-Text.prototype._addArea = function(map, labels, l) {
-  var ph = 4, pw = 4;
-  if (!l || !l.positions)
-    return;
-  var aspect = map._size[0] / map._size[1];
-  var start = 0, prev = null;
-  for (var ix = 0; ix < l.id.length; ix++) {
-    var id = l.id[ix];
-    if ((prev === null || prev === id) && ix !== l.id.length - 1) {
+  _addArea(map, style, labels, p) {
+    if (!(p == null ? void 0 : p.positions))
+      return;
+    let start = 0;
+    let prev = null;
+    const styleSettings = (0, import_settings.default)();
+    const read = (0, import_read.default)({ pixels: style.data, zoomCount: styleSettings.zoomCount, imageWidth: styleSettings.imageWidth });
+    const zoom = Math.round(map.getZoom());
+    for (let ix = 0; ix < p.id.length; ix++) {
+      const id = p.id[ix];
+      if ((prev === null || prev === id) && ix !== p.id.length - 1) {
+        prev = id;
+        continue;
+      }
+      if (!p.labels.hasOwnProperty(id) || p.labels[id].length === 0) {
+        start = ix;
+        prev = id;
+        continue;
+      }
+      const labelId = prev;
+      const text = this._getLabel(p.labels[labelId]);
       prev = id;
-      continue;
-    }
-    if (!l.labels.hasOwnProperty(id) || l.labels[id].length === 0) {
+      if (text === null)
+        continue;
+      const end = ix;
+      const vb = map.viewbox;
+      const positions = p.positions.slice(start * 2, end * 2 + 2);
       start = ix;
-      prev = id;
-      continue;
+      const type = p.types[id];
+      const {
+        fillColor,
+        fillOpacity,
+        fontFamily,
+        fontSize,
+        priority,
+        strokeWidth,
+        strokeColor,
+        strokeOpacity
+      } = read.label("area", type, zoom);
+      labels.push({
+        type: "area",
+        text,
+        positions,
+        id,
+        fontFamilyIndex: fontFamily,
+        fontFamily: style.labelFontFamily[fontFamily] || "Arial",
+        fontSize,
+        priority,
+        strokeWidth,
+        // add to style2png:start
+        letterSpacing: 1,
+        labelMarginPx: [0, 0],
+        // add to style2png:end
+        zindex: 2e3,
+        fillColor: fillColor.map((c) => c / 255).concat([fillOpacity / 100]),
+        strokeColor: strokeColor.map((c) => c / 255).concat([strokeOpacity / 100])
+      });
     }
-    var labelId = prev;
-    var text = this._getLabel(l.labels[prev]);
-    prev = id;
-    if (text === null)
-      continue;
-    var end = ix;
-    var vb = map.viewbox;
-    var positions = l.positions.slice(start * 2, end * 2 + 2);
-    start = ix;
-    var pxToLon = (map.viewbox[2] - map.viewbox[0]) / map._size[0];
-    var pxToLat = (map.viewbox[3] - map.viewbox[1]) / map._size[1];
-    var m = this._qbzf.measure({ text, strokeWidth: 150, padding });
-    var widthPx = Math.round(m.units[0] / this._qbzf.unitsPerEm * fontSize);
-    var heightPx = Math.round(m.units[1] / this._qbzf.unitsPerEm * fontSize);
-    var widthLon = (widthPx + pw + 1) * pxToLon;
-    var heightLat = (heightPx + ph + 1) * pxToLat;
-    labels.push({
-      type: "area",
-      positions,
-      labelSize: [widthLon, heightLat],
-      labelMargin: [10 / map._size[0] * widthLon, 10 / map._size[1] * heightLat],
-      id,
-      widthPx,
-      heightPx,
-      text
-    });
+  }
+  _measurePoint(map, prepared, label, { pw = 2, ph = 2 } = {}) {
+    const { glyphIndicies } = label;
+    const {
+      labelDim,
+      point,
+      fontSize,
+      letterSpacing
+    } = prepared.glyphs[glyphIndicies[0]];
+    const pxToLon = (map.viewbox[2] - map.viewbox[0]) / map._size[0];
+    const pxToLat = (map.viewbox[3] - map.viewbox[1]) / map._size[1];
+    const aspect = map._size[0] / map._size[1];
+    const widthPx = label.widthPx = fontSize * labelDim[0] * letterSpacing / labelDim[1];
+    const heightPx = label.heightPx = fontSize;
+    const widthLon = (widthPx + pw + 1) * pxToLon;
+    const heightLat = (heightPx + ph + 1) * pxToLat / aspect;
+    label.labelSize = [widthLon, heightLat];
+    label.labelMargin = [
+      label.labelMarginPx[0] * pxToLon,
+      label.labelMarginPx[1] * pxToLat
+    ];
+    label.pointSize = [
+      label.pointSizePx[0] * pxToLon,
+      label.pointSizePx[1] * pxToLat
+    ];
+    label.pointMargin = [
+      label.pointMarginPx[0] * pxToLon,
+      label.pointMarginPx[1] * pxToLat
+    ];
+  }
+  _measureLine(map, prepared, label, { pw = 2, ph = 2 } = {}) {
+    const { glyphIndicies } = label;
+    const {
+      labelDim,
+      point,
+      fontSize,
+      letterSpacing
+    } = prepared.glyphs[glyphIndicies[0]];
+    const pxToLon = (map.viewbox[2] - map.viewbox[0]) / map._size[0];
+    const pxToLat = (map.viewbox[3] - map.viewbox[1]) / map._size[1];
+    const aspect = map._size[0] / map._size[1];
+    const widthPx = label.widthPx = fontSize * labelDim[0] * letterSpacing / labelDim[1];
+    const heightPx = label.heightPx = fontSize;
+    const widthLon = (widthPx + pw + 1) * pxToLon;
+    const heightLat = (heightPx + ph + 1) * pxToLat / aspect;
+    label.labelSize = [widthLon, heightLat];
+    label.labelMargin = [
+      label.labelMarginPx[0] * pxToLon,
+      label.labelMarginPx[1] * pxToLat
+    ];
+    label.labelLineMargin = [
+      label.labelLineMarginPx[0] * pxToLon,
+      label.labelLineMarginPx[1] * pxToLat
+    ];
+  }
+  _measureArea(map, prepared, label, { pw = 2, ph = 2 } = {}) {
+    const { glyphIndicies } = label;
+    const {
+      labelDim,
+      point,
+      fontSize,
+      letterSpacing
+    } = prepared.glyphs[glyphIndicies[0]];
+    const pxToLon = (map.viewbox[2] - map.viewbox[0]) / map._size[0];
+    const pxToLat = (map.viewbox[3] - map.viewbox[1]) / map._size[1];
+    const aspect = map._size[0] / map._size[1];
+    const widthPx = label.widthPx = fontSize * labelDim[0] * letterSpacing / labelDim[1];
+    const heightPx = label.heightPx = fontSize;
+    const widthLon = (widthPx + pw + 1) * pxToLon;
+    const heightLat = (heightPx + ph + 1) * pxToLat / aspect;
+    label.labelSize = [widthLon, heightLat];
+    label.labelMargin = [
+      label.labelMarginPx[0] * pxToLon,
+      label.labelMarginPx[1] * pxToLat
+    ];
+  }
+  _getLabel(labels) {
+    if (!labels)
+      return null;
+    const best = {
+      score: 0,
+      text: null
+    };
+    let btext = null;
+    for (let i = 0; i < labels.length; i++) {
+      const m = /^([^=]*)=(.*)/.exec(labels[i]);
+      if (!m)
+        continue;
+      const [_, lang, text] = m;
+      let score = 0;
+      if (lang === "en")
+        score += 3;
+      else if (lang === "")
+        score += 2;
+      else if (lang === "alt")
+        score += 1;
+      if (score > best.score) {
+        best.score = score;
+        best.text = text;
+      }
+    }
+    return best.text;
   }
 };
-Text.prototype._getLabel = function(labels) {
-  if (!labels)
-    return null;
-  var best = 0, btext = null;
-  for (var i = 0; i < labels.length; i++) {
-    var m = /^([^=]*)=(.*)/.exec(labels[i]);
-    if (!m)
-      continue;
-    var lang = m[1], text = m[2];
-    var score = 1;
-    if (lang === "en")
-      score += 3;
-    else if (lang === "")
-      score += 2;
-    else if (lang === "alt")
-      score += 1;
-    if (score > best) {
-      best = score;
-      btext = text;
+
+// text.mjs
+var PrepareText = class {
+  constructor(opts) {
+    this.label = null;
+    this._labelOpts = __spreadProps(__spreadValues({}, defaultLabelOpts), {
+      fontFamily: ["Arial"]
+    });
+    if (typeof opts == "object" && opts !== null) {
+      this._labelOpts = __spreadValues({
+        labelEngine: __spreadValues(__spreadValues({}, this._labelOpts.labelEngine), opts.labelEngine)
+      }, opts);
     }
+    this.label = new Label(this._labelOpts);
   }
-  return btext;
+  update(props, map, { style }) {
+    if (!this.label)
+      return {
+        labelEngine: null,
+        atlas: [],
+        glyphs: []
+      };
+    const labelFontFamily = this._labelOpts.fontFamily;
+    const labelProps = this.label.update(props, map, {
+      style: __spreadProps(__spreadValues({}, style), {
+        labelFontFamily
+      })
+    });
+    const baseGamma = 2 * 1.4142;
+    const glyphs = labelProps.glyphs = [];
+    for (let i = 0; i < labelProps.atlas.length; i++) {
+      const glyphProps = [];
+      for (let j = 0; j < labelProps.atlas[i].glyphs.length; j++) {
+        const glyph = labelProps.atlas[i].glyphs[j];
+        const { fontSize, fillColor, strokeColor, strokeWidth } = glyph;
+        const gamma = baseGamma / fontSize;
+        const stroke = __spreadProps(__spreadValues({}, glyph), {
+          buffer: 0.75 - strokeWidth / fontSize,
+          gamma,
+          color: strokeColor
+        });
+        const fill = __spreadProps(__spreadValues({}, glyph), {
+          buffer: 0.75,
+          gamma,
+          color: fillColor
+        });
+        glyphProps.push(stroke);
+        glyphProps.push(fill);
+      }
+      glyphs.push(glyphProps);
+    }
+    return labelProps;
+  }
 };
 export {
-  Text as default
+  PrepareText
 };
-/*! Bundled license information:
-
-ieee754/index.js:
-  (*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> *)
-*/

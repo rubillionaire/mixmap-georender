@@ -2,6 +2,7 @@ import { glslifyInline } from '@rubenrodriguez/esbuild-plugin-glslify'
 
 export const esm = {
   entryPoints: ['index.mjs', 'prepare.mjs', 'text.mjs'],
+  allowOverwrite: true,
   globalName: 'MixmapGeorender',
   target: 'es6',
   bundle: true,

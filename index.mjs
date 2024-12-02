@@ -1,5 +1,6 @@
 import glsl from 'glslify'
 import { unpackVec3 } from 'int-pack-vec'
+import { Shaders as LabelShaders } from 'tiny-label'
 var size = [0,0]
 
 export const pickFrag = glsl`
@@ -423,105 +424,6 @@ export default function shaders (map) {
         }
       }
     },
-    labels: (n) => { return {
-      frag: glsl`
-        precision highp float;
-        #pragma glslify: QBZF = require('qbzf/h')
-        #pragma glslify: create_qbzf = require('qbzf/create')
-        #pragma glslify: read_curve = require('qbzf/read')
-        varying vec2 vuv, vunits, vsize, vPxSize;
-        varying float vStrokeWidth, voffset;
-        varying vec3 vFillColor, vStrokeColor;
-        uniform sampler2D curveTex, gridTex;
-        uniform vec2 curveSize, dim;
-        uniform float gridN, aspect;
-
-        vec4 draw(vec2 uv) {
-          QBZF qbzf = create_qbzf(
-            uv, gridN, vsize, vunits, vec3(dim,voffset),
-            gridTex, curveSize
-          );
-          float ldist = 1e30;
-          for (int i = 0; i < ${n}; i++) {
-            vec4 curve = read_curve(qbzf, gridTex, curveTex, float(i));
-            if (curve.x < 0.5) break;
-            qbzf.count += curve.y;
-            ldist = min(ldist,length(curve.zw));
-          }
-          float a = 50.0;
-          float outline = 1.0-smoothstep(vStrokeWidth-a,vStrokeWidth+a,ldist);
-          vec3 fill = vFillColor;
-          vec3 stroke = vStrokeColor;
-          float cm = mod(qbzf.count,2.0);
-          if (cm < 0.5 && ldist > vStrokeWidth+a) return vec4(0);
-          float m = smoothstep(0.0,1.0,vStrokeWidth-ldist);
-          return vec4(mix(stroke, mix(stroke,fill,m), cm),1);
-        }
-        void main() {
-          float dx = 0.5/vPxSize.x;
-          vec4 c0 = draw(vuv-vec2(dx,0));
-          vec4 c1 = draw(vuv);
-          vec4 c2 = draw(vuv+vec2(dx,0));
-          gl_FragColor = c0*0.25 + c1*0.5 + c2*0.25;
-        }`,
-      vert: `
-        precision highp float;
-        attribute vec2 position, uv, units, gsize, pxSize;
-        attribute vec3 fillColor, strokeColor;
-        attribute float strokeWidth, ioffset;
-        varying vec2 vuv, vunits, vsize, vPxSize;
-        varying vec3 vFillColor, vStrokeColor;
-        varying float vStrokeWidth, voffset;
-        uniform vec4 viewbox;
-        uniform float aspect, gridN;
-        uniform vec2 offset, size;
-        void main () {
-          vuv = uv;
-          vunits = units;
-          vsize = gsize;
-          voffset = ioffset;
-          vFillColor = fillColor;
-          vStrokeColor = strokeColor;
-          vStrokeWidth = strokeWidth;
-          vPxSize = pxSize;
-          vec2 p = position.xy + offset;
-          float zindex = 1000.0;
-          gl_Position = vec4(
-            (p.x - viewbox.x) / (viewbox.z - viewbox.x) * 2.0 - 1.0,
-            ((p.y - viewbox.y) / (viewbox.w - viewbox.y) * 2.0 - 1.0) * aspect,
-            1.0/(1.0+zindex),
-            1
-          );
-        }
-      `,
-      uniforms: {
-        curveTex: (c,props) => props.curves.texture,
-        curveSize: (c,props) => props.curves.size,
-        gridTex: (c,props) => props.grid.texture,
-        dim: (c,props) => props.grid.dimension,
-        gridN: Number(n),
-      },
-      attributes: {
-        position: map.prop('positions'),
-        uv: map.prop('uvs'),
-        ioffset: map.prop('offsets'),
-        units: map.prop('units'),
-        gsize: map.prop('size'),
-        fillColor: map.prop('fillColors'),
-        strokeColor: map.prop('strokeColors'),
-        strokeWidth: map.prop('strokeWidths'),
-        pxSize: map.prop('pxSize'),
-      },
-      elements: map.prop('cells'),
-      blend: {
-        enable: true,
-        func: {
-          srcRGB: 'src alpha',
-          srcAlpha: 1,
-          dstRGB: 'one minus src alpha',
-          dstAlpha: 1
-        }
-      },
-    } },
+    ...LabelShaders(map),
   }
 }
