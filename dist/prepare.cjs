@@ -1,9 +1,26 @@
 var __create = Object.create;
 var __defProp = Object.defineProperty;
+var __defProps = Object.defineProperties;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
 var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getOwnPropSymbols = Object.getOwnPropertySymbols;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __propIsEnum = Object.prototype.propertyIsEnumerable;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp.call(b, prop))
+      __defNormalProp(a, prop, b[prop]);
+  if (__getOwnPropSymbols)
+    for (var prop of __getOwnPropSymbols(b)) {
+      if (__propIsEnum.call(b, prop))
+        __defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
@@ -78,8 +95,13 @@ var require_read = __commonJS({
       let priority;
       let constraints;
       let strokeWidth;
+      const typeSpecific = {};
       if (key === "point") {
-        let prevFkeyLoops = 3;
+        let prevFkeyLoops = 2;
+        const x3 = xOffset(type, prevFkeyLoops, imageWidth);
+        const i3 = vec4Index(x3, y, imageWidth);
+        typeSpecific.pointSize = pixels[i3 + 0];
+        prevFkeyLoops += 1;
         const x4 = xOffset(type, prevFkeyLoops, imageWidth);
         const i4 = vec4Index(x4, y, imageWidth);
         fillColor[0] = pixels[i4 + 0];
@@ -157,7 +179,7 @@ var require_read = __commonJS({
         priority = pixels[i5 + 2];
         constraints = pixels[i5 + 3];
       }
-      return {
+      return __spreadValues({
         fillColor,
         fillOpacity,
         strokeColor,
@@ -167,7 +189,7 @@ var require_read = __commonJS({
         priority,
         constraints,
         strokeWidth
-      };
+      }, typeSpecific);
     }
     function yOffset(key, zoom, zoomCount) {
       switch (key) {
@@ -196,26 +218,26 @@ var require_read = __commonJS({
 var require_text = __commonJS({
   "dist/text.cjs"(exports, module2) {
     var __defProp2 = Object.defineProperty;
-    var __defProps = Object.defineProperties;
+    var __defProps2 = Object.defineProperties;
     var __getOwnPropDesc2 = Object.getOwnPropertyDescriptor;
-    var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
+    var __getOwnPropDescs2 = Object.getOwnPropertyDescriptors;
     var __getOwnPropNames2 = Object.getOwnPropertyNames;
-    var __getOwnPropSymbols = Object.getOwnPropertySymbols;
+    var __getOwnPropSymbols2 = Object.getOwnPropertySymbols;
     var __hasOwnProp2 = Object.prototype.hasOwnProperty;
-    var __propIsEnum = Object.prototype.propertyIsEnumerable;
-    var __defNormalProp = (obj, key, value) => key in obj ? __defProp2(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-    var __spreadValues = (a, b) => {
+    var __propIsEnum2 = Object.prototype.propertyIsEnumerable;
+    var __defNormalProp2 = (obj, key, value) => key in obj ? __defProp2(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+    var __spreadValues2 = (a, b) => {
       for (var prop in b || (b = {}))
         if (__hasOwnProp2.call(b, prop))
-          __defNormalProp(a, prop, b[prop]);
-      if (__getOwnPropSymbols)
-        for (var prop of __getOwnPropSymbols(b)) {
-          if (__propIsEnum.call(b, prop))
-            __defNormalProp(a, prop, b[prop]);
+          __defNormalProp2(a, prop, b[prop]);
+      if (__getOwnPropSymbols2)
+        for (var prop of __getOwnPropSymbols2(b)) {
+          if (__propIsEnum2.call(b, prop))
+            __defNormalProp2(a, prop, b[prop]);
         }
       return a;
     };
-    var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
+    var __spreadProps2 = (a, b) => __defProps2(a, __getOwnPropDescs2(b));
     var __export2 = (target, all) => {
       for (var name in all)
         __defProp2(target, name, { get: all[name], enumerable: true });
@@ -236,27 +258,27 @@ var require_text = __commonJS({
     module2.exports = __toCommonJS2(text_exports);
     var __create2 = Object.create;
     var __defProp22 = Object.defineProperty;
-    var __defProps2 = Object.defineProperties;
+    var __defProps22 = Object.defineProperties;
     var __getOwnPropDesc22 = Object.getOwnPropertyDescriptor;
-    var __getOwnPropDescs2 = Object.getOwnPropertyDescriptors;
+    var __getOwnPropDescs22 = Object.getOwnPropertyDescriptors;
     var __getOwnPropNames22 = Object.getOwnPropertyNames;
-    var __getOwnPropSymbols2 = Object.getOwnPropertySymbols;
+    var __getOwnPropSymbols22 = Object.getOwnPropertySymbols;
     var __getProtoOf2 = Object.getPrototypeOf;
     var __hasOwnProp22 = Object.prototype.hasOwnProperty;
-    var __propIsEnum2 = Object.prototype.propertyIsEnumerable;
-    var __defNormalProp2 = (obj, key, value) => key in obj ? __defProp22(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-    var __spreadValues2 = (a, b) => {
+    var __propIsEnum22 = Object.prototype.propertyIsEnumerable;
+    var __defNormalProp22 = (obj, key, value) => key in obj ? __defProp22(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+    var __spreadValues22 = (a, b) => {
       for (var prop in b || (b = {}))
         if (__hasOwnProp22.call(b, prop))
-          __defNormalProp2(a, prop, b[prop]);
-      if (__getOwnPropSymbols2)
-        for (var prop of __getOwnPropSymbols2(b)) {
-          if (__propIsEnum2.call(b, prop))
-            __defNormalProp2(a, prop, b[prop]);
+          __defNormalProp22(a, prop, b[prop]);
+      if (__getOwnPropSymbols22)
+        for (var prop of __getOwnPropSymbols22(b)) {
+          if (__propIsEnum22.call(b, prop))
+            __defNormalProp22(a, prop, b[prop]);
         }
       return a;
     };
-    var __spreadProps2 = (a, b) => __defProps2(a, __getOwnPropDescs2(b));
+    var __spreadProps22 = (a, b) => __defProps22(a, __getOwnPropDescs22(b));
     var __commonJS2 = (cb, mod) => function __require() {
       return mod || (0, cb[__getOwnPropNames22(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
     };
@@ -603,7 +625,6 @@ var require_text = __commonJS({
               }
               var visible = true;
               if (bstart === bend) {
-                console.log("found=true", f.type);
                 bbox[0] = Infinity;
                 bbox[1] = Infinity;
                 bbox[2] = Infinity;
@@ -1491,7 +1512,7 @@ var require_text = __commonJS({
       }
     });
     var require_features = __commonJS2({
-      "../georender-style2png/node_modules/@rubenrodriguez/georender-pack/features.json"(exports2, module22) {
+      "node_modules/@rubenrodriguez/georender-pack/features.json"(exports2, module22) {
         module22.exports = [
           "aerialway.cable_car",
           "aerialway.canopy",
@@ -2737,7 +2758,7 @@ var require_text = __commonJS({
       }
     });
     var require_settings = __commonJS2({
-      "../georender-style2png/settings.js"(exports2, module22) {
+      "node_modules/@rubenrodriguez/georender-style2png/settings.js"(exports2, module22) {
         var features = require_features();
         module22.exports = function() {
           var zoomStart = 1;
@@ -2764,7 +2785,7 @@ var require_text = __commonJS({
       }
     });
     var require_read2 = __commonJS2({
-      "../georender-style2png/read.js"(exports2, module22) {
+      "node_modules/@rubenrodriguez/georender-style2png/read.js"(exports2, module22) {
         module22.exports = read;
         function read({ pixels, zoomCount, imageWidth }) {
           return {
@@ -2788,8 +2809,13 @@ var require_text = __commonJS({
           let priority;
           let constraints;
           let strokeWidth;
+          const typeSpecific = {};
           if (key === "point") {
-            let prevFkeyLoops = 3;
+            let prevFkeyLoops = 2;
+            const x3 = xOffset(type, prevFkeyLoops, imageWidth);
+            const i3 = vec4Index(x3, y, imageWidth);
+            typeSpecific.pointSize = pixels[i3 + 0];
+            prevFkeyLoops += 1;
             const x4 = xOffset(type, prevFkeyLoops, imageWidth);
             const i4 = vec4Index(x4, y, imageWidth);
             fillColor[0] = pixels[i4 + 0];
@@ -2867,7 +2893,7 @@ var require_text = __commonJS({
             priority = pixels[i5 + 2];
             constraints = pixels[i5 + 3];
           }
-          return {
+          return __spreadValues22({
             fillColor,
             fillOpacity,
             strokeColor,
@@ -2877,7 +2903,7 @@ var require_text = __commonJS({
             priority,
             constraints,
             strokeWidth
-          };
+          }, typeSpecific);
         }
         function yOffset(key, zoom, zoomCount) {
           switch (key) {
@@ -2902,24 +2928,24 @@ var require_text = __commonJS({
       }
     });
     var __defProp222 = Object.defineProperty;
-    var __defProps22 = Object.defineProperties;
-    var __getOwnPropDescs22 = Object.getOwnPropertyDescriptors;
-    var __getOwnPropSymbols22 = Object.getOwnPropertySymbols;
+    var __defProps222 = Object.defineProperties;
+    var __getOwnPropDescs222 = Object.getOwnPropertyDescriptors;
+    var __getOwnPropSymbols222 = Object.getOwnPropertySymbols;
     var __hasOwnProp222 = Object.prototype.hasOwnProperty;
-    var __propIsEnum22 = Object.prototype.propertyIsEnumerable;
-    var __defNormalProp22 = (obj, key, value) => key in obj ? __defProp222(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-    var __spreadValues22 = (a, b) => {
+    var __propIsEnum222 = Object.prototype.propertyIsEnumerable;
+    var __defNormalProp222 = (obj, key, value) => key in obj ? __defProp222(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+    var __spreadValues222 = (a, b) => {
       for (var prop in b || (b = {}))
         if (__hasOwnProp222.call(b, prop))
-          __defNormalProp22(a, prop, b[prop]);
-      if (__getOwnPropSymbols22)
-        for (var prop of __getOwnPropSymbols22(b)) {
-          if (__propIsEnum22.call(b, prop))
-            __defNormalProp22(a, prop, b[prop]);
+          __defNormalProp222(a, prop, b[prop]);
+      if (__getOwnPropSymbols222)
+        for (var prop of __getOwnPropSymbols222(b)) {
+          if (__propIsEnum222.call(b, prop))
+            __defNormalProp222(a, prop, b[prop]);
         }
       return a;
     };
-    var __spreadProps22 = (a, b) => __defProps22(a, __getOwnPropDescs22(b));
+    var __spreadProps222 = (a, b) => __defProps222(a, __getOwnPropDescs222(b));
     var INF = 1e20;
     var TinySDF = class {
       constructor({
@@ -3219,7 +3245,7 @@ var require_text = __commonJS({
           for (const labelRunIndex of labelRunIndices) {
             props.labelDim[labelRunIndex * 2 + 0] = labelWidth;
           }
-          labels.push(__spreadProps22(__spreadValues22({}, label), {
+          labels.push(__spreadProps222(__spreadValues222({}, label), {
             glyphIndicies: labelRunIndices
           }));
         }
@@ -3249,7 +3275,7 @@ var require_text = __commonJS({
           for (let i = 0; i < chars.length; i++) {
             const char = chars[i];
             const glyphBox = this._glyphBoxes[char];
-            labelRun.push(__spreadProps22(__spreadValues22({}, label), {
+            labelRun.push(__spreadProps222(__spreadValues222({}, label), {
               glyphInLabelStringIndex: i / chars.length,
               glyphInLabelStringOffset: labelOffset.slice(),
               glyphTexOffset: [glyphBox.x, glyphBox.y],
@@ -3269,7 +3295,7 @@ var require_text = __commonJS({
             g.labelDim[0] = labelWidth;
             glyphs.push(g);
           }
-          labels.push(__spreadProps22(__spreadValues22({}, label), {
+          labels.push(__spreadProps222(__spreadValues222({}, label), {
             glyphIndicies: labelRunIndices
           }));
         }
@@ -3346,7 +3372,7 @@ var require_text = __commonJS({
       constructor(opts = {}) {
         if (Array.isArray(opts.fontFamily)) {
           opts.atlas = opts.fontFamily.map((fontFamily) => {
-            return __spreadProps2(__spreadValues2({}, defaultLabelOpts.atlas), {
+            return __spreadProps22(__spreadValues22({}, defaultLabelOpts.atlas), {
               fontFamily
             });
           });
@@ -3354,11 +3380,11 @@ var require_text = __commonJS({
         if (!opts.atlas)
           opts.atlas = defaultLabelOpts.atlas;
         this._atlas = opts.atlas.map((atlasOpts) => {
-          const opts2 = __spreadValues2(__spreadValues2({}, defaultLabelOpts.atlas[0]), atlasOpts);
+          const opts2 = __spreadValues22(__spreadValues22({}, defaultLabelOpts.atlas[0]), atlasOpts);
           const atlas = new Atlas(opts2);
           return atlas;
         });
-        this._labelEngine = (0, import_label_placement_engine.default)(__spreadValues2(__spreadValues2({}, defaultLabelOpts.labelEngine), opts.labelEngine));
+        this._labelEngine = (0, import_label_placement_engine.default)(__spreadValues22(__spreadValues22({}, defaultLabelOpts.labelEngine), opts.labelEngine));
         this.style = opts.style;
         this._props = {};
       }
@@ -3370,6 +3396,8 @@ var require_text = __commonJS({
         const viewboxWidthLon = map.viewbox[2] - map.viewbox[0];
         const viewboxHeightLat = map.viewbox[3] - map.viewbox[1];
         const measureLabels = [];
+        const styleSettings = (0, import_settings.default)();
+        this.styleRead = (0, import_read2.default)({ pixels: style.data, zoomCount: styleSettings.zoomCount, imageWidth: styleSettings.imageWidth });
         this._addPoint(map, style, measureLabels, props.pointT);
         this._addPoint(map, style, measureLabels, props.pointP);
         this._addLine(map, style, measureLabels, props.lineT);
@@ -3498,8 +3526,6 @@ var require_text = __commonJS({
       _addPoint(map, style, labels, p) {
         if (!(p == null ? void 0 : p.positions))
           return;
-        const styleSettings = (0, import_settings.default)();
-        const read = (0, import_read2.default)({ pixels: style.data, zoomCount: styleSettings.zoomCount, imageWidth: styleSettings.imageWidth });
         const zoom = Math.round(map.getZoom());
         const y = zoom * 7;
         for (let ix = 0; ix < p.id.length; ix++) {
@@ -3514,7 +3540,6 @@ var require_text = __commonJS({
           if (map.viewbox[1] > lat || lat > map.viewbox[3])
             continue;
           const type = p.types[id];
-          const pointSize = style.data[(type + (y + 2) * style.width) * 4 + 0];
           const {
             fillColor,
             fillOpacity,
@@ -3523,8 +3548,9 @@ var require_text = __commonJS({
             priority,
             strokeWidth,
             strokeColor,
-            strokeOpacity
-          } = read.label("point", type, zoom);
+            strokeOpacity,
+            pointSize
+          } = this.styleRead.label("point", type, zoom);
           labels.push({
             type: "point",
             point: [lon, lat],
@@ -3553,8 +3579,6 @@ var require_text = __commonJS({
           return;
         let start = 0;
         let prev = null;
-        const styleSettings = (0, import_settings.default)();
-        const read = (0, import_read2.default)({ pixels: style.data, zoomCount: styleSettings.zoomCount, imageWidth: styleSettings.imageWidth });
         const zoom = Math.round(map.getZoom());
         for (let ix = 0; ix < p.id.length; ix++) {
           const id = p.id[ix];
@@ -3583,7 +3607,7 @@ var require_text = __commonJS({
             strokeWidth,
             strokeColor,
             strokeOpacity
-          } = read.label("line", type, zoom);
+          } = this.styleRead.label("line", type, zoom);
           labels.push({
             type: "line",
             text,
@@ -3610,8 +3634,6 @@ var require_text = __commonJS({
           return;
         let start = 0;
         let prev = null;
-        const styleSettings = (0, import_settings.default)();
-        const read = (0, import_read2.default)({ pixels: style.data, zoomCount: styleSettings.zoomCount, imageWidth: styleSettings.imageWidth });
         const zoom = Math.round(map.getZoom());
         for (let ix = 0; ix < p.id.length; ix++) {
           const id = p.id[ix];
@@ -3643,7 +3665,7 @@ var require_text = __commonJS({
             strokeWidth,
             strokeColor,
             strokeOpacity
-          } = read.label("area", type, zoom);
+          } = this.styleRead.label("area", type, zoom);
           labels.push({
             type: "area",
             text,
@@ -3769,19 +3791,22 @@ var require_text = __commonJS({
     };
     var PrepareText2 = class {
       constructor(opts) {
+        this.style = opts.style;
+        delete opts.style;
         this.label = null;
-        this._labelOpts = __spreadProps(__spreadValues({}, defaultLabelOpts), {
+        this._labelOpts = __spreadProps2(__spreadValues2({}, defaultLabelOpts), {
           fontFamily: ["Arial"]
         });
         if (typeof opts == "object" && opts !== null) {
-          this._labelOpts = __spreadValues({
-            labelEngine: __spreadValues(__spreadValues({}, this._labelOpts.labelEngine), opts.labelEngine)
+          this._labelOpts = __spreadValues2({
+            labelEngine: __spreadValues2(__spreadValues2({}, this._labelOpts.labelEngine), opts.labelEngine)
           }, opts);
         }
         this.label = new Label(this._labelOpts);
       }
-      update(props, map, { style }) {
-        if (!this.label)
+      update(props, map, opts) {
+        const style = opts.style || this.style;
+        if (!this.label || !style)
           return {
             labelEngine: null,
             atlas: [],
@@ -3789,7 +3814,7 @@ var require_text = __commonJS({
           };
         const labelFontFamily = this._labelOpts.fontFamily;
         const labelProps = this.label.update(props, map, {
-          style: __spreadProps(__spreadValues({}, style), {
+          style: __spreadProps2(__spreadValues2({}, style), {
             labelFontFamily
           })
         });
@@ -3801,12 +3826,12 @@ var require_text = __commonJS({
             const glyph = labelProps.atlas[i].glyphs[j];
             const { fontSize, fillColor, strokeColor, strokeWidth } = glyph;
             const gamma = baseGamma / fontSize;
-            const stroke = __spreadProps(__spreadValues({}, glyph), {
+            const stroke = __spreadProps2(__spreadValues2({}, glyph), {
               buffer: 0.75 - strokeWidth / fontSize,
               gamma,
               color: strokeColor
             });
-            const fill = __spreadProps(__spreadValues({}, glyph), {
+            const fill = __spreadProps2(__spreadValues2({}, glyph), {
               buffer: 0.75,
               gamma,
               color: fillColor
@@ -3839,7 +3864,7 @@ function Prepare(opts) {
   this.data = opts.decoded;
   this.zoomCount = opts.zoomEnd - opts.zoomStart;
   this.imageSize = opts.imageSize;
-  this.label = opts.label && new import_text.PrepareText(opts.label);
+  this.label = opts.label && new import_text.PrepareText(__spreadProps(__spreadValues({}, opts.label), { style: this.pixels }));
   this.styleRead = (0, import_read.default)({
     pixels: this.pixels,
     zoomCount: this.zoomCount,
@@ -4158,7 +4183,7 @@ Prepare.prototype._splitSortArea = function(key, zoom) {
   }
 };
 Prepare.prototype.update = function(map) {
-  const { zoom } = map;
+  const zoom = Math.round(map.getZoom());
   var self = this;
   this._splitSort("point", zoom);
   this._splitSort("line", zoom);

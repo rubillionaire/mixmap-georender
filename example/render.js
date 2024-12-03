@@ -2,9 +2,8 @@ var mixmap = require('mixmap')
 var regl = require('regl')
 var prepare = require('../prepare.js')
 var getImagePixels = require('get-image-pixels')
-var decode = require('georender-pack/decode')
+var decode = require('@rubenrodriguez/georender-pack/decode')
 var lpb = require('length-prefixed-buffers/without-count')
-var Text = require('../text.js')
  
 var mix = mixmap(regl, { extensions: [
   'oes_element_index_uint', 'oes_texture_float','EXT_float_blend',
@@ -27,7 +26,7 @@ var draw = {
   lineFillT: map.createDraw(geoRender.lineFill),
   point: map.createDraw(geoRender.points),
   pointT: map.createDraw(geoRender.points),
-  label: {},
+  label: [],
 }
 
 function ready({style, decoded, font}) {
@@ -41,26 +40,9 @@ function ready({style, decoded, font}) {
   })
   var zoom = Math.round(map.getZoom())
   var props = null
-  var text = new Text({ font })
-  update(zoom)
+  update()
   map.on('viewbox', function () {
-    var z = Math.round(map.getZoom())
-    if (zoom !== z) {
-      update(z)
-    } else {
-      /*
-      draw.label.props = {}
-      var tprops = text.update(props, map)
-      var ns = Object.keys(tprops)
-      for (var i = 0; i < ns.length; i++) {
-        var n = ns[i]
-        if (!draw.label[n]) draw.label[n] = map.createDraw(geoRender.labels(n))
-        draw.label[n].props = [tprops[n]]
-      }
-      */
-      map.draw()
-    }
-    zoom = z
+    update()
   })
   function update(zoom) {
     props = prep.update(zoom)
@@ -72,9 +54,12 @@ function ready({style, decoded, font}) {
     draw.lineStrokeT.props = [props.lineT]
     draw.area.props = [props.areaP]
     draw.areaT.props = [props.areaT]
-    //draw.label.props = [text.update(props, map)]
     draw.areaBorder.props = [props.areaBorderP]
     draw.areaBorderT.props = [props.areaBorderT]
+    draw.label = props.label.atlas.map((prepared) => map.createDraw(geoRender.label(prepared)))
+    for (let i = 0; i < draw.label.length; i++) {
+      draw.label[i].props = props.label.glyphs[i]
+    }
     map.draw()
   }
 }

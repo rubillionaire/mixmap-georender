@@ -3,6 +3,9 @@ import { defaultLabelOpts, Label } from 'tiny-label'
 
 export class PrepareText {
   constructor(opts) {
+    this.style = opts.style
+    delete opts.style
+
     this.label = null
     this._labelOpts = {
       ...defaultLabelOpts,
@@ -20,8 +23,10 @@ export class PrepareText {
     this.label = new Label(this._labelOpts)
   }
 
-  update (props, map, { style }) {
-    if (!this.label) return {
+  update (props, map, opts) {
+    const style = opts.style || this.style
+
+    if (!this.label || !style) return {
       labelEngine: null,
       atlas: [],
       glyphs: [],

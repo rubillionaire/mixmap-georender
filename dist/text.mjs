@@ -388,7 +388,6 @@ var require_label_placement_engine = __commonJS({
           }
           var visible = true;
           if (bstart === bend) {
-            console.log("found=true", f.type);
             bbox[0] = Infinity;
             bbox[1] = Infinity;
             bbox[2] = Infinity;
@@ -1276,7 +1275,7 @@ var require_area = __commonJS({
   }
 });
 var require_features = __commonJS({
-  "../georender-style2png/node_modules/@rubenrodriguez/georender-pack/features.json"(exports, module) {
+  "node_modules/@rubenrodriguez/georender-pack/features.json"(exports, module) {
     module.exports = [
       "aerialway.cable_car",
       "aerialway.canopy",
@@ -2522,7 +2521,7 @@ var require_features = __commonJS({
   }
 });
 var require_settings = __commonJS({
-  "../georender-style2png/settings.js"(exports, module) {
+  "node_modules/@rubenrodriguez/georender-style2png/settings.js"(exports, module) {
     var features = require_features();
     module.exports = function() {
       var zoomStart = 1;
@@ -2549,7 +2548,7 @@ var require_settings = __commonJS({
   }
 });
 var require_read = __commonJS({
-  "../georender-style2png/read.js"(exports, module) {
+  "node_modules/@rubenrodriguez/georender-style2png/read.js"(exports, module) {
     module.exports = read;
     function read({ pixels, zoomCount, imageWidth }) {
       return {
@@ -2573,8 +2572,13 @@ var require_read = __commonJS({
       let priority;
       let constraints;
       let strokeWidth;
+      const typeSpecific = {};
       if (key === "point") {
-        let prevFkeyLoops = 3;
+        let prevFkeyLoops = 2;
+        const x3 = xOffset(type, prevFkeyLoops, imageWidth);
+        const i3 = vec4Index(x3, y, imageWidth);
+        typeSpecific.pointSize = pixels[i3 + 0];
+        prevFkeyLoops += 1;
         const x4 = xOffset(type, prevFkeyLoops, imageWidth);
         const i4 = vec4Index(x4, y, imageWidth);
         fillColor[0] = pixels[i4 + 0];
@@ -2652,7 +2656,7 @@ var require_read = __commonJS({
         priority = pixels[i5 + 2];
         constraints = pixels[i5 + 3];
       }
-      return {
+      return __spreadValues2({
         fillColor,
         fillOpacity,
         strokeColor,
@@ -2662,7 +2666,7 @@ var require_read = __commonJS({
         priority,
         constraints,
         strokeWidth
-      };
+      }, typeSpecific);
     }
     function yOffset(key, zoom, zoomCount) {
       switch (key) {
@@ -3155,6 +3159,8 @@ var Label = class {
     const viewboxWidthLon = map.viewbox[2] - map.viewbox[0];
     const viewboxHeightLat = map.viewbox[3] - map.viewbox[1];
     const measureLabels = [];
+    const styleSettings = (0, import_settings.default)();
+    this.styleRead = (0, import_read.default)({ pixels: style.data, zoomCount: styleSettings.zoomCount, imageWidth: styleSettings.imageWidth });
     this._addPoint(map, style, measureLabels, props.pointT);
     this._addPoint(map, style, measureLabels, props.pointP);
     this._addLine(map, style, measureLabels, props.lineT);
@@ -3283,8 +3289,6 @@ var Label = class {
   _addPoint(map, style, labels, p) {
     if (!(p == null ? void 0 : p.positions))
       return;
-    const styleSettings = (0, import_settings.default)();
-    const read = (0, import_read.default)({ pixels: style.data, zoomCount: styleSettings.zoomCount, imageWidth: styleSettings.imageWidth });
     const zoom = Math.round(map.getZoom());
     const y = zoom * 7;
     for (let ix = 0; ix < p.id.length; ix++) {
@@ -3299,7 +3303,6 @@ var Label = class {
       if (map.viewbox[1] > lat || lat > map.viewbox[3])
         continue;
       const type = p.types[id];
-      const pointSize = style.data[(type + (y + 2) * style.width) * 4 + 0];
       const {
         fillColor,
         fillOpacity,
@@ -3308,8 +3311,9 @@ var Label = class {
         priority,
         strokeWidth,
         strokeColor,
-        strokeOpacity
-      } = read.label("point", type, zoom);
+        strokeOpacity,
+        pointSize
+      } = this.styleRead.label("point", type, zoom);
       labels.push({
         type: "point",
         point: [lon, lat],
@@ -3338,8 +3342,6 @@ var Label = class {
       return;
     let start = 0;
     let prev = null;
-    const styleSettings = (0, import_settings.default)();
-    const read = (0, import_read.default)({ pixels: style.data, zoomCount: styleSettings.zoomCount, imageWidth: styleSettings.imageWidth });
     const zoom = Math.round(map.getZoom());
     for (let ix = 0; ix < p.id.length; ix++) {
       const id = p.id[ix];
@@ -3368,7 +3370,7 @@ var Label = class {
         strokeWidth,
         strokeColor,
         strokeOpacity
-      } = read.label("line", type, zoom);
+      } = this.styleRead.label("line", type, zoom);
       labels.push({
         type: "line",
         text,
@@ -3395,8 +3397,6 @@ var Label = class {
       return;
     let start = 0;
     let prev = null;
-    const styleSettings = (0, import_settings.default)();
-    const read = (0, import_read.default)({ pixels: style.data, zoomCount: styleSettings.zoomCount, imageWidth: styleSettings.imageWidth });
     const zoom = Math.round(map.getZoom());
     for (let ix = 0; ix < p.id.length; ix++) {
       const id = p.id[ix];
@@ -3428,7 +3428,7 @@ var Label = class {
         strokeWidth,
         strokeColor,
         strokeOpacity
-      } = read.label("area", type, zoom);
+      } = this.styleRead.label("area", type, zoom);
       labels.push({
         type: "area",
         text,
@@ -3556,6 +3556,8 @@ var Label = class {
 // text.mjs
 var PrepareText = class {
   constructor(opts) {
+    this.style = opts.style;
+    delete opts.style;
     this.label = null;
     this._labelOpts = __spreadProps(__spreadValues({}, defaultLabelOpts), {
       fontFamily: ["Arial"]
@@ -3567,8 +3569,9 @@ var PrepareText = class {
     }
     this.label = new Label(this._labelOpts);
   }
-  update(props, map, { style }) {
-    if (!this.label)
+  update(props, map, opts) {
+    const style = opts.style || this.style;
+    if (!this.label || !style)
       return {
         labelEngine: null,
         atlas: [],

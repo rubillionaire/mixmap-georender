@@ -9,7 +9,7 @@ export default function Prepare(opts) {
   this.data = opts.decoded
   this.zoomCount = opts.zoomEnd - opts.zoomStart
   this.imageSize = opts.imageSize
-  this.label = opts.label && new PrepareText(opts.label)
+  this.label = opts.label && new PrepareText({ ...opts.label, style: this.pixels })
   this.styleRead = Read({
     pixels: this.pixels,
     zoomCount: this.zoomCount,
@@ -339,7 +339,7 @@ Prepare.prototype._splitSortArea = function (key, zoom) {
 }
 
 Prepare.prototype.update = function (map) {
-  const { zoom } = map
+  const zoom = Math.round(map.getZoom())
   var self = this
   this._splitSort('point', zoom)
   this._splitSort('line', zoom)
@@ -370,6 +370,12 @@ function makeIndexes (ids) {
     indexes: indexes,
     idToIndex: idToIndex,
     indexToId: indexToId
+  }
+}
+
+function defined (...args) {
+  for (const arg of args) {
+    if (arg) return arg
   }
 }
 

@@ -66,7 +66,7 @@ var require_int_pack_vec = __commonJS({
       vec2[0] = v % 256;
       return vec2.map((n) => n / 255);
     }
-    function unpackVec2(vec2) {
+    function unpackVec22(vec2) {
       return vec2[0] * 256 + vec2[1];
     }
     function packVec3(value) {
@@ -99,7 +99,7 @@ var require_int_pack_vec = __commonJS({
     }
     module.exports = {
       packVec2,
-      unpackVec2,
+      unpackVec2: unpackVec22,
       packVec3,
       unpackVec3: unpackVec32,
       packVec4,
@@ -117,8 +117,22 @@ var __create2 = Object.create;
 var __defProp2 = Object.defineProperty;
 var __getOwnPropDesc2 = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames2 = Object.getOwnPropertyNames;
+var __getOwnPropSymbols2 = Object.getOwnPropertySymbols;
 var __getProtoOf2 = Object.getPrototypeOf;
 var __hasOwnProp2 = Object.prototype.hasOwnProperty;
+var __propIsEnum2 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp2 = (obj, key, value) => key in obj ? __defProp2(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues2 = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp2.call(b, prop))
+      __defNormalProp2(a, prop, b[prop]);
+  if (__getOwnPropSymbols2)
+    for (var prop of __getOwnPropSymbols2(b)) {
+      if (__propIsEnum2.call(b, prop))
+        __defNormalProp2(a, prop, b[prop]);
+    }
+  return a;
+};
 var __commonJS2 = (cb, mod) => function __require() {
   return mod || (0, cb[__getOwnPropNames2(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
@@ -465,7 +479,6 @@ var require_label_placement_engine = __commonJS2({
           }
           var visible = true;
           if (bstart === bend) {
-            console.log("found=true", f.type);
             bbox[0] = Infinity;
             bbox[1] = Infinity;
             bbox[2] = Infinity;
@@ -1353,7 +1366,7 @@ var require_area = __commonJS2({
   }
 });
 var require_features = __commonJS2({
-  "../georender-style2png/node_modules/@rubenrodriguez/georender-pack/features.json"(exports, module) {
+  "node_modules/@rubenrodriguez/georender-pack/features.json"(exports, module) {
     module.exports = [
       "aerialway.cable_car",
       "aerialway.canopy",
@@ -2599,7 +2612,7 @@ var require_features = __commonJS2({
   }
 });
 var require_settings = __commonJS2({
-  "../georender-style2png/settings.js"(exports, module) {
+  "node_modules/@rubenrodriguez/georender-style2png/settings.js"(exports, module) {
     var features = require_features();
     module.exports = function() {
       var zoomStart = 1;
@@ -2626,7 +2639,7 @@ var require_settings = __commonJS2({
   }
 });
 var require_read = __commonJS2({
-  "../georender-style2png/read.js"(exports, module) {
+  "node_modules/@rubenrodriguez/georender-style2png/read.js"(exports, module) {
     module.exports = read;
     function read({ pixels, zoomCount, imageWidth }) {
       return {
@@ -2650,8 +2663,13 @@ var require_read = __commonJS2({
       let priority;
       let constraints;
       let strokeWidth;
+      const typeSpecific = {};
       if (key === "point") {
-        let prevFkeyLoops = 3;
+        let prevFkeyLoops = 2;
+        const x3 = xOffset(type, prevFkeyLoops, imageWidth);
+        const i3 = vec4Index(x3, y, imageWidth);
+        typeSpecific.pointSize = pixels[i3 + 0];
+        prevFkeyLoops += 1;
         const x4 = xOffset(type, prevFkeyLoops, imageWidth);
         const i4 = vec4Index(x4, y, imageWidth);
         fillColor[0] = pixels[i4 + 0];
@@ -2729,7 +2747,7 @@ var require_read = __commonJS2({
         priority = pixels[i5 + 2];
         constraints = pixels[i5 + 3];
       }
-      return {
+      return __spreadValues2({
         fillColor,
         fillOpacity,
         strokeColor,
@@ -2739,7 +2757,7 @@ var require_read = __commonJS2({
         priority,
         constraints,
         strokeWidth
-      };
+      }, typeSpecific);
     }
     function yOffset(key, zoom, zoomCount) {
       switch (key) {
@@ -2856,7 +2874,6 @@ var Shaders = (map) => {
           position: map.prop("positions"),
           uv: [0, 0, 1, 0, 1, 1, 0, 1]
         },
-        // elements: map.prop('cells'),
         elements: [0, 1, 2, 0, 2, 3],
         primitive: "triangles",
         uniforms: {
@@ -2989,10 +3006,58 @@ var Shaders = (map) => {
 
 // index.mjs
 var size = [0, 0];
-var pickFrag = `
+var pickTypesArr = ["", "point", "line", "area"];
+var pickTypes = pickTypesArr.reduce((accum, curr, index) => {
+  accum[curr] = index;
+  return accum;
+}, {});
+var pickFragWithType = `
                 precision highp float;
 #define GLSLIFY 1
 
+  uniform float uPickType;
+  varying float vindex;
+
+  vec2 pack (float value, vec2 r) {
+  float v = value + 0.0;
+  r.y = mod(v, 256.0);
+  v = floor(v / 256.0);
+  r.x = mod(v, 256.0);
+  return r/255.0;
+}
+
+vec3 pack (float value, vec3 r) {
+  float v = value + 0.0;
+  r.z = mod(v, 256.0);
+  v = floor(v / 256.0);
+  r.y = mod(v, 256.0);
+  v = floor(v / 256.0);
+  r.x = mod(v, 256.0);
+  return r/255.0;
+}
+
+vec4 pack (float value, vec4 r) {
+  float v = value + 0.0;
+  r.w = mod(v, 256.0);
+  v = floor(v / 256.0);
+  r.z = mod(v, 256.0);
+  v = floor(v / 256.0);
+  r.y = mod(v, 256.0);
+  v = floor(v / 256.0);
+  r.x = mod(v, 256.0);
+  return r/255.0;
+}
+
+  void main () {
+    vec2 encoded = pack(vindex, vec2(0.));
+    gl_FragColor = vec4(encoded, uPickType/255.0, 1.0);
+  }
+              `;
+var pickFragNoType = `
+                precision highp float;
+#define GLSLIFY 1
+
+  uniform float uPickType;
   varying float vindex;
 
   vec2 pack (float value, vec2 r) {
@@ -3030,17 +3095,93 @@ vec4 pack (float value, vec4 r) {
     gl_FragColor = vec4(encoded, 1.0);
   }
               `;
+var pickFragTwoWide = `
+                precision highp float;
+#define GLSLIFY 1
+
+  uniform float uPickType;
+  uniform vec2 size;
+  varying float vindex;
+  varying vec2 vpos;
+  varying vec4 vcolor;
+
+  vec2 pack (float value, vec2 r) {
+  float v = value + 0.0;
+  r.y = mod(v, 256.0);
+  v = floor(v / 256.0);
+  r.x = mod(v, 256.0);
+  return r/255.0;
+}
+
+vec3 pack (float value, vec3 r) {
+  float v = value + 0.0;
+  r.z = mod(v, 256.0);
+  v = floor(v / 256.0);
+  r.y = mod(v, 256.0);
+  v = floor(v / 256.0);
+  r.x = mod(v, 256.0);
+  return r/255.0;
+}
+
+vec4 pack (float value, vec4 r) {
+  float v = value + 0.0;
+  r.w = mod(v, 256.0);
+  v = floor(v / 256.0);
+  r.z = mod(v, 256.0);
+  v = floor(v / 256.0);
+  r.y = mod(v, 256.0);
+  v = floor(v / 256.0);
+  r.x = mod(v, 256.0);
+  return r/255.0;
+}
+
+  void main () {
+    float n = mod((vpos.x*0.5+0.5)*size.x, 2.0);
+    vec3 pix1 = pack(vindex, vec3(0.));
+    vec3 pix2 = vec3(uPickType/255.0, 0.0, 0.0);
+    vec3 currentPix = mix(pix1, pix2, step(1.0, n));
+    float opacity = floor(min(vcolor.a, 1.0));
+    gl_FragColor = vec4(currentPix, 1.0);
+  }
+              `;
 var pickfb = {
-  type: "uint8",
   colorType: "uint8",
   colorFormat: "rgba",
   depth: true
 };
-var pickUnpack = (vec4) => {
-  return (0, import_int_pack_vec.unpackVec3)(vec4.slice(0, 3));
+var pickUnpackWithType = (vec4) => {
+  const index = (0, import_int_pack_vec.unpackVec2)(vec4.slice(0, 2));
+  const type = vec4[2];
+  return { index, pickType: pickTypesArr[type] };
+};
+var pickUnpackNoType = (vec4) => {
+  const index = (0, import_int_pack_vec.unpackVec3)(vec4.slice(0, 3));
+  return { index, pickType: null };
+};
+var pickUnpackTwoWide = (vec8) => {
+  console.log(vec8.length);
+  const index = (0, import_int_pack_vec.unpackVec3)(vec8.slice(0, 3));
+  const type = vec8[4];
+  return { index, pickType: pickTypesArr[type] };
 };
 function shaders(map) {
+  const pickFrag = pickFragTwoWide;
   return __spreadValues({
+    pick: (event, cb) => {
+      const x = defined(event.offsetX, event.x, 0);
+      const y = defined(event.offsetY, event.y, 0);
+      const opts = {
+        width: 2,
+        x: x % 2 === 0 ? x : x - 1,
+        y
+      };
+      map.pick(opts, (err, picked) => {
+        if (err)
+          cb(err);
+        else
+          cb(null, pickUnpackTwoWide(picked));
+      });
+    },
     points: {
       frag: `
                 precision highp float;
@@ -3129,7 +3270,7 @@ Point readPoint(sampler2D styleTexture, float featureType, float zoom, vec2 imag
         uniform vec4 viewbox;
         uniform vec2 offset, size, texSize;
         uniform float aspect, zoom;
-        varying float vft, vindex, zindex;
+        varying float vft, vindex, zindex, vPickType;
         varying vec2 vpos;
         varying vec4 vcolor;
         void main () {
@@ -3158,7 +3299,8 @@ Point readPoint(sampler2D styleTexture, float featureType, float zoom, vec2 imag
         texSize: map.prop("imageSize"),
         aspect: function(context) {
           return context.viewportWidth / context.viewportHeight;
-        }
+        },
+        uPickType: pickTypes.point
       },
       attributes: {
         position: [-0.1, 0.1, 0.1, 0.1, 0.1, -0.1, -0.1, -0.1],
@@ -3333,7 +3475,8 @@ Line readLine(sampler2D styleTexture, float featureType, float zoom, vec2 imageS
           return size;
         },
         styleTexture: map.prop("style"),
-        texSize: map.prop("imageSize")
+        texSize: map.prop("imageSize"),
+        uPickType: pickTypes.line
       },
       attributes: {
         position: map.prop("positions"),
@@ -3499,7 +3642,8 @@ Line readLine(sampler2D styleTexture, float featureType, float zoom, vec2 imageS
           return size;
         },
         styleTexture: map.prop("style"),
-        texSize: map.prop("imageSize")
+        texSize: map.prop("imageSize"),
+        uPickType: pickTypes.line
       },
       attributes: {
         position: map.prop("positions"),
@@ -3630,7 +3774,8 @@ Area readArea(sampler2D styleTexture, float featureType, float zoom, vec2 imageS
           return size;
         },
         texSize: map.prop("imageSize"),
-        styleTexture: map.prop("style")
+        styleTexture: map.prop("style"),
+        uPickType: pickTypes.area
       },
       attributes: {
         position: map.prop("positions"),
@@ -3755,7 +3900,8 @@ AreaBorder readAreaBorder(sampler2D styleTexture, float featureType, float zoom,
           return size;
         },
         styleTexture: map.prop("style"),
-        texSize: map.prop("imageSize")
+        texSize: map.prop("imageSize"),
+        uPickType: pickTypes.area
       },
       attributes: {
         position: map.prop("positions"),
@@ -3780,9 +3926,20 @@ AreaBorder readAreaBorder(sampler2D styleTexture, float featureType, float zoom,
     }
   }, Shaders(map));
 }
+function defined() {
+  for (var i = 0; i < arguments.length; i++) {
+    if (arguments[i] !== void 0)
+      return arguments[i];
+  }
+}
 export {
   shaders as default,
-  pickFrag,
-  pickUnpack,
+  pickFragNoType,
+  pickFragTwoWide,
+  pickFragWithType,
+  pickTypes,
+  pickUnpackNoType,
+  pickUnpackTwoWide,
+  pickUnpackWithType,
   pickfb
 };

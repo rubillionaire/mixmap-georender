@@ -1,10 +1,33 @@
 import glsl from 'glslify'
-import { unpackVec3 } from 'int-pack-vec'
+import { unpackVec2, unpackVec3 } from 'int-pack-vec'
 import { Shaders as LabelShaders } from 'tiny-label'
 var size = [0,0]
 
-export const pickFrag = glsl`
+const pickTypesArr = ['', 'point', 'line', 'area']
+export const pickTypes = pickTypesArr.reduce((accum, curr, index) => {
+  accum[curr] = index
+  return accum
+}, {})
+
+
+// max features: 255*255 = 65_025
+export const pickFragWithType = glsl`
   precision highp float;
+  uniform float uPickType;
+  varying float vindex;
+
+  #pragma glslify: pack = require('int-pack-vec/pack.glsl');
+
+  void main () {
+    vec2 encoded = pack(vindex, vec2(0.));
+    gl_FragColor = vec4(encoded, uPickType/255.0, 1.0);
+  }
+`
+
+// max features: 255*255*255 = 16_581_375
+export const pickFragNoType = glsl`
+  precision highp float;
+  uniform float uPickType;
   varying float vindex;
 
   #pragma glslify: pack = require('int-pack-vec/pack.glsl');
@@ -15,8 +38,27 @@ export const pickFrag = glsl`
   }
 `
 
+export const pickFragTwoWide = glsl`
+  precision highp float;
+  uniform float uPickType;
+  uniform vec2 size;
+  varying float vindex;
+  varying vec2 vpos;
+  varying vec4 vcolor;
+
+  #pragma glslify: pack = require('int-pack-vec/pack.glsl');
+
+  void main () {
+    float n = mod((vpos.x*0.5+0.5)*size.x, 2.0);
+    vec3 pix1 = pack(vindex, vec3(0.));
+    vec3 pix2 = vec3(uPickType/255.0, 0.0, 0.0);
+    vec3 currentPix = mix(pix1, pix2, step(1.0, n));
+    float opacity = floor(min(vcolor.a, 1.0));
+    gl_FragColor = vec4(currentPix, 1.0);
+  }
+`
+
 export const pickfb = {
-  type: 'uint8',
   colorType: 'uint8',
   colorFormat: 'rgba',
   depth: true,
@@ -27,12 +69,44 @@ export const pickfb = {
 // - mix.create({ ...opts, pickfb }) using the pickfb options above
 // - using the provided `pickFrag` above
 // returns the unpacked `vindex` value
-export const pickUnpack = (vec4) => {
-  return unpackVec3(vec4.slice(0, 3))
+export const pickUnpackWithType = (vec4) => {
+  const index = unpackVec2(vec4.slice(0, 2))
+  const type = vec4[2]
+  return { index, pickType: pickTypesArr[type] }
+}
+
+export const pickUnpackNoType = (vec4) => {
+  const index = unpackVec3(vec4.slice(0, 3))
+  return { index, pickType: null }
+}
+
+export const pickUnpackTwoWide = (vec8) => {
+  console.log(vec8.length)
+  const index = unpackVec3(vec8.slice(0, 3))
+  const type = vec8[4]
+  return { index, pickType: pickTypesArr[type] }
 }
 
 export default function shaders (map) {
+  const pickFrag = pickFragTwoWide
   return {
+    pick: (event, cb) => {
+      const x = defined(event.offsetX, event.x, 0)
+      const y = defined(event.offsetY, event.y, 0)
+      // since we pick 2px wide we always want to have an even
+      // pixel that we are examining
+      // even pix = pix1 = index
+      // odd pix = pix2 = pickType
+      const opts = {
+        width: 2,
+        x: x % 2 === 0 ? x : x - 1,
+        y: y,
+      }
+      map.pick(opts, (err, picked) => {
+        if (err) cb(err)
+        else cb(null, pickUnpackTwoWide(picked))
+      })
+    },
     points: {
       frag: glsl`
         precision highp float;
@@ -52,7 +126,7 @@ export default function shaders (map) {
         uniform vec4 viewbox;
         uniform vec2 offset, size, texSize;
         uniform float aspect, zoom;
-        varying float vft, vindex, zindex;
+        varying float vft, vindex, zindex, vPickType;
         varying vec2 vpos;
         varying vec4 vcolor;
         void main () {
@@ -82,6 +156,7 @@ export default function shaders (map) {
         aspect: function (context) {
           return context.viewportWidth / context.viewportHeight
         },
+        uPickType: pickTypes.point,
       },
       attributes: {
         position: [-0.1,0.1,0.1,0.1,0.1,-0.1,-0.1,-0.1],
@@ -173,7 +248,8 @@ export default function shaders (map) {
           return size
         },
         styleTexture: map.prop('style'),
-        texSize: map.prop('imageSize')
+        texSize: map.prop('imageSize'),
+        uPickType: pickTypes.line,
       },
       attributes: {
         position: map.prop('positions'),
@@ -256,7 +332,8 @@ export default function shaders (map) {
           return size
         },
         styleTexture: map.prop('style'),
-        texSize: map.prop('imageSize')
+        texSize: map.prop('imageSize'),
+        uPickType: pickTypes.line,
       },
       attributes: {
         position: map.prop('positions'),
@@ -322,7 +399,8 @@ export default function shaders (map) {
           return size
         },
         texSize: map.prop('imageSize'),
-        styleTexture: map.prop('style')
+        styleTexture: map.prop('style'),
+        uPickType: pickTypes.area,
       },
       attributes: {
         position: map.prop('positions'),
@@ -401,7 +479,8 @@ export default function shaders (map) {
           return size
         },
         styleTexture: map.prop('style'),
-        texSize: map.prop('imageSize')
+        texSize: map.prop('imageSize'),
+        uPickType: pickTypes.area,
       },
       attributes: {
         position: map.prop('positions'),
@@ -425,5 +504,11 @@ export default function shaders (map) {
       }
     },
     ...LabelShaders(map),
+  }
+}
+
+function defined () {
+  for (var i = 0; i < arguments.length; i++) {
+    if (arguments[i] !== undefined) return arguments[i]
   }
 }

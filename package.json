@@ -31,14 +31,15 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@rubenrodriguez/qbzf": "^1.1.0",
-    "georender-pack": "^4.1.0",
+    "@rubenrodriguez/georender-style2png": "^6.1.1",
     "glsl-georender-style-texture": "^5.0.0",
     "int-pack-vec": "^1.0.1",
-    "partition-array": "^1.0.0"
+    "partition-array": "^1.0.0",
+    "tiny-label": "^1.0.0"
   },
   "devDependencies": {
     "@rubenrodriguez/esbuild-plugin-glslify": "^1.0.0",
+    "@rubenrodriguez/georender-pack": "^5.1.0",
     "esbuild": "^0.20.2",
     "get-image-pixels": "^1.0.1",
     "glslify": "^7.0.0",
