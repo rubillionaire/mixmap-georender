@@ -16,8 +16,6 @@ export default function Prepare(opts) {
     zoomCount: this.zoomCount,
     imageWidth: this.imageSize[0]
   })
-  var propsLineP = defined(opts.propsLineP, opts.propsLine, identity)
-  var propsArea = typeof opts.propsArea === 'function' ? opts.propsArea : identity
   this.indexes = {
     point: new Uint32Array(this.data.point.types.length),
     line: new Uint32Array(this.data.line.types.length),
@@ -82,6 +80,45 @@ export default function Prepare(opts) {
     this.abdistances.push(abdistx, abdisty)
   }
 
+  // this.attributes = {
+  //   point: {
+  //     id: 1,
+  //     types: 1,
+  //     positions: 2,
+  //   },
+  //   line: {
+  //     id: 1,
+  //     types: 1,
+  //     positions: 2,
+  //     normals: 2,
+  //     distances: 2,
+  //   },
+  //   area: {
+  //     id: 1,
+  //     types: 1,
+  //     positions: 2,
+  //     normals: 2,
+  //     distances: 2,
+  //   },
+  // }
+
+  // const uniforms = ['labels', 'style', 'imageSize']
+  // const indicies = ['indexes', 'indexToId', 'idToIndex']
+  // this.noSpreadKeys = uniforms.concat(indicies)
+
+  // additional attributes that a use can expand core georender data
+  // with. this comes in the shape of attrKey : size, for example, if we
+  // have population values on the point, we would define that as 
+  // this.attributes.point.population = 1
+  // if it were a vec2 we were going to save, the value would be 2
+  // 3 for vec3 and 4 for vec4.
+  this.attributes = {
+    point: {},
+    line: {},
+    area: {},
+    areaBorder: {},
+  }
+
   this.props = {
     point: {
       positions: null,
@@ -142,7 +179,7 @@ export default function Prepare(opts) {
       style: this.style,
       imageSize: this.imageSize,
     },
-    lineP: propsLineP({
+    lineP: {
       positions: null,
       types: null,
       id: null,
@@ -154,8 +191,8 @@ export default function Prepare(opts) {
       labels: this.data.line.labels,
       style: this.style,
       imageSize: this.imageSize,
-    }),
-    area: propsArea({
+    },
+    area: {
       positions: this.data.area.positions,
       types: this.data.area.types,
       indexes: areaIndexes.indexes,
@@ -166,7 +203,7 @@ export default function Prepare(opts) {
       labels: this.data.area.labels,
       style: this.style,
       imageSize: this.imageSize,
-    }),
+    },
     areaT: {
       positions: this.data.area.positions,
       types: this.data.area.types,
@@ -236,6 +273,8 @@ export default function Prepare(opts) {
       glyphs: [],
     }
   }
+
+  if (typeof opts.extend === 'function') opts.extend(this.attributes, this.props)
 }
 Prepare.prototype._splitSort = function (key, zoom) {
   var self = this
@@ -268,6 +307,8 @@ Prepare.prototype._splitSort = function (key, zoom) {
     self.props[tkey].distances = []
     self.props[pkey].distances = []
   }
+  const spreadExtendedForKey = categorizeAttributes(this.attributes[key])
+  const spreadExtendedTkey = spreadExtendedForKey(tkey)
   for (var i=0; i<self.indexes[tkey].length; i++) {
     self.props[tkey].id.push(self.data[key].ids[self.indexes[tkey][i]])
     self.props[tkey].types.push(self.data[key].types[self.indexes[tkey][i]])
@@ -287,7 +328,9 @@ Prepare.prototype._splitSort = function (key, zoom) {
         self.props[tkey].distances.push(this.abdistances[self.indexes[tkey][i]*2+1])
       }
     }
+    spreadExtendedTkey(i)
   }
+  const spreadExtendedPkey = spreadExtendedForKey(pkey)
   for (var i=0; i<self.indexes[pkey].length; i++) {
     self.props[pkey].id.push(self.data[key].ids[self.indexes[pkey][i]])
     self.props[pkey].types.push(self.data[key].types[self.indexes[pkey][i]])
@@ -307,6 +350,7 @@ Prepare.prototype._splitSort = function (key, zoom) {
         self.props[pkey].distances.push(this.abdistances[self.indexes[pkey][i]*2+1])
       }
     }
+    spreadExtendedPkey(i)
   }
   //figure out area line indexes
   var tindexes = makeIndexes(self.props[tkey].id)
@@ -317,6 +361,65 @@ Prepare.prototype._splitSort = function (key, zoom) {
   self.props[pkey].indexes = pindexes.indexes
   self.props[pkey].indexToId = pindexes.indexToId
   self.props[pkey].idToIndex = pindexes.idToIndex
+
+  // extended attributes
+  function categorizeAttributes (attr) {
+    const len1attr = []
+    const len2attr = []
+    const len3attr = []
+    const len4attr = []
+
+    for (const attrKey in attr) {
+      self.props[tkey][attrKey] = []
+      self.props[pkey][attrKey] = []
+
+      const len = attr[attrKey]
+      if (len === 1) len1attr.push(attrKey)
+      if (len === 2) len2attr.push(attrKey)
+      if (len === 3) len3attr.push(attrKey)
+      if (len === 4) len4attr.push(attrKey)
+    }
+
+    const len1spread = (ckey) => (i) => {
+      for (const attrKey of len1attr) {
+        self.props[ckey][attrKey].push(self.data[key][attrKey][self.indexes[ckey][i]])
+      }
+    }
+    const len2spread = (ckey) => (i) => {
+      for (const attrKey of len2attr) {
+        self.props[ckey][attrKey].push(self.data[key][attrKey][self.indexes[ckey][i]*2])
+        self.props[ckey][attrKey].push(self.data[key][attrKey][self.indexes[ckey][i]*2+1])
+      }
+    }
+    const len3spread = (ckey) => (i) => {
+      for (const attrKey of len3attr) {
+        self.props[ckey][attrKey].push(self.data[key][attrKey][self.indexes[ckey][i]*3])
+        self.props[ckey][attrKey].push(self.data[key][attrKey][self.indexes[ckey][i]*3+1])
+        self.props[ckey][attrKey].push(self.data[key][attrKey][self.indexes[ckey][i]*3+2])
+      }
+    }
+    const len4spread = (ckey) => (i) => {
+      for (const attrKey of len4attr) {
+        self.props[ckey][attrKey].push(self.data[key][attrKey][self.indexes[ckey][i]*4])
+        self.props[ckey][attrKey].push(self.data[key][attrKey][self.indexes[ckey][i]*4+1])
+        self.props[ckey][attrKey].push(self.data[key][attrKey][self.indexes[ckey][i]*4+2])
+        self.props[ckey][attrKey].push(self.data[key][attrKey][self.indexes[ckey][i]*4+3])
+      }
+    }
+
+    return (ckey) => {
+      const spreaders = []
+      if (len1attr.length > 0) spreaders.push(len1spread(ckey))
+      if (len2attr.length > 0) spreaders.push(len2spread(ckey))
+      if (len3attr.length > 0) spreaders.push(len3spread(ckey))
+      if (len4attr.length > 0) spreaders.push(len4spread(ckey))
+      return (i) => {
+        for (const spreader of spreaders) {
+          spreader(i)
+        }
+      }
+    }
+  }
 }
 
 Prepare.prototype._splitSortArea = function (key, zoom) {
