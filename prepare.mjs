@@ -245,14 +245,13 @@ Prepare.prototype._splitSort = function (key, zoom) {
     var opacity = self.styleRead.opacity(key, self.data[key].types[i], zoom)
     return opacity > 100
   })
-
   this.indexes[tkey] = this.indexes[key].subarray(0, splitT)
   this.indexes[pkey] = this.indexes[key].subarray(splitT)
   this.indexes[tkey].sort(function (a, b) {
     var xa = self.data[key].types[a]
     var xb = self.data[key].types[b]
-    var zindexa = self.pixels[(xa + (zoom * 2 + 1) * self.imageSize[0])*4 + 1]
-    var zindexb = self.pixels[(xb + (zoom * 2 + 1) * self.imageSize[0])*4 + 1]
+    var zindexa = self.styleRead.zindex(key, xa, zoom)
+    var zindexb = self.styleRead.zindex(key, xb, zoom)
     return zindexa - zindexb
   })
   self.props[tkey].id = []

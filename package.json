@@ -31,7 +31,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@rubenrodriguez/georender-style2png": "^6.1.1",
+    "@rubenrodriguez/georender-style2png": "^6.2.0",
     "glsl-georender-style-texture": "^5.0.0",
     "int-pack-vec": "^1.0.1",
     "partition-array": "^1.0.0",

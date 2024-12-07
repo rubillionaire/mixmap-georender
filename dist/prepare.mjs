@@ -71,13 +71,38 @@ var require_read = __commonJS({
     function read({ pixels, zoomCount, imageWidth }) {
       return {
         opacity: (key, type, zoom) => opacity(key, type, zoom, { pixels, imageWidth, zoomCount }),
-        label: (key, type, zoom) => label(key, type, zoom, { pixels, imageWidth, zoomCount })
+        label: (key, type, zoom) => label(key, type, zoom, { pixels, imageWidth, zoomCount }),
+        zindex: (key, type, zoom) => zindex(key, type, zoom, { pixels, imageWidth, zoomCount })
       };
     }
     function opacity(key, type, zoom, { pixels, imageWidth, zoomCount }) {
       const y = yOffset(key, zoom, zoomCount);
       const index = (type + y * imageWidth) * 4 + 3;
       return pixels[index];
+    }
+    function zindex(key, type, zoom, { pixels, imageWidth, zoomCount }) {
+      const y = yOffset(key, zoom, zoomCount);
+      if (key === "point") {
+        const prevFkeyLoops = 2;
+        const x3 = xOffset(type, prevFkeyLoops, imageWidth);
+        const i3 = vec4Index(x3, y, imageWidth);
+        const zindex2 = pixels[i3 + 3];
+        return zindex2;
+      }
+      if (key === "line") {
+        const prevFkeyLoops = 3;
+        const x4 = xOffset(type, prevFkeyLoops, imageWidth);
+        const i4 = vec4Index(x4, y, imageWidth);
+        const zindex2 = pixels[i4 + 3];
+        return zindex2;
+      }
+      if (key === "area") {
+        const prevFkeyLoops = 1;
+        const x2 = xOffset(type, prevFkeyLoops, imageWidth);
+        const i3 = vec4Index(x2, y, imageWidth);
+        const zindex2 = pixels[i3 + 0];
+        return zindex2;
+      }
     }
     function label(key, type, zoom, { pixels, imageWidth, zoomCount }) {
       const y = yOffset(key, zoom, zoomCount);
@@ -4101,8 +4126,8 @@ Prepare.prototype._splitSort = function(key, zoom) {
   this.indexes[tkey].sort(function(a, b) {
     var xa = self.data[key].types[a];
     var xb = self.data[key].types[b];
-    var zindexa = self.pixels[(xa + (zoom * 2 + 1) * self.imageSize[0]) * 4 + 1];
-    var zindexb = self.pixels[(xb + (zoom * 2 + 1) * self.imageSize[0]) * 4 + 1];
+    var zindexa = self.styleRead.zindex(key, xa, zoom);
+    var zindexb = self.styleRead.zindex(key, xb, zoom);
     return zindexa - zindexb;
   });
   self.props[tkey].id = [];
