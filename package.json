@@ -41,6 +41,7 @@
     "@rubenrodriguez/esbuild-plugin-glslify": "^1.0.0",
     "@rubenrodriguez/georender-pack": "^5.1.0",
     "esbuild": "^0.20.2",
+    "esbuild-plugin-path-alias": "^1.0.7",
     "get-image-pixels": "^1.0.1",
     "glslify": "^7.0.0",
     "length-prefixed-buffers": "^1.0.0",

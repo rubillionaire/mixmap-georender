@@ -1,6 +1,8 @@
 import glsl from 'glslify'
 import { unpackVec2, unpackVec3 } from 'int-pack-vec'
 import { Shaders as LabelShaders } from 'tiny-label'
+import defined from '@/lib/defined'
+
 var size = [0,0]
 
 const pickTypesArr = ['', 'point', 'line', 'area']
@@ -81,7 +83,6 @@ export const pickUnpackNoType = (vec4) => {
 }
 
 export const pickUnpackTwoWide = (vec8) => {
-  console.log(vec8.length)
   const index = unpackVec3(vec8.slice(0, 3))
   const type = vec8[4]
   return { index, pickType: pickTypesArr[type] }
@@ -504,11 +505,5 @@ export default function shaders (map) {
       }
     },
     ...LabelShaders(map),
-  }
-}
-
-function defined () {
-  for (var i = 0; i < arguments.length; i++) {
-    if (arguments[i] !== undefined) return arguments[i]
   }
 }

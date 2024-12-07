@@ -130,7 +130,7 @@ module.exports = __toCommonJS(mixmap_georender_exports);
 var import_glslify = __toESM(require_browser(), 1);
 var import_int_pack_vec = __toESM(require_int_pack_vec(), 1);
 
-// ../tiny-label/dist/index.mjs
+// node_modules/tiny-label/dist/index.mjs
 var __create2 = Object.create;
 var __defProp2 = Object.defineProperty;
 var __getOwnPropDesc2 = Object.getOwnPropertyDescriptor;
@@ -497,6 +497,7 @@ var require_label_placement_engine = __commonJS2({
           }
           var visible = true;
           if (bstart === bend) {
+            console.log("found=true", f.type);
             bbox[0] = Infinity;
             bbox[1] = Infinity;
             bbox[2] = Infinity;
@@ -2892,6 +2893,7 @@ var Shaders = (map) => {
           position: map.prop("positions"),
           uv: [0, 0, 1, 0, 1, 1, 0, 1]
         },
+        // elements: map.prop('cells'),
         elements: [0, 1, 2, 0, 2, 3],
         primitive: "triangles",
         uniforms: {
@@ -3021,6 +3023,14 @@ var Shaders = (map) => {
     }
   };
 };
+
+// lib/defined.mjs
+function defined() {
+  for (var i = 0; i < arguments.length; i++) {
+    if (arguments[i] !== void 0)
+      return arguments[i];
+  }
+}
 
 // index.mjs
 var size = [0, 0];
@@ -3177,7 +3187,6 @@ var pickUnpackNoType = (vec4) => {
   return { index, pickType: null };
 };
 var pickUnpackTwoWide = (vec8) => {
-  console.log(vec8.length);
   const index = (0, import_int_pack_vec.unpackVec3)(vec8.slice(0, 3));
   const type = vec8[4];
   return { index, pickType: pickTypesArr[type] };
@@ -3943,10 +3952,4 @@ AreaBorder readAreaBorder(sampler2D styleTexture, float featureType, float zoom,
       }
     }
   }, Shaders(map));
-}
-function defined() {
-  for (var i = 0; i < arguments.length; i++) {
-    if (arguments[i] !== void 0)
-      return arguments[i];
-  }
 }

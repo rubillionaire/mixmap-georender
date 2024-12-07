@@ -40,7 +40,7 @@ __export(text_exports, {
 });
 module.exports = __toCommonJS(text_exports);
 
-// ../tiny-label/dist/index.mjs
+// node_modules/tiny-label/dist/index.mjs
 var __create = Object.create;
 var __defProp2 = Object.defineProperty;
 var __defProps2 = Object.defineProperties;
@@ -410,6 +410,7 @@ var require_label_placement_engine = __commonJS({
           }
           var visible = true;
           if (bstart === bend) {
+            console.log("found=true", f.type);
             bbox[0] = Infinity;
             bbox[1] = Infinity;
             bbox[2] = Infinity;

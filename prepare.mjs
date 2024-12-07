@@ -1,6 +1,7 @@
 import partition from 'partition-array'
 import Read from '@rubenrodriguez/georender-style2png/read'
 import { PrepareText } from './text'
+import defined from '@/lib/defined'
 
 export default function Prepare(opts) {
   if (!(this instanceof Prepare)) return new Prepare(opts)
@@ -15,7 +16,7 @@ export default function Prepare(opts) {
     zoomCount: this.zoomCount,
     imageWidth: this.imageSize[0]
   })
-  var propsLineP = typeof opts.propsLineP === 'function' ? opts.propsLineP : identity
+  var propsLineP = defined(opts.propsLineP, opts.propsLine, identity)
   var propsArea = typeof opts.propsArea === 'function' ? opts.propsArea : identity
   this.indexes = {
     point: new Uint32Array(this.data.point.types.length),
@@ -370,12 +371,6 @@ function makeIndexes (ids) {
     indexes: indexes,
     idToIndex: idToIndex,
     indexToId: indexToId
-  }
-}
-
-function defined (...args) {
-  for (const arg of args) {
-    if (arg) return arg
   }
 }
 

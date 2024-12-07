@@ -69,9 +69,9 @@ var require_partition = __commonJS({
   }
 });
 
-// ../georender-style2png/read.js
+// node_modules/@rubenrodriguez/georender-style2png/read.js
 var require_read = __commonJS({
-  "../georender-style2png/read.js"(exports, module2) {
+  "node_modules/@rubenrodriguez/georender-style2png/read.js"(exports, module2) {
     module2.exports = read;
     function read({ pixels, zoomCount, imageWidth }) {
       return {
@@ -625,6 +625,7 @@ var require_text = __commonJS({
               }
               var visible = true;
               if (bstart === bend) {
+                console.log("found=true", f.type);
                 bbox[0] = Infinity;
                 bbox[1] = Infinity;
                 bbox[2] = Infinity;
@@ -3856,6 +3857,16 @@ module.exports = __toCommonJS(prepare_exports);
 var import_partition_array = __toESM(require_partition(), 1);
 var import_read = __toESM(require_read(), 1);
 var import_text = __toESM(require_text(), 1);
+
+// lib/defined.mjs
+function defined() {
+  for (var i = 0; i < arguments.length; i++) {
+    if (arguments[i] !== void 0)
+      return arguments[i];
+  }
+}
+
+// prepare.mjs
 function Prepare(opts) {
   if (!(this instanceof Prepare))
     return new Prepare(opts);
@@ -3870,7 +3881,7 @@ function Prepare(opts) {
     zoomCount: this.zoomCount,
     imageWidth: this.imageSize[0]
   });
-  var propsLineP = typeof opts.propsLineP === "function" ? opts.propsLineP : identity;
+  var propsLineP = defined(opts.propsLineP, opts.propsLine, identity);
   var propsArea = typeof opts.propsArea === "function" ? opts.propsArea : identity;
   this.indexes = {
     point: new Uint32Array(this.data.point.types.length),

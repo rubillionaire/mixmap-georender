@@ -1,4 +1,5 @@
 import { glslifyInline } from '@rubenrodriguez/esbuild-plugin-glslify'
+import aliasPlugin from 'esbuild-plugin-path-alias'
 
 export const esm = {
   entryPoints: ['index.mjs', 'prepare.mjs', 'text.mjs'],
@@ -11,6 +12,9 @@ export const esm = {
   outExtension: { '.js': '.mjs' },
   plugins: [
     glslifyInline(),
+    aliasPlugin({
+      '@': process.cwd(),
+    }),
   ],
 }
 

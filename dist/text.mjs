@@ -18,7 +18,7 @@ var __spreadValues = (a, b) => {
 };
 var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
 
-// ../tiny-label/dist/index.mjs
+// node_modules/tiny-label/dist/index.mjs
 var __create = Object.create;
 var __defProp2 = Object.defineProperty;
 var __defProps2 = Object.defineProperties;
@@ -388,6 +388,7 @@ var require_label_placement_engine = __commonJS({
           }
           var visible = true;
           if (bstart === bend) {
+            console.log("found=true", f.type);
             bbox[0] = Infinity;
             bbox[1] = Infinity;
             bbox[2] = Infinity;
