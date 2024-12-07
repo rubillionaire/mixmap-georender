@@ -80,32 +80,6 @@ export default function Prepare(opts) {
     this.abdistances.push(abdistx, abdisty)
   }
 
-  // this.attributes = {
-  //   point: {
-  //     id: 1,
-  //     types: 1,
-  //     positions: 2,
-  //   },
-  //   line: {
-  //     id: 1,
-  //     types: 1,
-  //     positions: 2,
-  //     normals: 2,
-  //     distances: 2,
-  //   },
-  //   area: {
-  //     id: 1,
-  //     types: 1,
-  //     positions: 2,
-  //     normals: 2,
-  //     distances: 2,
-  //   },
-  // }
-
-  // const uniforms = ['labels', 'style', 'imageSize']
-  // const indicies = ['indexes', 'indexToId', 'idToIndex']
-  // this.noSpreadKeys = uniforms.concat(indicies)
-
   // additional attributes that a use can expand core georender data
   // with. this comes in the shape of attrKey : size, for example, if we
   // have population values on the point, we would define that as 
