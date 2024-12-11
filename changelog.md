@@ -18,4 +18,6 @@
 
 - [package] patch: install budo as dev dependencies to run the example
 
+- [package] patch: install @rubenrodriguez/mixmap as dev dependencies to run the example
+
 - [example] rework example using @rubenrodriguez scoped packages, and data produced within. rendering and picking work. although the label placement engine within tiny-label can definitely use some work.
