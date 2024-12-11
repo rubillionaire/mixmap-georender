@@ -1,6 +1,6 @@
 {
   "name": "@rubenrodriguez/mixmap-georender",
-  "version": "5.0.0",
+  "version": "6.0.0",
   "description": "a mixmap layer for rendering peermaps georender data",
   "type": "module",
   "main": "dist/index.cjs",
