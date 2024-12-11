@@ -2,9 +2,8 @@ var mixmap = require('mixmap')
 var regl = require('regl')
 var prepare = require('../prepare.js')
 var getImagePixels = require('get-image-pixels')
-var decode = require('georender-pack/decode')
+var decode = require('@rubenrodriguez/georender-pack/decode')
 var lpb = require('length-prefixed-buffers/without-count')
-var Text = require('../text.js')
  
 var mix = mixmap(regl, { extensions: [
   'oes_element_index_uint', 'EXT_float_blend', 'angle_instanced_arrays'] })
@@ -28,7 +27,7 @@ var draw = {
   lineFillT: map.createDraw(geoRender.lineFill),
   point: map.createDraw(geoRender.points),
   pointT: map.createDraw(geoRender.points),
-  label: map.createDraw(geoRender.labels),
+  label: [],
 }
 window.draw = draw
 
@@ -40,21 +39,13 @@ function ready({style, decoded}) {
     zoomEnd: 21,
     decoded
   })
-  var zoom = Math.round(map.getZoom())
   var props = null
-  var text = new Text
-  update(zoom)
+  update()
   map.on('viewbox', function () {
-    var z = Math.round(map.getZoom())
-    if (zoom !== z) {
-      update(z)
-    } else {
-      draw.label.props = [text.update(props, map)]
-    }
-    zoom = z
+    update()
   })
-  function update(zoom) {
-    props = prep.update(zoom)
+  function update() {
+    props = prep.update(map)
     //console.log('areaP props: ', props.areaP.indexes, 'areaT props: ', props.areaT.indexes)
     draw.point.props = [props.pointP]
     draw.pointT.props = [props.pointT]
@@ -66,7 +57,10 @@ function ready({style, decoded}) {
     draw.areaT.props = [props.areaT]
     draw.areaBorder.props = [props.areaBorderP]
     draw.areaBorderT.props = [props.areaBorderT]
-    draw.label.props = [text.update(props, map)]
+    draw.label = props.label.atlas.map((prepared) => map.createDraw(geoRender.label(prepared)))
+    for (let i = 0; i < draw.label.length; i++) {
+      draw.label[i].props = props.label.glyphs[i]
+    }
     map.draw()
   }
   window.addEventListener('click', function (ev) {

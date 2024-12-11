@@ -1,16 +1,28 @@
-var partition = require('partition-array')
-var featureList = require('georender-pack/features.json')
-var featureCount = featureList.length
+import partition from 'partition-array'
+import Read from '@rubenrodriguez/georender-style2png/read'
+import { PrepareText } from './text'
+import defined from '@/lib/defined'
 
-module.exports = Prepare
-
-function Prepare(opts) {
+export default function Prepare(opts) {
   if (!(this instanceof Prepare)) return new Prepare(opts)
   this.style = opts.styleTexture
   this.pixels = opts.stylePixels
   this.data = opts.decoded
   this.zoomCount = opts.zoomEnd - opts.zoomStart
   this.imageSize = opts.imageSize
+  this.label = opts.label && new PrepareText({
+    ...opts.label,
+    style: {
+      data: opts.stylePixels,
+      width: opts.imageSize[0],
+      height: opts.imageSize[1],
+    },
+  })
+  this.styleRead = Read({
+    pixels: this.pixels,
+    zoomCount: this.zoomCount,
+    imageWidth: this.imageSize[0]
+  })
   this.indexes = {
     point: new Uint32Array(this.data.point.types.length),
     line: new Uint32Array(this.data.line.types.length),
@@ -75,6 +87,19 @@ function Prepare(opts) {
     this.abdistances.push(abdistx, abdisty)
   }
 
+  // additional attributes that a use can expand core georender data
+  // with. this comes in the shape of attrKey : size, for example, if we
+  // have population values on the point, we would define that as 
+  // this.attributes.point.population = 1
+  // if it were a vec2 we were going to save, the value would be 2
+  // 3 for vec3 and 4 for vec4.
+  this.attributes = {
+    point: {},
+    line: {},
+    area: {},
+    areaBorder: {},
+  }
+
   this.props = {
     point: {
       positions: null,
@@ -86,7 +111,6 @@ function Prepare(opts) {
       labels: this.data.point.labels,
       style: this.style,
       imageSize: this.imageSize,
-      featureCount
     },
     pointT: {
       positions: null,
@@ -98,7 +122,7 @@ function Prepare(opts) {
       labels: this.data.point.labels,
       style: this.style,
       imageSize: this.imageSize,
-      featureCount
+      pickType: 'pointT',
     },
     pointP: {
       positions: null,
@@ -110,7 +134,7 @@ function Prepare(opts) {
       labels: this.data.point.labels,
       style: this.style,
       imageSize: this.imageSize,
-      featureCount
+      pickType: 'pointP',
     },
     line: {
       positions: null,
@@ -124,7 +148,6 @@ function Prepare(opts) {
       labels: this.data.line.labels,
       style: this.style,
       imageSize: this.imageSize,
-      featureCount,
     },
     lineT: {
       positions: null,
@@ -138,7 +161,7 @@ function Prepare(opts) {
       labels: this.data.line.labels,
       style: this.style,
       imageSize: this.imageSize,
-      featureCount
+      pickType: 'lineT',
     },
     lineP: {
       positions: null,
@@ -152,7 +175,7 @@ function Prepare(opts) {
       labels: this.data.line.labels,
       style: this.style,
       imageSize: this.imageSize,
-      featureCount
+      pickType: 'lineP',
     },
     area: {
       positions: this.data.area.positions,
@@ -165,7 +188,6 @@ function Prepare(opts) {
       labels: this.data.area.labels,
       style: this.style,
       imageSize: this.imageSize,
-      featureCount
     },
     areaT: {
       positions: this.data.area.positions,
@@ -178,7 +200,7 @@ function Prepare(opts) {
       labels: this.data.area.labels,
       style: this.style,
       imageSize: this.imageSize,
-      featureCount
+      pickType: 'areaT',
     },
     areaP: {
       positions: this.data.area.positions,
@@ -191,7 +213,7 @@ function Prepare(opts) {
       labels: this.data.area.labels,
       style: this.style,
       imageSize: this.imageSize,
-      featureCount
+      pickType: 'areaP',
     },
     areaBorder: {
       positions: null,
@@ -207,7 +229,6 @@ function Prepare(opts) {
       idToIndex: null,
       style: this.style,
       imageSize: this.imageSize,
-      featureCount,
     },
     areaBorderT: {
       positions: null,
@@ -220,7 +241,7 @@ function Prepare(opts) {
       idToIndex: null,
       style: this.style,
       imageSize: this.imageSize,
-      featureCount
+      pickType: 'areaT',
     },
     areaBorderP: {
       positions: null,
@@ -233,26 +254,32 @@ function Prepare(opts) {
       idToIndex: null,
       style: this.style,
       imageSize: this.imageSize,
-      featureCount
+      pickType: 'areaP',
     },
+    label: {
+      labelEngine: null,
+      atlas: [],
+      glyphs: [],
+    }
   }
+
+  if (typeof opts.extend === 'function') opts.extend(this.attributes, this.props)
 }
 Prepare.prototype._splitSort = function (key, zoom) {
   var self = this
   var tkey = key+'T'
   var pkey = key+'P'
   var splitT = partition(this.indexes[key], function (i) {
-    var opacity = self.getOpacity(key, self.data[key].types[i], zoom)
+    var opacity = self.styleRead.opacity(key, self.data[key].types[i], zoom)
     return opacity > 100
   })
-
   this.indexes[tkey] = this.indexes[key].subarray(0, splitT)
   this.indexes[pkey] = this.indexes[key].subarray(splitT)
   this.indexes[tkey].sort(function (a, b) {
     var xa = self.data[key].types[a]
     var xb = self.data[key].types[b]
-    var zindexa = self.pixels[(xa + (zoom * 2 + 1) * self.imageSize[0])*4 + 1]
-    var zindexb = self.pixels[(xb + (zoom * 2 + 1) * self.imageSize[0])*4 + 1]
+    var zindexa = self.styleRead.zindex(key, xa, zoom)
+    var zindexb = self.styleRead.zindex(key, xb, zoom)
     return zindexa - zindexb
   })
   self.props[tkey].id = []
@@ -269,6 +296,8 @@ Prepare.prototype._splitSort = function (key, zoom) {
     self.props[tkey].distances = []
     self.props[pkey].distances = []
   }
+  const spreadExtendedForKey = categorizeAttributes(this.attributes[key])
+  const spreadExtendedTkey = spreadExtendedForKey(tkey)
   for (var i=0; i<self.indexes[tkey].length; i++) {
     self.props[tkey].id.push(self.data[key].ids[self.indexes[tkey][i]])
     self.props[tkey].types.push(self.data[key].types[self.indexes[tkey][i]])
@@ -288,7 +317,9 @@ Prepare.prototype._splitSort = function (key, zoom) {
         self.props[tkey].distances.push(this.abdistances[self.indexes[tkey][i]*2+1])
       }
     }
+    spreadExtendedTkey(i)
   }
+  const spreadExtendedPkey = spreadExtendedForKey(pkey)
   for (var i=0; i<self.indexes[pkey].length; i++) {
     self.props[pkey].id.push(self.data[key].ids[self.indexes[pkey][i]])
     self.props[pkey].types.push(self.data[key].types[self.indexes[pkey][i]])
@@ -308,6 +339,7 @@ Prepare.prototype._splitSort = function (key, zoom) {
         self.props[pkey].distances.push(this.abdistances[self.indexes[pkey][i]*2+1])
       }
     }
+    spreadExtendedPkey(i)
   }
   //figure out area line indexes
   var tindexes = makeIndexes(self.props[tkey].id)
@@ -318,6 +350,65 @@ Prepare.prototype._splitSort = function (key, zoom) {
   self.props[pkey].indexes = pindexes.indexes
   self.props[pkey].indexToId = pindexes.indexToId
   self.props[pkey].idToIndex = pindexes.idToIndex
+
+  // extended attributes
+  function categorizeAttributes (attr) {
+    const len1attr = []
+    const len2attr = []
+    const len3attr = []
+    const len4attr = []
+
+    for (const attrKey in attr) {
+      self.props[tkey][attrKey] = []
+      self.props[pkey][attrKey] = []
+
+      const len = attr[attrKey]
+      if (len === 1) len1attr.push(attrKey)
+      if (len === 2) len2attr.push(attrKey)
+      if (len === 3) len3attr.push(attrKey)
+      if (len === 4) len4attr.push(attrKey)
+    }
+
+    const len1spread = (ckey) => (i) => {
+      for (const attrKey of len1attr) {
+        self.props[ckey][attrKey].push(self.data[key][attrKey][self.indexes[ckey][i]])
+      }
+    }
+    const len2spread = (ckey) => (i) => {
+      for (const attrKey of len2attr) {
+        self.props[ckey][attrKey].push(self.data[key][attrKey][self.indexes[ckey][i]*2])
+        self.props[ckey][attrKey].push(self.data[key][attrKey][self.indexes[ckey][i]*2+1])
+      }
+    }
+    const len3spread = (ckey) => (i) => {
+      for (const attrKey of len3attr) {
+        self.props[ckey][attrKey].push(self.data[key][attrKey][self.indexes[ckey][i]*3])
+        self.props[ckey][attrKey].push(self.data[key][attrKey][self.indexes[ckey][i]*3+1])
+        self.props[ckey][attrKey].push(self.data[key][attrKey][self.indexes[ckey][i]*3+2])
+      }
+    }
+    const len4spread = (ckey) => (i) => {
+      for (const attrKey of len4attr) {
+        self.props[ckey][attrKey].push(self.data[key][attrKey][self.indexes[ckey][i]*4])
+        self.props[ckey][attrKey].push(self.data[key][attrKey][self.indexes[ckey][i]*4+1])
+        self.props[ckey][attrKey].push(self.data[key][attrKey][self.indexes[ckey][i]*4+2])
+        self.props[ckey][attrKey].push(self.data[key][attrKey][self.indexes[ckey][i]*4+3])
+      }
+    }
+
+    return (ckey) => {
+      const spreaders = []
+      if (len1attr.length > 0) spreaders.push(len1spread(ckey))
+      if (len2attr.length > 0) spreaders.push(len2spread(ckey))
+      if (len3attr.length > 0) spreaders.push(len3spread(ckey))
+      if (len4attr.length > 0) spreaders.push(len4spread(ckey))
+      return (i) => {
+        for (const spreader of spreaders) {
+          spreader(i)
+        }
+      }
+    }
+  }
 }
 
 Prepare.prototype._splitSortArea = function (key, zoom) {
@@ -329,7 +420,7 @@ Prepare.prototype._splitSortArea = function (key, zoom) {
   var cells = self.data[key].cells
   for (var i=0; i<cells.length; i+=3) {
     var type = self.data[key].types[cells[i]]
-    var opacity = self.getOpacity(key, type, zoom)
+    var opacity = self.styleRead.opacity(key, type, zoom)
     if (opacity < 100) {
       self.props[tkey].cells.push(cells[i], cells[i+1], cells[i+2])
     }
@@ -339,30 +430,22 @@ Prepare.prototype._splitSortArea = function (key, zoom) {
   }
 }
 
-Prepare.prototype.update = function (zoom) {
+Prepare.prototype.update = function (map) {
+  const zoom = Math.round(map.getZoom())
   var self = this
   this._splitSort('point', zoom)
   this._splitSort('line', zoom)
   this._splitSort('areaBorder', zoom)
   this._splitSortArea('area', zoom)
+  if (this.label) {
+    const style = {
+      data: this.pixels,
+      width: this.imageSize[0],
+      height: this.imageSize[1],
+    }
+    this.props.label = this.label.update(this.props, map, { style })
+  }
   return this.props
-}
-
-Prepare.prototype.getOpacity = function (key, type, zoom) {
-  if (key === 'point') {
-    var y = zoom * 7
-  }
-  else if (key === 'line') {
-    var y = zoom * 7 + this.zoomCount * 8
-  }
-  else if (key === 'area') {
-    var y = zoom * 7 + this.zoomCount * 8 + this.zoomCount * 6
-  }
-  else if (key === 'areaBorder') {
-    var y = zoom * 7 + this.zoomCount * 8 + this.zoomCount * 6 + this.zoomCount * 3
-  }
-  var index = (type + y * this.imageSize[0])*4 + 3
-  return this.pixels[index]
 }
 
 function makeIndexes (ids) { 
@@ -386,3 +469,5 @@ function makeIndexes (ids) {
     indexToId: indexToId
   }
 }
+
+function identity (x) { return x }

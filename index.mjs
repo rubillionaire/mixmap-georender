@@ -1,8 +1,121 @@
-var glsl = require('glslify')
+import glsl from 'glslify'
+import { unpackVec2, unpackVec3 } from 'int-pack-vec'
+import { Shaders as LabelShaders } from 'tiny-label'
+import defined from '@/lib/defined'
+
 var size = [0,0]
 
-module.exports = function (map) {
+const pickTypesArr = ['', 'pointP', 'pointT', 'lineP', 'lineT', 'areaP', 'areaT']
+export const pickTypes = pickTypesArr.reduce((accum, curr, index) => {
+  accum[curr] = index
+  return accum
+}, {})
+
+
+// max features: 255*255 = 65_025
+export const pickFragWithType = glsl`
+  precision highp float;
+  uniform float uPickType;
+  varying float vindex;
+
+  #pragma glslify: pack = require('int-pack-vec/pack.glsl');
+
+  void main () {
+    vec2 encoded = pack(vindex, vec2(0.));
+    gl_FragColor = vec4(encoded, uPickType/255.0, 1.0);
+  }
+`
+
+// max features: 255*255*255 = 16_581_375
+export const pickFragNoType = glsl`
+  precision highp float;
+  uniform float uPickType;
+  varying float vindex;
+
+  #pragma glslify: pack = require('int-pack-vec/pack.glsl');
+
+  void main () {
+    vec3 encoded = pack(vindex, vec3(0.));
+    gl_FragColor = vec4(encoded, 1.0);
+  }
+`
+
+export const pickFragTwoWide = glsl`
+  precision highp float;
+  uniform float uPickType;
+  uniform vec2 size;
+  varying float vindex;
+  varying vec2 vpos;
+  varying vec4 vcolor;
+
+  #pragma glslify: pack = require('int-pack-vec/pack.glsl');
+
+  void main () {
+    float n = mod((vpos.x*0.5+0.5)*size.x, 2.0);
+    vec3 pix1 = pack(vindex, vec3(0.));
+    vec3 pix2 = vec3(uPickType/255.0, 0.0, 0.0);
+    vec3 currentPix = mix(pix1, pix2, step(1.0, n));
+    float opacity = floor(min(vcolor.a, 1.0));
+    gl_FragColor = vec4(currentPix, 1.0);
+  }
+`
+
+export const pickfb = {
+  colorType: 'uint8',
+  colorFormat: 'rgba',
+  depth: true,
+  depthStencil: false,
+}
+
+// assumes
+// - the default map.pick({width:1,height:1})
+// - mix.create({ ...opts, pickfb }) using the pickfb options above
+// - using the provided `pickFrag` above
+// returns the unpacked `vindex` value
+export const pickUnpackWithType = (vec4) => {
+  const index = unpackVec2(vec4.slice(0, 2))
+  const type = vec4[2]
+  return { index, pickType: pickTypesArr[type] }
+}
+
+export const pickUnpackNoType = (vec4) => {
+  const index = unpackVec3(vec4.slice(0, 3))
+  return { index, pickType: null }
+}
+
+export const pickUnpackTwoWide = (vec8) => {
+  const index = unpackVec3(vec8.slice(0, 3))
+  const type = vec8[4]
+  return { index, pickType: pickTypesArr[type] }
+}
+
+export const pickTwoWide = (map) => (event, cb) => {
+  const x = defined(event.offsetX, event.x, 0)
+  const y = defined(event.offsetY, event.y, 0)
+  // we double our map size in order to pick into a 2x wide
+  // space and maintain the same drawing ration. presumably
+  // the 2x height could produce another 6 values in the 0-255
+  // range to store. since we are not using the alpha channel
+  // based on iOS not reading out values from it properly.
+  const fbDim = [map._size[0] * 2, map._size[1] * 2]
+  const opts = {
+    fbWidth: fbDim[0],
+    fbHeight: fbDim[1],
+    width: 2,
+    x: x * 2,
+    y: y * 2,
+  }
+  map.pick(opts, (err, picked) => {
+    if (err) cb(err)
+    else cb(null, pickUnpackTwoWide(picked))
+  })
+}
+
+export default function shaders (map) {
+  const pickFrag = pickFragTwoWide
+  const uPickType = (context, props) => (pickTypes[props.pickType])
   return {
+    pick: pickTwoWide(map),
     points: {
       frag: glsl`
         precision highp float;
@@ -11,30 +124,7 @@ module.exports = function (map) {
           gl_FragColor = vcolor;
         }
       `,
-      pickFrag: `
-        precision highp float;
-        uniform vec2 size;
-        varying float vft, vindex;
-        varying vec2 vpos;
-        varying vec4 vcolor;
-        uniform float featureCount;
-        void main () {
-          float n = mod((vpos.x*0.5+0.5)*size.x, 2.0);
-          vec4 pix1 = vec4(
-            floor(vindex/(256.0*256.0)),
-            mod(vindex/256.0, 256.0),
-            mod(vindex, 256.0),
-            255.0) / 255.0;
-          float opacity = floor(min(vcolor.w, 1.0));
-          //vec4 pix2 = vec4((0.0+opacity)/255.0, 0.0, 0.0, 1.0);
-          vec4 pix2 = vec4(10.0/255.0, 0.0, 0.0, 1.0);
-          gl_FragColor = mix(pix1, pix2, step(1.0, n));
-          /*
-          float opacity = floor(min(vcolor.w, 1.0));
-          gl_FragColor = vec4(vindex, vft, opacity, 1.0);
-          */
-        }
-      `,
+      pickFrag,
       vert: glsl`
         precision highp float;
         #pragma glslify: Point = require('glsl-georender-style-texture/point.h');
@@ -44,8 +134,8 @@ module.exports = function (map) {
         attribute float featureType, index;
         uniform vec4 viewbox;
         uniform vec2 offset, size, texSize;
-        uniform float featureCount, aspect, zoom;
-        varying float vft, vindex, zindex;
+        uniform float aspect, zoom;
+        varying float vft, vindex, zindex, vPickType;
         varying vec2 vpos;
         varying vec4 vcolor;
         void main () {
@@ -62,7 +152,7 @@ module.exports = function (map) {
             ((p.y - viewbox.y) / (viewbox.w - viewbox.y) * 2.0 - 1.0) * aspect,
             1.0/(1.0+zindex), 1) + vec4(position.x * psizex, position.y * psizey, 0, 0);
           vpos = gl_Position.xy;
-         }
+       }
       `,
       uniforms: {
         size: function (context) {
@@ -71,11 +161,11 @@ module.exports = function (map) {
           return size
         },
         styleTexture: map.prop('style'),
-        featureCount: map.prop('featureCount'),
         texSize: map.prop('imageSize'),
         aspect: function (context) {
           return context.viewportWidth / context.viewportHeight
         },
+        uPickType,
       },
       attributes: {
         position: [-0.1,0.1,0.1,0.1,0.1,-0.1,-0.1,-0.1],
@@ -126,29 +216,7 @@ module.exports = function (map) {
           gl_FragColor = vec4(vcolor.xyz, vcolor.w * x);
         }
       `,
-      pickFrag: `
-        precision highp float;
-        uniform vec2 size;
-        varying float vft, vindex;
-        varying vec2 vpos;
-        varying vec4 vcolor;
-        uniform float featureCount;
-        void main () {
-          float n = mod((vpos.x*0.5+0.5)*size.x, 2.0);
-          vec4 pix1 = vec4(
-            floor(vindex/(256.0*256.0)),
-            mod(vindex/256.0, 256.0),
-            mod(vindex, 256.0),
-            255.0) / 255.0;
-          float opacity = floor(min(vcolor.w, 1.0));
-          vec4 pix2 = vec4((2.0+opacity)/255.0, 0.0, 0.0, 1.0);
-          gl_FragColor = mix(pix1, pix2, step(1.0, n));
-          /*
-          float opacity = floor(min(vcolor.w, 1.0));
-          gl_FragColor = vec4(vindex, vft, 2.0+opacity, 1.0);
-          */
-        }
-      `,
+      pickFrag,
       vert: glsl`
         precision highp float;
         #pragma glslify: Line = require('glsl-georender-style-texture/line.h');
@@ -157,7 +225,7 @@ module.exports = function (map) {
         attribute float featureType, index;
         uniform vec4 viewbox;
         uniform vec2 offset, size, texSize;
-        uniform float featureCount, aspect, zoom;
+        uniform float aspect, zoom;
         uniform sampler2D styleTexture;
         varying float vft, vindex, zindex, vdashLength, vdashGap;
         varying vec2 vpos, vnorm, vdist;
@@ -189,8 +257,8 @@ module.exports = function (map) {
           return size
         },
         styleTexture: map.prop('style'),
-        featureCount: map.prop('featureCount'),
-        texSize: map.prop('imageSize')
+        texSize: map.prop('imageSize'),
+        uPickType,
       },
       attributes: {
         position: map.prop('positions'),
@@ -233,29 +301,7 @@ module.exports = function (map) {
           //gl_FragColor = vec4(mix(vec3(0,1,0), vec3(1,0,0), x), 1.0);
         }
       `,
-      pickFrag: `
-        precision highp float;
-        uniform vec2 size;
-        varying float vft, vindex;
-        varying vec2 vpos;
-        varying vec4 vcolor;
-        uniform float featureCount;
-        void main () {
-          float n = mod((vpos.x*0.5+0.5)*size.x, 2.0);
-          vec4 pix1 = vec4(
-            floor(vindex/(256.0*256.0)),
-            mod(vindex/256.0, 256.0),
-            mod(vindex, 256.0),
-            255.0) / 255.0;
-          float opacity = floor(min(vcolor.w, 1.0));
-          vec4 pix2 = vec4((2.0+opacity)/255.0, 0.0, 0.0, 1.0);
-          gl_FragColor = mix(pix1, pix2, step(1.0, n));
-          /*
-          float opacity = floor(min(vcolor.w, 1.0));
-          gl_FragColor = vec4(vindex, vft, 2.0+opacity, 1.0);
-          */
-        }
-      `,
+      pickFrag,
       vert: glsl`
         precision highp float;
         #pragma glslify: Line = require('glsl-georender-style-texture/line.h');
@@ -264,7 +310,7 @@ module.exports = function (map) {
         attribute float featureType, index;
         uniform vec4 viewbox;
         uniform vec2 offset, size, texSize;
-        uniform float featureCount, aspect, zoom;
+        uniform float aspect, zoom;
         uniform sampler2D styleTexture;
         varying float vft, vindex, zindex, vdashLength, vdashGap;
         varying vec2 vpos, vnorm, vdist;
@@ -295,8 +341,8 @@ module.exports = function (map) {
           return size
         },
         styleTexture: map.prop('style'),
-        featureCount: map.prop('featureCount'),
-        texSize: map.prop('imageSize')
+        texSize: map.prop('imageSize'),
+        uPickType,
       },
       attributes: {
         position: map.prop('positions'),
@@ -327,26 +373,7 @@ module.exports = function (map) {
           gl_FragColor = vcolor;
         }
       `,
-      pickFrag: `
-        precision highp float;
-        uniform vec2 size;
-        varying float vft, vindex;
-        varying vec2 vpos;
-        varying vec4 vcolor;
-        uniform float featureCount;
-        void main () {
-          float n = mod((vpos.x*0.5+0.5)*size.x, 2.0);
-          vec4 pix1 = vec4(
-            floor(vindex/(256.0*256.0)),
-            mod(vindex/256.0, 256.0),
-            mod(vindex, 256.0),
-            255.0) / 255.0;
-          float opacity = floor(min(vcolor.w, 1.0));
-          vec4 pix2 = vec4((4.0+opacity)/255.0, 0.0, 0.0, 1.0);
-          gl_FragColor = mix(pix1, pix2, step(1.0, n));
-          //gl_FragColor = vec4(vindex, vft, 4.0+opacity, 1.0);
-        }
-      `,
+      pickFrag,
       vert: glsl`
         precision highp float;
         #pragma glslify: Area = require('glsl-georender-style-texture/area.h');
@@ -355,7 +382,7 @@ module.exports = function (map) {
         attribute float featureType, index;
         uniform vec4 viewbox;
         uniform vec2 offset, size, texSize;
-        uniform float aspect, featureCount, zoom;
+        uniform float aspect, zoom;
         uniform sampler2D styleTexture;
         varying float vft, vindex, zindex;
         varying vec2 vpos;
@@ -380,14 +407,14 @@ module.exports = function (map) {
           size[1] = context.viewportHeight
           return size
         },
-        featureCount: map.prop('featureCount'),
         texSize: map.prop('imageSize'),
-        styleTexture: map.prop('style')
+        styleTexture: map.prop('style'),
+        uPickType,
       },
       attributes: {
         position: map.prop('positions'),
         featureType: map.prop('types'),
-        index: map.prop('indexes')
+        index: map.prop('indexes'),
       },
       elements: map.prop('cells'),
       primitive: "triangles",
@@ -420,25 +447,7 @@ module.exports = function (map) {
           gl_FragColor = vec4(vcolor.xyz, vcolor.w * x);
         }
       `,
-      pickFrag: `
-        precision highp float;
-        uniform vec2 size;
-        varying float vft, vindex;
-        varying vec2 vpos;
-        varying vec4 vcolor;
-        uniform float featureCount;
-        void main () {
-          float n = mod((vpos.x*0.5+0.5)*size.x, 2.0);
-          vec4 pix1 = vec4(
-            floor(vindex/(256.0*256.0)),
-            mod(vindex/256.0, 256.0),
-            mod(vindex, 256.0),
-            0.0);
-          float opacity = floor(min(vcolor.w, 1.0));
-          vec4 pix2 = vec4((4.0+opacity)/255.0, 0.0, 0.0, 1.0);
-          gl_FragColor = mix(pix1, pix2, step(n, 1.0));
-        }
-      `,
+      pickFrag,
       vert: glsl`
         precision highp float;
         #pragma glslify: AreaBorder = require('glsl-georender-style-texture/areaborder.h');
@@ -447,7 +456,7 @@ module.exports = function (map) {
         attribute float featureType, index;
         uniform vec4 viewbox;
         uniform vec2 offset, size, texSize;
-        uniform float featureCount, aspect, zoom;
+        uniform float aspect, zoom;
         uniform sampler2D styleTexture;
         varying float vft, vindex, zindex, vdashLength, vdashGap;
         varying vec2 vpos, vnorm, vdist;
@@ -479,8 +488,8 @@ module.exports = function (map) {
           return size
         },
         styleTexture: map.prop('style'),
-        featureCount: map.prop('featureCount'),
-        texSize: map.prop('imageSize')
+        texSize: map.prop('imageSize'),
+        uPickType,
       },
       attributes: {
         position: map.prop('positions'),
@@ -503,105 +512,6 @@ module.exports = function (map) {
         }
       }
     },
-    labels: (n) => { return {
-      frag: glsl`
-        precision highp float;
-        #pragma glslify: QBZF = require('qbzf/h')
-        #pragma glslify: create_qbzf = require('qbzf/create')
-        #pragma glslify: read_curve = require('qbzf/read')
-        varying vec2 vuv, vunits, vsize, vPxSize;
-        varying float vStrokeWidth, voffset;
-        varying vec3 vFillColor, vStrokeColor;
-        uniform sampler2D curveTex, gridTex;
-        uniform vec2 curveSize, dim;
-        uniform float gridN, aspect;
-
-        vec4 draw(vec2 uv) {
-          QBZF qbzf = create_qbzf(
-            uv, gridN, vsize, vunits, vec3(dim,voffset),
-            gridTex, curveSize
-          );
-          float ldist = 1e30;
-          for (int i = 0; i < ${n}; i++) {
-            vec4 curve = read_curve(qbzf, gridTex, curveTex, float(i));
-            if (curve.x < 0.5) break;
-            qbzf.count += curve.y;
-            ldist = min(ldist,length(curve.zw));
-          }
-          float a = 50.0;
-          float outline = 1.0-smoothstep(vStrokeWidth-a,vStrokeWidth+a,ldist);
-          vec3 fill = vFillColor;
-          vec3 stroke = vStrokeColor;
-          float cm = mod(qbzf.count,2.0);
-          if (cm < 0.5 && ldist > vStrokeWidth+a) return vec4(0);
-          float m = smoothstep(0.0,1.0,vStrokeWidth-ldist);
-          return vec4(mix(stroke, mix(stroke,fill,m), cm),1);
-        }
-        void main() {
-          float dx = 0.5/vPxSize.x;
-          vec4 c0 = draw(vuv-vec2(dx,0));
-          vec4 c1 = draw(vuv);
-          vec4 c2 = draw(vuv+vec2(dx,0));
-          gl_FragColor = c0*0.25 + c1*0.5 + c2*0.25;
-        }`,
-      vert: `
-        precision highp float;
-        attribute vec2 position, uv, units, gsize, pxSize;
-        attribute vec3 fillColor, strokeColor;
-        attribute float strokeWidth, ioffset;
-        varying vec2 vuv, vunits, vsize, vPxSize;
-        varying vec3 vFillColor, vStrokeColor;
-        varying float vStrokeWidth, voffset;
-        uniform vec4 viewbox;
-        uniform float aspect, gridN;
-        uniform vec2 offset, size;
-        void main () {
-          vuv = uv;
-          vunits = units;
-          vsize = gsize;
-          voffset = ioffset;
-          vFillColor = fillColor;
-          vStrokeColor = strokeColor;
-          vStrokeWidth = strokeWidth;
-          vPxSize = pxSize;
-          vec2 p = position.xy + offset;
-          float zindex = 1000.0;
-          gl_Position = vec4(
-            (p.x - viewbox.x) / (viewbox.z - viewbox.x) * 2.0 - 1.0,
-            ((p.y - viewbox.y) / (viewbox.w - viewbox.y) * 2.0 - 1.0) * aspect,
-            1.0/(1.0+zindex),
-            1
-          );
-        }
-      `,
-      uniforms: {
-        curveTex: (c,props) => props.curves.texture,
-        curveSize: (c,props) => props.curves.size,
-        gridTex: (c,props) => props.grid.texture,
-        dim: (c,props) => props.grid.dimension,
-        gridN: Number(n),
-      },
-      attributes: {
-        position: map.prop('positions'),
-        uv: map.prop('uvs'),
-        ioffset: map.prop('offsets'),
-        units: map.prop('units'),
-        gsize: map.prop('size'),
-        fillColor: map.prop('fillColors'),
-        strokeColor: map.prop('strokeColors'),
-        strokeWidth: map.prop('strokeWidths'),
-        pxSize: map.prop('pxSize'),
-      },
-      elements: map.prop('cells'),
-      blend: {
-        enable: true,
-        func: {
-          srcRGB: 'src alpha',
-          srcAlpha: 1,
-          dstRGB: 'one minus src alpha',
-          dstAlpha: 1
-        }
-      },
-    } },
+    ...LabelShaders(map),
   }
 }

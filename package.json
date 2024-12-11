@@ -1,12 +1,27 @@
 {
-  "name": "mixmap-georender",
-  "version": "5.0.0",
+  "name": "@rubenrodriguez/mixmap-georender",
+  "version": "6.0.0",
   "description": "a mixmap layer for rendering peermaps georender data",
-  "main": "index.js",
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "source": "index.mjs",
+  "exports": {
+    ".": "./dist/index.mjs",
+    "./prepare": "./dist/prepare.mjs",
+    "./text": "./dist/text.mjs"
+  },
+  "browser": {
+    ".": "./dist/index.cjs",
+    "./prepare": "./dist/prepare.cjs",
+    "./text": "./dist/text.cjs"
+  },
   "scripts": {
     "test": "tape test/*.js",
     "example": "budo ./example/render.js",
-    "download": "wget https://kitties.neocities.org/mixmap-georender/style.png -P ./example/ && peermaps query hyper://3dd1656d6408a718fae1117b5283fb18cb1f9139b892ce0f8cacbb6737ec1d67 -f lp --bbox=36.2146,49.9962,36.2404,50.0154 > ./example/kharkiv"
+    "download": "wget https://kitties.neocities.org/mixmap-georender/style.png -P ./example/ && peermaps query hyper://3dd1656d6408a718fae1117b5283fb18cb1f9139b892ce0f8cacbb6737ec1d67 -f lp --bbox=36.2146,49.9962,36.2404,50.0154 > ./example/kharkiv",
+    "build": "node esbuild.build.mjs",
+    "start": "node esbuild.watch.mjs"
   },
   "browserify": {
     "transform": [
@@ -16,20 +31,22 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "bin-pack": "^1.0.2",
-    "georender-pack": "^4.1.0",
-    "glsl-georender-style-texture": "^4.0.2",
-    "glslify": "^7.0.0",
-    "label-placement-engine": "^2.1.0",
+    "@rubenrodriguez/georender-style2png": "^6.2.2",
+    "glsl-georender-style-texture": "^5.0.0",
+    "int-pack-vec": "^1.0.1",
     "partition-array": "^1.0.0",
-    "qbzf": "^1.1.0"
+    "tiny-label": "^1.0.2"
   },
   "devDependencies": {
-    "budo": "^11.6.2",
-    "get-image-pixels": "^1.0.1",
+    "@rubenrodriguez/esbuild-plugin-glslify": "^1.0.0",
+    "@rubenrodriguez/georender-pack": "^5.1.0",
+    "@rubenrodriguez/mixmap": "^1.8.0",
+    "budo": "^11.8.4",
+    "esbuild": "^0.20.2",
+    "esbuild-plugin-path-alias": "^1.0.7",
+    "fast-png": "^6.2.0",
+    "glslify": "^7.0.0",
     "length-prefixed-buffers": "^1.0.0",
-    "mixmap": "^1.6.0",
-    "peermaps": "^3.0.2",
     "regl": "^1.3.11",
     "resl": "^1.0.3",
     "tape": "^5.1.1"
