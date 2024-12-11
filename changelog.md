@@ -11,3 +11,11 @@
 - [prepare] minor: replace Prepare.prototype.getOpacity with a function exported from `georender-style2png` which pulls opacity. this centralizes all style texture writing and reading into one place. same with finding zindex values.
 
 - [prepare] minor: add an `extend : (attributes, props) => void` to the `prepare` options, this allows for the ability to define additional attribute data that should be spread across T and P keys upon zoom level update (`prepare.update(zoom)`).
+
+- [package] patch: replace get-image-pixels with fast-png for decoding georender texture in our render example, our style texture was not coming out with the same values when first stored as an image and then decoded, so consuming as a binary fetch and using fast-png gave us values consistenet with what were being produced in node.
+
+- [package] patch: bump tiny-label to 1.0.2
+
+- [package] patch: install budo as dev dependencies to run the example
+
+- [example] rework example using @rubenrodriguez scoped packages, and data produced within. rendering and picking work. although the label placement engine within tiny-label can definitely use some work.
