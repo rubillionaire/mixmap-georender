@@ -32,12 +32,14 @@ export class PrepareText {
       glyphs: [],
     }
     const labelFontFamily = this._labelOpts.fontFamily
-    const labelProps = this.label.update(props, map, {
+    const updateOpts = {
       style: {
         ...style,
         labelFontFamily,
       }
-    })
+    }
+
+    const labelProps = this.label.update(props, map, updateOpts)
     const baseGamma = 2.0 * 1.4142
     const glyphs = labelProps.glyphs =[]
     for (let i = 0; i < labelProps.atlas.length; i++) {
