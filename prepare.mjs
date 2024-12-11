@@ -10,7 +10,14 @@ export default function Prepare(opts) {
   this.data = opts.decoded
   this.zoomCount = opts.zoomEnd - opts.zoomStart
   this.imageSize = opts.imageSize
-  this.label = opts.label && new PrepareText({ ...opts.label, style: this.pixels })
+  this.label = opts.label && new PrepareText({
+    ...opts.label,
+    style: {
+      data: opts.stylePixels,
+      width: opts.imageSize[0],
+      height: opts.imageSize[1],
+    },
+  })
   this.styleRead = Read({
     pixels: this.pixels,
     zoomCount: this.zoomCount,
@@ -115,6 +122,7 @@ export default function Prepare(opts) {
       labels: this.data.point.labels,
       style: this.style,
       imageSize: this.imageSize,
+      pickType: 'pointT',
     },
     pointP: {
       positions: null,
@@ -126,6 +134,7 @@ export default function Prepare(opts) {
       labels: this.data.point.labels,
       style: this.style,
       imageSize: this.imageSize,
+      pickType: 'pointP',
     },
     line: {
       positions: null,
@@ -152,6 +161,7 @@ export default function Prepare(opts) {
       labels: this.data.line.labels,
       style: this.style,
       imageSize: this.imageSize,
+      pickType: 'lineT',
     },
     lineP: {
       positions: null,
@@ -165,6 +175,7 @@ export default function Prepare(opts) {
       labels: this.data.line.labels,
       style: this.style,
       imageSize: this.imageSize,
+      pickType: 'lineP',
     },
     area: {
       positions: this.data.area.positions,
@@ -189,6 +200,7 @@ export default function Prepare(opts) {
       labels: this.data.area.labels,
       style: this.style,
       imageSize: this.imageSize,
+      pickType: 'areaT',
     },
     areaP: {
       positions: this.data.area.positions,
@@ -201,6 +213,7 @@ export default function Prepare(opts) {
       labels: this.data.area.labels,
       style: this.style,
       imageSize: this.imageSize,
+      pickType: 'areaP',
     },
     areaBorder: {
       positions: null,
@@ -228,6 +241,7 @@ export default function Prepare(opts) {
       idToIndex: null,
       style: this.style,
       imageSize: this.imageSize,
+      pickType: 'areaT',
     },
     areaBorderP: {
       positions: null,
@@ -240,6 +254,7 @@ export default function Prepare(opts) {
       idToIndex: null,
       style: this.style,
       imageSize: this.imageSize,
+      pickType: 'areaP',
     },
     label: {
       labelEngine: null,
@@ -423,7 +438,12 @@ Prepare.prototype.update = function (map) {
   this._splitSort('areaBorder', zoom)
   this._splitSortArea('area', zoom)
   if (this.label) {
-    this.props.label = this.label.update(this.props, map, { style: this.pixels })
+    const style = {
+      data: this.pixels,
+      width: this.imageSize[0],
+      height: this.imageSize[1],
+    }
+    this.props.label = this.label.update(this.props, map, { style })
   }
   return this.props
 }
