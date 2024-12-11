@@ -1,60 +1,86 @@
-var mixmap = require('mixmap')
-var regl = require('regl')
-var prepare = require('../prepare.js')
-var getImagePixels = require('get-image-pixels')
-var decode = require('@rubenrodriguez/georender-pack/decode')
-var lpb = require('length-prefixed-buffers/without-count')
+const mixmap = require('@rubenrodriguez/mixmap')
+const regl = require('regl')
+const { default: prepare } = require('../dist/prepare.cjs')
+const { pickfb } = require('../dist/index.cjs')
+const decode = require('@rubenrodriguez/georender-pack/decode')
+const lpb = require('length-prefixed-buffers/without-count')
+const { decode: decodePng } = require('fast-png')
+const { default: makeGeoRender } = require('../dist/index.cjs')
  
-var mix = mixmap(regl, { extensions: [
-  'oes_element_index_uint', 'oes_texture_float','EXT_float_blend',
-  'angle_instanced_arrays'] })
-var map = mix.create({ 
-  viewbox: [+36.2146, +49.9962, +36.2404, +50.0154],
-  backgroundColor: [0.82, 0.85, 0.99, 1.0],
-  pickfb: { colorFormat: 'rgba', colorType: 'float32' }
+const mix = mixmap(regl, {
+  extensions: [
+    'oes_element_index_uint',
+    'angle_instanced_arrays'
+  ],
 })
-var geoRender = require('../index.js')(map)
+const map = mix.create({ 
+  viewbox: [-67.356661, +17.329674506, -65.575714, +19.110621506],
+  backgroundColor: [0.9, 0.9, 0.9, 1.0],
+  pickfb,
+})
+const geoRender = makeGeoRender(map)
 
-var draw = {
-  area: map.createDraw(geoRender.areas),
+const draw = {
+  areaP: map.createDraw(geoRender.areas),
   areaT: map.createDraw(geoRender.areas),
-  areaBorder: map.createDraw(geoRender.areaBorders),
+  areaBorderP: map.createDraw(geoRender.areaBorders),
   areaBorderT: map.createDraw(geoRender.areaBorders),
-  lineStroke: map.createDraw(geoRender.lineStroke),
-  lineFill: map.createDraw(geoRender.lineFill),
+  lineStrokeP: map.createDraw(geoRender.lineStroke),
+  lineFillP: map.createDraw(geoRender.lineFill),
   lineStrokeT: map.createDraw(geoRender.lineStroke),
   lineFillT: map.createDraw(geoRender.lineFill),
-  point: map.createDraw(geoRender.points),
+  pointP: map.createDraw(geoRender.points),
   pointT: map.createDraw(geoRender.points),
   label: [],
 }
 
-function ready({style, decoded, font}) {
-  var prep = prepare({
-    stylePixels: getImagePixels(style),
+window.addEventListener('click', (event) => {
+  geoRender.pick(event, (err, picked) => {
+    if (err) return console.log(err)
+    const { index, pickType } = picked
+    if (!draw[pickType]) return console.log(`no pickType: ${pickType}`)
+    let ref = null
+    for (let i = 0; i < draw[pickType].props.length; i++) {
+      const p = draw[pickType].props[i]
+      if (p.indexToId[index] !== undefined) {
+        ref = { id: p.indexToId[index], pi: i }
+        break
+      }
+    }
+    if (ref) {
+      const labels = (draw[pickType].props[ref.pi].labels[ref.id] || [])
+        .map(l => l.split('=')[1])
+      console.log(Object.assign({ labels }, ref))
+    }
+    else console.log(`no matching feature id found. index: ${index}, pickType: ${pickType}`)
+  })
+})
+
+function ready({style, label, decoded}) {
+  const prep = prepare({
+    stylePixels: style.data,
     styleTexture: map.regl.texture(style),
     zoomStart: 1,
     zoomEnd: 21,
     imageSize: [style.width, style.height],
-    decoded
+    decoded,
+    label,
   })
-  var zoom = Math.round(map.getZoom())
-  var props = null
   update()
   map.on('viewbox', function () {
     update()
   })
   function update(zoom) {
-    props = prep.update(zoom)
-    draw.point.props = [props.pointP]
+    const props = prep.update(map)
+    draw.pointP.props = [props.pointP]
     draw.pointT.props = [props.pointT]
-    draw.lineFill.props = [props.lineP]
-    draw.lineStroke.props = [props.lineP]
+    draw.lineFillP.props = [props.lineP]
+    draw.lineStrokeP.props = [props.lineP]
     draw.lineFillT.props = [props.lineT]
     draw.lineStrokeT.props = [props.lineT]
-    draw.area.props = [props.areaP]
+    draw.areaP.props = [props.areaP]
     draw.areaT.props = [props.areaT]
-    draw.areaBorder.props = [props.areaBorderP]
+    draw.areaBorderP.props = [props.areaBorderP]
     draw.areaBorderT.props = [props.areaBorderT]
     draw.label = props.label.atlas.map((prepared) => map.createDraw(geoRender.label(prepared)))
     for (let i = 0; i < draw.label.length; i++) {
@@ -67,18 +93,29 @@ function ready({style, decoded, font}) {
 require('resl')({
   manifest: {
     style: {
-      type: 'image',
-      src: './example/style.png'
+      type: 'binary',
+      src: 'https://rr-studio-assets.nyc3.digitaloceanspaces.com/mixmap-georender/example/georender-basic-setup-style.png',
+      parser: (data) => {
+        return decodePng(data)
+      },
+    },
+    label: {
+      type: 'text',
+      src: 'https://rr-studio-assets.nyc3.digitaloceanspaces.com/mixmap-georender/example/georender-basic-setup-label.json',
+      parser: JSON.parse,
     },
     decoded: {
-      type: 'binary',
-      src: './example/kharkiv' || location.search.slice(1),
-      parser: data => decode(lpb.decode(Buffer.from(data)))
-    },
-    font: {
-      type: 'binary',
-      src: 'example/font',
-      parser: data => new Uint8Array(data),
+      type: 'text',
+      src: 'https://rr-studio-assets.nyc3.digitaloceanspaces.com/mixmap-georender/example/basic-stack-georender.nlb64' || location.search.slice(1),
+      parser: (data) => {
+        const bufs = []
+        for (const enc of data.split('\n')) {
+          if (enc.trim().length === 0) continue
+          const buf = Buffer.from(enc.toString(), 'base64')
+          bufs.push(buf)
+        }
+        return decode(bufs)
+      },
     },
   },
   onDone: ready
@@ -100,4 +137,8 @@ window.addEventListener('keydown', function (ev) {
 
 document.body.style = 'margin: 0px; overflow: hidden;'
 document.body.appendChild(mix.render())
-document.body.appendChild(map.render({ width: window.innerWidth, height: window.innerHeight }))
+document.body.appendChild(map.render({
+  width: window.innerWidth,
+  height: window.innerHeight,
+  mouse: false,
+}))
