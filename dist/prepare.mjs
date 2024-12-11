@@ -645,7 +645,6 @@ var require_text = __commonJS({
               }
               var visible = true;
               if (bstart === bend) {
-                console.log("found=true", f.type);
                 bbox[0] = Infinity;
                 bbox[1] = Infinity;
                 bbox[2] = Infinity;
@@ -2811,13 +2810,38 @@ var require_text = __commonJS({
         function read({ pixels, zoomCount, imageWidth }) {
           return {
             opacity: (key, type, zoom) => opacity(key, type, zoom, { pixels, imageWidth, zoomCount }),
-            label: (key, type, zoom) => label(key, type, zoom, { pixels, imageWidth, zoomCount })
+            label: (key, type, zoom) => label(key, type, zoom, { pixels, imageWidth, zoomCount }),
+            zindex: (key, type, zoom) => zindex(key, type, zoom, { pixels, imageWidth, zoomCount })
           };
         }
         function opacity(key, type, zoom, { pixels, imageWidth, zoomCount }) {
           const y = yOffset(key, zoom, zoomCount);
           const index = (type + y * imageWidth) * 4 + 3;
           return pixels[index];
+        }
+        function zindex(key, type, zoom, { pixels, imageWidth, zoomCount }) {
+          const y = yOffset(key, zoom, zoomCount);
+          if (key === "point") {
+            const prevFkeyLoops = 2;
+            const x3 = xOffset(type, prevFkeyLoops, imageWidth);
+            const i3 = vec4Index(x3, y, imageWidth);
+            const zindex2 = pixels[i3 + 3];
+            return zindex2;
+          }
+          if (key === "line") {
+            const prevFkeyLoops = 3;
+            const x4 = xOffset(type, prevFkeyLoops, imageWidth);
+            const i4 = vec4Index(x4, y, imageWidth);
+            const zindex2 = pixels[i4 + 3];
+            return zindex2;
+          }
+          if (key === "area") {
+            const prevFkeyLoops = 1;
+            const x2 = xOffset(type, prevFkeyLoops, imageWidth);
+            const i3 = vec4Index(x2, y, imageWidth);
+            const zindex2 = pixels[i3 + 0];
+            return zindex2;
+          }
         }
         function label(key, type, zoom, { pixels, imageWidth, zoomCount }) {
           const y = yOffset(key, zoom, zoomCount);
@@ -3548,7 +3572,6 @@ var require_text = __commonJS({
         if (!(p == null ? void 0 : p.positions))
           return;
         const zoom = Math.round(map.getZoom());
-        const y = zoom * 7;
         for (let ix = 0; ix < p.id.length; ix++) {
           const id = p.id[ix];
           if (!p.labels.hasOwnProperty(id) || p.labels[id].length === 0)
@@ -3560,7 +3583,7 @@ var require_text = __commonJS({
             continue;
           if (map.viewbox[1] > lat || lat > map.viewbox[3])
             continue;
-          const type = p.types[id];
+          const type = p.types[ix];
           const {
             fillColor,
             fillOpacity,
@@ -3618,7 +3641,7 @@ var require_text = __commonJS({
           const end = ix;
           const positions = p.positions.slice(start * 2, end * 2 + 2);
           start = ix;
-          const type = p.types[id];
+          const type = p.types[ix];
           const {
             fillColor,
             fillOpacity,
@@ -3676,7 +3699,7 @@ var require_text = __commonJS({
           const vb = map.viewbox;
           const positions = p.positions.slice(start * 2, end * 2 + 2);
           start = ix;
-          const type = p.types[id];
+          const type = p.types[ix];
           const {
             fillColor,
             fillOpacity,
@@ -3834,11 +3857,12 @@ var require_text = __commonJS({
             glyphs: []
           };
         const labelFontFamily = this._labelOpts.fontFamily;
-        const labelProps = this.label.update(props, map, {
+        const updateOpts = {
           style: __spreadProps2(__spreadValues2({}, style), {
             labelFontFamily
           })
-        });
+        };
+        const labelProps = this.label.update(props, map, updateOpts);
         const baseGamma = 2 * 1.4142;
         const glyphs = labelProps.glyphs = [];
         for (let i = 0; i < labelProps.atlas.length; i++) {
@@ -3880,7 +3904,13 @@ function Prepare(opts) {
   this.data = opts.decoded;
   this.zoomCount = opts.zoomEnd - opts.zoomStart;
   this.imageSize = opts.imageSize;
-  this.label = opts.label && new import_text.PrepareText(__spreadProps(__spreadValues({}, opts.label), { style: this.pixels }));
+  this.label = opts.label && new import_text.PrepareText(__spreadProps(__spreadValues({}, opts.label), {
+    style: {
+      data: opts.stylePixels,
+      width: opts.imageSize[0],
+      height: opts.imageSize[1]
+    }
+  }));
   this.styleRead = (0, import_read.default)({
     pixels: this.pixels,
     zoomCount: this.zoomCount,
@@ -3973,7 +4003,8 @@ function Prepare(opts) {
       idToIndex: null,
       labels: this.data.point.labels,
       style: this.style,
-      imageSize: this.imageSize
+      imageSize: this.imageSize,
+      pickType: "pointT"
     },
     pointP: {
       positions: null,
@@ -3984,7 +4015,8 @@ function Prepare(opts) {
       idToIndex: null,
       labels: this.data.point.labels,
       style: this.style,
-      imageSize: this.imageSize
+      imageSize: this.imageSize,
+      pickType: "pointP"
     },
     line: {
       positions: null,
@@ -4010,7 +4042,8 @@ function Prepare(opts) {
       idToIndex: null,
       labels: this.data.line.labels,
       style: this.style,
-      imageSize: this.imageSize
+      imageSize: this.imageSize,
+      pickType: "lineT"
     },
     lineP: {
       positions: null,
@@ -4023,7 +4056,8 @@ function Prepare(opts) {
       idToIndex: null,
       labels: this.data.line.labels,
       style: this.style,
-      imageSize: this.imageSize
+      imageSize: this.imageSize,
+      pickType: "lineP"
     },
     area: {
       positions: this.data.area.positions,
@@ -4047,7 +4081,8 @@ function Prepare(opts) {
       cells: null,
       labels: this.data.area.labels,
       style: this.style,
-      imageSize: this.imageSize
+      imageSize: this.imageSize,
+      pickType: "areaT"
     },
     areaP: {
       positions: this.data.area.positions,
@@ -4059,7 +4094,8 @@ function Prepare(opts) {
       cells: null,
       labels: this.data.area.labels,
       style: this.style,
-      imageSize: this.imageSize
+      imageSize: this.imageSize,
+      pickType: "areaP"
     },
     areaBorder: {
       positions: null,
@@ -4086,7 +4122,8 @@ function Prepare(opts) {
       indexToId: null,
       idToIndex: null,
       style: this.style,
-      imageSize: this.imageSize
+      imageSize: this.imageSize,
+      pickType: "areaT"
     },
     areaBorderP: {
       positions: null,
@@ -4098,7 +4135,8 @@ function Prepare(opts) {
       indexToId: null,
       idToIndex: null,
       style: this.style,
-      imageSize: this.imageSize
+      imageSize: this.imageSize,
+      pickType: "areaP"
     },
     label: {
       labelEngine: null,
@@ -4278,7 +4316,12 @@ Prepare.prototype.update = function(map) {
   this._splitSort("areaBorder", zoom);
   this._splitSortArea("area", zoom);
   if (this.label) {
-    this.props.label = this.label.update(this.props, map, { style: this.pixels });
+    const style = {
+      data: this.pixels,
+      width: this.imageSize[0],
+      height: this.imageSize[1]
+    };
+    this.props.label = this.label.update(this.props, map, { style });
   }
   return this.props;
 };

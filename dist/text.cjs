@@ -410,7 +410,6 @@ var require_label_placement_engine = __commonJS({
           }
           var visible = true;
           if (bstart === bend) {
-            console.log("found=true", f.type);
             bbox[0] = Infinity;
             bbox[1] = Infinity;
             bbox[2] = Infinity;
@@ -2576,13 +2575,38 @@ var require_read = __commonJS({
     function read({ pixels, zoomCount, imageWidth }) {
       return {
         opacity: (key, type, zoom) => opacity(key, type, zoom, { pixels, imageWidth, zoomCount }),
-        label: (key, type, zoom) => label(key, type, zoom, { pixels, imageWidth, zoomCount })
+        label: (key, type, zoom) => label(key, type, zoom, { pixels, imageWidth, zoomCount }),
+        zindex: (key, type, zoom) => zindex(key, type, zoom, { pixels, imageWidth, zoomCount })
       };
     }
     function opacity(key, type, zoom, { pixels, imageWidth, zoomCount }) {
       const y = yOffset(key, zoom, zoomCount);
       const index = (type + y * imageWidth) * 4 + 3;
       return pixels[index];
+    }
+    function zindex(key, type, zoom, { pixels, imageWidth, zoomCount }) {
+      const y = yOffset(key, zoom, zoomCount);
+      if (key === "point") {
+        const prevFkeyLoops = 2;
+        const x3 = xOffset(type, prevFkeyLoops, imageWidth);
+        const i3 = vec4Index(x3, y, imageWidth);
+        const zindex2 = pixels[i3 + 3];
+        return zindex2;
+      }
+      if (key === "line") {
+        const prevFkeyLoops = 3;
+        const x4 = xOffset(type, prevFkeyLoops, imageWidth);
+        const i4 = vec4Index(x4, y, imageWidth);
+        const zindex2 = pixels[i4 + 3];
+        return zindex2;
+      }
+      if (key === "area") {
+        const prevFkeyLoops = 1;
+        const x2 = xOffset(type, prevFkeyLoops, imageWidth);
+        const i3 = vec4Index(x2, y, imageWidth);
+        const zindex2 = pixels[i3 + 0];
+        return zindex2;
+      }
     }
     function label(key, type, zoom, { pixels, imageWidth, zoomCount }) {
       const y = yOffset(key, zoom, zoomCount);
@@ -3313,7 +3337,6 @@ var Label = class {
     if (!(p == null ? void 0 : p.positions))
       return;
     const zoom = Math.round(map.getZoom());
-    const y = zoom * 7;
     for (let ix = 0; ix < p.id.length; ix++) {
       const id = p.id[ix];
       if (!p.labels.hasOwnProperty(id) || p.labels[id].length === 0)
@@ -3325,7 +3348,7 @@ var Label = class {
         continue;
       if (map.viewbox[1] > lat || lat > map.viewbox[3])
         continue;
-      const type = p.types[id];
+      const type = p.types[ix];
       const {
         fillColor,
         fillOpacity,
@@ -3383,7 +3406,7 @@ var Label = class {
       const end = ix;
       const positions = p.positions.slice(start * 2, end * 2 + 2);
       start = ix;
-      const type = p.types[id];
+      const type = p.types[ix];
       const {
         fillColor,
         fillOpacity,
@@ -3441,7 +3464,7 @@ var Label = class {
       const vb = map.viewbox;
       const positions = p.positions.slice(start * 2, end * 2 + 2);
       start = ix;
-      const type = p.types[id];
+      const type = p.types[ix];
       const {
         fillColor,
         fillOpacity,
@@ -3601,11 +3624,12 @@ var PrepareText = class {
         glyphs: []
       };
     const labelFontFamily = this._labelOpts.fontFamily;
-    const labelProps = this.label.update(props, map, {
+    const updateOpts = {
       style: __spreadProps(__spreadValues({}, style), {
         labelFontFamily
       })
-    });
+    };
+    const labelProps = this.label.update(props, map, updateOpts);
     const baseGamma = 2 * 1.4142;
     const glyphs = labelProps.glyphs = [];
     for (let i = 0; i < labelProps.atlas.length; i++) {

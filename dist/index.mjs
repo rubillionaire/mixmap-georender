@@ -479,7 +479,6 @@ var require_label_placement_engine = __commonJS2({
           }
           var visible = true;
           if (bstart === bend) {
-            console.log("found=true", f.type);
             bbox[0] = Infinity;
             bbox[1] = Infinity;
             bbox[2] = Infinity;
@@ -2645,13 +2644,38 @@ var require_read = __commonJS2({
     function read({ pixels, zoomCount, imageWidth }) {
       return {
         opacity: (key, type, zoom) => opacity(key, type, zoom, { pixels, imageWidth, zoomCount }),
-        label: (key, type, zoom) => label(key, type, zoom, { pixels, imageWidth, zoomCount })
+        label: (key, type, zoom) => label(key, type, zoom, { pixels, imageWidth, zoomCount }),
+        zindex: (key, type, zoom) => zindex(key, type, zoom, { pixels, imageWidth, zoomCount })
       };
     }
     function opacity(key, type, zoom, { pixels, imageWidth, zoomCount }) {
       const y = yOffset(key, zoom, zoomCount);
       const index = (type + y * imageWidth) * 4 + 3;
       return pixels[index];
+    }
+    function zindex(key, type, zoom, { pixels, imageWidth, zoomCount }) {
+      const y = yOffset(key, zoom, zoomCount);
+      if (key === "point") {
+        const prevFkeyLoops = 2;
+        const x3 = xOffset(type, prevFkeyLoops, imageWidth);
+        const i3 = vec4Index(x3, y, imageWidth);
+        const zindex2 = pixels[i3 + 3];
+        return zindex2;
+      }
+      if (key === "line") {
+        const prevFkeyLoops = 3;
+        const x4 = xOffset(type, prevFkeyLoops, imageWidth);
+        const i4 = vec4Index(x4, y, imageWidth);
+        const zindex2 = pixels[i4 + 3];
+        return zindex2;
+      }
+      if (key === "area") {
+        const prevFkeyLoops = 1;
+        const x2 = xOffset(type, prevFkeyLoops, imageWidth);
+        const i3 = vec4Index(x2, y, imageWidth);
+        const zindex2 = pixels[i3 + 0];
+        return zindex2;
+      }
     }
     function label(key, type, zoom, { pixels, imageWidth, zoomCount }) {
       const y = yOffset(key, zoom, zoomCount);
@@ -2875,7 +2899,6 @@ var Shaders = (map) => {
           position: map.prop("positions"),
           uv: [0, 0, 1, 0, 1, 1, 0, 1]
         },
-        // elements: map.prop('cells'),
         elements: [0, 1, 2, 0, 2, 3],
         primitive: "triangles",
         uniforms: {
@@ -3016,7 +3039,7 @@ function defined() {
 
 // index.mjs
 var size = [0, 0];
-var pickTypesArr = ["", "point", "line", "area"];
+var pickTypesArr = ["", "pointP", "pointT", "lineP", "lineT", "areaP", "areaT"];
 var pickTypes = pickTypesArr.reduce((accum, curr, index) => {
   accum[curr] = index;
   return accum;
@@ -3157,7 +3180,8 @@ vec4 pack (float value, vec4 r) {
 var pickfb = {
   colorType: "uint8",
   colorFormat: "rgba",
-  depth: true
+  depth: true,
+  depthStencil: false
 };
 var pickUnpackWithType = (vec4) => {
   const index = (0, import_int_pack_vec.unpackVec2)(vec4.slice(0, 2));
@@ -3173,24 +3197,29 @@ var pickUnpackTwoWide = (vec8) => {
   const type = vec8[4];
   return { index, pickType: pickTypesArr[type] };
 };
+var pickTwoWide = (map) => (event, cb) => {
+  const x = defined(event.offsetX, event.x, 0);
+  const y = defined(event.offsetY, event.y, 0);
+  const fbDim = [map._size[0] * 2, map._size[1] * 2];
+  const opts = {
+    fbWidth: fbDim[0],
+    fbHeight: fbDim[1],
+    width: 2,
+    x: x * 2,
+    y: y * 2
+  };
+  map.pick(opts, (err, picked) => {
+    if (err)
+      cb(err);
+    else
+      cb(null, pickUnpackTwoWide(picked));
+  });
+};
 function shaders(map) {
   const pickFrag = pickFragTwoWide;
+  const uPickType = (context, props) => pickTypes[props.pickType];
   return __spreadValues({
-    pick: (event, cb) => {
-      const x = defined(event.offsetX, event.x, 0);
-      const y = defined(event.offsetY, event.y, 0);
-      const opts = {
-        width: 2,
-        x: x % 2 === 0 ? x : x - 1,
-        y
-      };
-      map.pick(opts, (err, picked) => {
-        if (err)
-          cb(err);
-        else
-          cb(null, pickUnpackTwoWide(picked));
-      });
-    },
+    pick: pickTwoWide(map),
     points: {
       frag: `
                 precision highp float;
@@ -3309,7 +3338,7 @@ Point readPoint(sampler2D styleTexture, float featureType, float zoom, vec2 imag
         aspect: function(context) {
           return context.viewportWidth / context.viewportHeight;
         },
-        uPickType: pickTypes.point
+        uPickType
       },
       attributes: {
         position: [-0.1, 0.1, 0.1, 0.1, 0.1, -0.1, -0.1, -0.1],
@@ -3485,7 +3514,7 @@ Line readLine(sampler2D styleTexture, float featureType, float zoom, vec2 imageS
         },
         styleTexture: map.prop("style"),
         texSize: map.prop("imageSize"),
-        uPickType: pickTypes.line
+        uPickType
       },
       attributes: {
         position: map.prop("positions"),
@@ -3652,7 +3681,7 @@ Line readLine(sampler2D styleTexture, float featureType, float zoom, vec2 imageS
         },
         styleTexture: map.prop("style"),
         texSize: map.prop("imageSize"),
-        uPickType: pickTypes.line
+        uPickType
       },
       attributes: {
         position: map.prop("positions"),
@@ -3784,7 +3813,7 @@ Area readArea(sampler2D styleTexture, float featureType, float zoom, vec2 imageS
         },
         texSize: map.prop("imageSize"),
         styleTexture: map.prop("style"),
-        uPickType: pickTypes.area
+        uPickType
       },
       attributes: {
         position: map.prop("positions"),
@@ -3910,7 +3939,7 @@ AreaBorder readAreaBorder(sampler2D styleTexture, float featureType, float zoom,
         },
         styleTexture: map.prop("style"),
         texSize: map.prop("imageSize"),
-        uPickType: pickTypes.area
+        uPickType
       },
       attributes: {
         position: map.prop("positions"),
@@ -3940,6 +3969,7 @@ export {
   pickFragNoType,
   pickFragTwoWide,
   pickFragWithType,
+  pickTwoWide,
   pickTypes,
   pickUnpackNoType,
   pickUnpackTwoWide,
