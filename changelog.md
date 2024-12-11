@@ -1,3 +1,7 @@
+# 6.0.1
+
+- [example] patch: remove picking example, this is covered in the render example
+
 # 6.0.0
 
 - major: retool with esbuild to compile ESM and CJS versions of this module
