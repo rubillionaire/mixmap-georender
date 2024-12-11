@@ -5,7 +5,7 @@ import defined from '@/lib/defined'
 
 var size = [0,0]
 
-const pickTypesArr = ['', 'point', 'line', 'area']
+const pickTypesArr = ['', 'pointP', 'pointT', 'lineP', 'lineT', 'areaP', 'areaT']
 export const pickTypes = pickTypesArr.reduce((accum, curr, index) => {
   accum[curr] = index
   return accum
@@ -64,6 +64,7 @@ export const pickfb = {
   colorType: 'uint8',
   colorFormat: 'rgba',
   depth: true,
+  depthStencil: false,
 }
 
 // assumes
@@ -88,26 +89,33 @@ export const pickUnpackTwoWide = (vec8) => {
   return { index, pickType: pickTypesArr[type] }
 }
 
+export const pickTwoWide = (map) => (event, cb) => {
+  const x = defined(event.offsetX, event.x, 0)
+  const y = defined(event.offsetY, event.y, 0)
+  // we double our map size in order to pick into a 2x wide
+  // space and maintain the same drawing ration. presumably
+  // the 2x height could produce another 6 values in the 0-255
+  // range to store. since we are not using the alpha channel
+  // based on iOS not reading out values from it properly.
+  const fbDim = [map._size[0] * 2, map._size[1] * 2]
+  const opts = {
+    fbWidth: fbDim[0],
+    fbHeight: fbDim[1],
+    width: 2,
+    x: x * 2,
+    y: y * 2,
+  }
+  map.pick(opts, (err, picked) => {
+    if (err) cb(err)
+    else cb(null, pickUnpackTwoWide(picked))
+  })
+}
+
 export default function shaders (map) {
   const pickFrag = pickFragTwoWide
+  const uPickType = (context, props) => (pickTypes[props.pickType])
   return {
-    pick: (event, cb) => {
-      const x = defined(event.offsetX, event.x, 0)
-      const y = defined(event.offsetY, event.y, 0)
-      // since we pick 2px wide we always want to have an even
-      // pixel that we are examining
-      // even pix = pix1 = index
-      // odd pix = pix2 = pickType
-      const opts = {
-        width: 2,
-        x: x % 2 === 0 ? x : x - 1,
-        y: y,
-      }
-      map.pick(opts, (err, picked) => {
-        if (err) cb(err)
-        else cb(null, pickUnpackTwoWide(picked))
-      })
-    },
+    pick: pickTwoWide(map),
     points: {
       frag: glsl`
         precision highp float;
@@ -157,7 +165,7 @@ export default function shaders (map) {
         aspect: function (context) {
           return context.viewportWidth / context.viewportHeight
         },
-        uPickType: pickTypes.point,
+        uPickType,
       },
       attributes: {
         position: [-0.1,0.1,0.1,0.1,0.1,-0.1,-0.1,-0.1],
@@ -250,7 +258,7 @@ export default function shaders (map) {
         },
         styleTexture: map.prop('style'),
         texSize: map.prop('imageSize'),
-        uPickType: pickTypes.line,
+        uPickType,
       },
       attributes: {
         position: map.prop('positions'),
@@ -334,7 +342,7 @@ export default function shaders (map) {
         },
         styleTexture: map.prop('style'),
         texSize: map.prop('imageSize'),
-        uPickType: pickTypes.line,
+        uPickType,
       },
       attributes: {
         position: map.prop('positions'),
@@ -401,7 +409,7 @@ export default function shaders (map) {
         },
         texSize: map.prop('imageSize'),
         styleTexture: map.prop('style'),
-        uPickType: pickTypes.area,
+        uPickType,
       },
       attributes: {
         position: map.prop('positions'),
@@ -481,7 +489,7 @@ export default function shaders (map) {
         },
         styleTexture: map.prop('style'),
         texSize: map.prop('imageSize'),
-        uPickType: pickTypes.area,
+        uPickType,
       },
       attributes: {
         position: map.prop('positions'),
