@@ -18,7 +18,7 @@ var __spreadValues = (a, b) => {
 };
 var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
 
-// node_modules/tiny-label/dist/index.mjs
+// ../tiny-label/dist/index.mjs
 var __create = Object.create;
 var __defProp2 = Object.defineProperty;
 var __defProps2 = Object.defineProperties;
@@ -3176,22 +3176,22 @@ var Label = class {
     this.style = opts.style;
     this._props = {};
   }
-  update(props, map, opts = {}) {
+  update(props, mapProps, opts = {}) {
     const style = opts.style || this.style;
     for (const index in this._atlas) {
       this._atlas[index].clear();
     }
-    const viewboxWidthLon = map.viewbox[2] - map.viewbox[0];
-    const viewboxHeightLat = map.viewbox[3] - map.viewbox[1];
+    const viewboxWidthLon = mapProps.viewbox[2] - mapProps.viewbox[0];
+    const viewboxHeightLat = mapProps.viewbox[3] - mapProps.viewbox[1];
     const measureLabels = [];
     const styleSettings = (0, import_settings.default)();
     this.styleRead = (0, import_read.default)({ pixels: style.data, zoomCount: styleSettings.zoomCount, imageWidth: styleSettings.imageWidth });
-    this._addPoint(map, style, measureLabels, props.pointT);
-    this._addPoint(map, style, measureLabels, props.pointP);
-    this._addLine(map, style, measureLabels, props.lineT);
-    this._addLine(map, style, measureLabels, props.lineP);
-    this._addArea(map, style, measureLabels, props.areaT);
-    this._addArea(map, style, measureLabels, props.areaP);
+    this._addPoint(mapProps, style, measureLabels, props.pointT);
+    this._addPoint(mapProps, style, measureLabels, props.pointP);
+    this._addLine(mapProps, style, measureLabels, props.lineT);
+    this._addLine(mapProps, style, measureLabels, props.lineP);
+    this._addArea(mapProps, style, measureLabels, props.areaT);
+    this._addArea(mapProps, style, measureLabels, props.areaP);
     measureLabels.sort((a, b) => {
       var _a, _b;
       const ap = (_a = a.priority) != null ? _a : 1;
@@ -3220,20 +3220,20 @@ var Label = class {
       const preparedLabel = prepared[label.fontFamilyIndex].labels[measureIndexToPreparedIndex[im]];
       switch (label.type) {
         case "point":
-          this._measurePoint(map, prepared[label.fontFamilyIndex], preparedLabel);
+          this._measurePoint(mapProps, prepared[label.fontFamilyIndex], preparedLabel);
           break;
         case "line":
-          this._measureLine(map, prepared[label.fontFamilyIndex], preparedLabel);
+          this._measureLine(mapProps, prepared[label.fontFamilyIndex], preparedLabel);
           break;
         case "area":
-          this._measureArea(map, prepared[label.fontFamilyIndex], preparedLabel);
+          this._measureArea(mapProps, prepared[label.fontFamilyIndex], preparedLabel);
           break;
         default:
           throw new Error("implement measure for type=", label.type);
       }
       Object.assign(label, preparedLabel);
     }
-    const placedLabels = [{ type: "bbox", bounds: map.viewbox }].concat(measureLabels);
+    const placedLabels = [{ type: "bbox", bounds: mapProps.viewbox }].concat(measureLabels);
     this._labelEngine.update(placedLabels);
     const ilabels = [];
     const idLabels = {};
@@ -3311,10 +3311,10 @@ var Label = class {
       atlas: prepared
     };
   }
-  _addPoint(map, style, labels, p) {
+  _addPoint(mapProps, style, labels, p) {
     if (!(p == null ? void 0 : p.positions))
       return;
-    const zoom = Math.round(map.getZoom());
+    const zoom = Math.round(mapProps.zoom);
     for (let ix = 0; ix < p.id.length; ix++) {
       const id = p.id[ix];
       if (!p.labels.hasOwnProperty(id) || p.labels[id].length === 0)
@@ -3322,9 +3322,9 @@ var Label = class {
       const text = this._getLabel(p.labels[id]);
       const lon = p.positions[ix * 2 + 0];
       const lat = p.positions[ix * 2 + 1];
-      if (map.viewbox[0] > lon || lon > map.viewbox[2])
+      if (mapProps.viewbox[0] > lon || lon > mapProps.viewbox[2])
         continue;
-      if (map.viewbox[1] > lat || lat > map.viewbox[3])
+      if (mapProps.viewbox[1] > lat || lat > mapProps.viewbox[3])
         continue;
       const type = p.types[ix];
       const {
@@ -3361,12 +3361,12 @@ var Label = class {
       });
     }
   }
-  _addLine(map, style, labels, p) {
+  _addLine(mapProps, style, labels, p) {
     if (!(p == null ? void 0 : p.positions))
       return;
     let start = 0;
     let prev = null;
-    const zoom = Math.round(map.getZoom());
+    const zoom = Math.round(mapProps.zoom);
     for (let ix = 0; ix < p.id.length; ix++) {
       const id = p.id[ix];
       if ((prev === null || prev === id) && ix !== p.id.length - 1) {
@@ -3416,12 +3416,12 @@ var Label = class {
       });
     }
   }
-  _addArea(map, style, labels, p) {
+  _addArea(mapProps, style, labels, p) {
     if (!(p == null ? void 0 : p.positions))
       return;
     let start = 0;
     let prev = null;
-    const zoom = Math.round(map.getZoom());
+    const zoom = Math.round(mapProps.zoom);
     for (let ix = 0; ix < p.id.length; ix++) {
       const id = p.id[ix];
       if ((prev === null || prev === id) && ix !== p.id.length - 1) {
@@ -3439,7 +3439,7 @@ var Label = class {
       if (text === null)
         continue;
       const end = ix;
-      const vb = map.viewbox;
+      const vb = mapProps.viewbox;
       const positions = p.positions.slice(start * 2, end * 2 + 2);
       start = ix;
       const type = p.types[ix];
@@ -3473,7 +3473,7 @@ var Label = class {
       });
     }
   }
-  _measurePoint(map, prepared, label, { pw = 2, ph = 2 } = {}) {
+  _measurePoint(mapProps, prepared, label, { pw = 2, ph = 2 } = {}) {
     const { glyphIndicies } = label;
     const {
       labelDim,
@@ -3481,9 +3481,9 @@ var Label = class {
       fontSize,
       letterSpacing
     } = prepared.glyphs[glyphIndicies[0]];
-    const pxToLon = (map.viewbox[2] - map.viewbox[0]) / map._size[0];
-    const pxToLat = (map.viewbox[3] - map.viewbox[1]) / map._size[1];
-    const aspect = map._size[0] / map._size[1];
+    const pxToLon = (mapProps.viewbox[2] - mapProps.viewbox[0]) / mapProps.size[0];
+    const pxToLat = (mapProps.viewbox[3] - mapProps.viewbox[1]) / mapProps.size[1];
+    const aspect = mapProps.size[0] / mapProps.size[1];
     const widthPx = label.widthPx = fontSize * labelDim[0] * letterSpacing / labelDim[1];
     const heightPx = label.heightPx = fontSize;
     const widthLon = (widthPx + pw + 1) * pxToLon;
@@ -3502,7 +3502,7 @@ var Label = class {
       label.pointMarginPx[1] * pxToLat
     ];
   }
-  _measureLine(map, prepared, label, { pw = 2, ph = 2 } = {}) {
+  _measureLine(mapProps, prepared, label, { pw = 2, ph = 2 } = {}) {
     const { glyphIndicies } = label;
     const {
       labelDim,
@@ -3510,9 +3510,9 @@ var Label = class {
       fontSize,
       letterSpacing
     } = prepared.glyphs[glyphIndicies[0]];
-    const pxToLon = (map.viewbox[2] - map.viewbox[0]) / map._size[0];
-    const pxToLat = (map.viewbox[3] - map.viewbox[1]) / map._size[1];
-    const aspect = map._size[0] / map._size[1];
+    const pxToLon = (mapProps.viewbox[2] - mapProps.viewbox[0]) / mapProps.size[0];
+    const pxToLat = (mapProps.viewbox[3] - mapProps.viewbox[1]) / mapProps.size[1];
+    const aspect = mapProps.size[0] / mapProps.size[1];
     const widthPx = label.widthPx = fontSize * labelDim[0] * letterSpacing / labelDim[1];
     const heightPx = label.heightPx = fontSize;
     const widthLon = (widthPx + pw + 1) * pxToLon;
@@ -3527,7 +3527,7 @@ var Label = class {
       label.labelLineMarginPx[1] * pxToLat
     ];
   }
-  _measureArea(map, prepared, label, { pw = 2, ph = 2 } = {}) {
+  _measureArea(mapProps, prepared, label, { pw = 2, ph = 2 } = {}) {
     const { glyphIndicies } = label;
     const {
       labelDim,
@@ -3535,9 +3535,9 @@ var Label = class {
       fontSize,
       letterSpacing
     } = prepared.glyphs[glyphIndicies[0]];
-    const pxToLon = (map.viewbox[2] - map.viewbox[0]) / map._size[0];
-    const pxToLat = (map.viewbox[3] - map.viewbox[1]) / map._size[1];
-    const aspect = map._size[0] / map._size[1];
+    const pxToLon = (mapProps.viewbox[2] - mapProps.viewbox[0]) / mapProps.size[0];
+    const pxToLat = (mapProps.viewbox[3] - mapProps.viewbox[1]) / mapProps.size[1];
+    const aspect = mapProps.size[0] / mapProps.size[1];
     const widthPx = label.widthPx = fontSize * labelDim[0] * letterSpacing / labelDim[1];
     const heightPx = label.heightPx = fontSize;
     const widthLon = (widthPx + pw + 1) * pxToLon;

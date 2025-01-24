@@ -3,6 +3,15 @@ import Read from '@rubenrodriguez/georender-style2png/read'
 import { PrepareText } from './text'
 import defined from '@/lib/defined'
 
+export const propsForMap = (map) => {
+  const zoom = map.getZoom()
+  return {
+    viewbox: map.viewbox,
+    zoom,
+    size: map._size,
+  }
+}
+
 export default function Prepare(opts) {
   if (!(this instanceof Prepare)) return new Prepare(opts)
   this.style = opts.styleTexture
@@ -430,8 +439,15 @@ Prepare.prototype._splitSortArea = function (key, zoom) {
   }
 }
 
-Prepare.prototype.update = function (map) {
-  const zoom = Math.round(map.getZoom())
+// map | maProps
+// for single threaded work, its fine to accept a mixmap instance
+// for Web Worker based implementations, we want mapProps which
+//  are serializable
+Prepare.prototype.update = function (mapProps) {
+  if (typeof mapProps?.getZoom === 'function') {
+    mapProps = propsForMap(mapProps)
+  }
+  const zoom = Math.round(mapProps.zoom)
   var self = this
   this._splitSort('point', zoom)
   this._splitSort('line', zoom)
@@ -443,7 +459,7 @@ Prepare.prototype.update = function (map) {
       width: this.imageSize[0],
       height: this.imageSize[1],
     }
-    this.props.label = this.label.update(this.props, map, { style })
+    this.props.label = this.label.update(this.props, mapProps, { style })
   }
   return this.props
 }

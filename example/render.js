@@ -1,6 +1,6 @@
 const mixmap = require('@rubenrodriguez/mixmap')
 const regl = require('regl')
-const { default: prepare } = require('../dist/prepare.cjs')
+const { default: prepare, propsForMap } = require('../dist/prepare.cjs')
 const { pickfb } = require('../dist/index.cjs')
 const decode = require('@rubenrodriguez/georender-pack/decode')
 const lpb = require('length-prefixed-buffers/without-count')
@@ -70,8 +70,8 @@ function ready({style, label, decoded}) {
   map.on('viewbox', function () {
     update()
   })
-  function update(zoom) {
-    const props = prep.update(map)
+  function update() {
+    const props = prep.update(propsForMap(map))
     draw.pointP.props = [props.pointP]
     draw.pointT.props = [props.pointT]
     draw.lineFillP.props = [props.lineP]

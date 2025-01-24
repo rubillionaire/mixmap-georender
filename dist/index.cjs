@@ -131,7 +131,7 @@ module.exports = __toCommonJS(mixmap_georender_exports);
 var import_glslify = __toESM(require_browser(), 1);
 var import_int_pack_vec = __toESM(require_int_pack_vec(), 1);
 
-// node_modules/tiny-label/dist/index.mjs
+// ../tiny-label/dist/index.mjs
 var __create2 = Object.create;
 var __defProp2 = Object.defineProperty;
 var __getOwnPropDesc2 = Object.getOwnPropertyDescriptor;
