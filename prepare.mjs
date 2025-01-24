@@ -3,12 +3,25 @@ import Read from '@rubenrodriguez/georender-style2png/read'
 import { PrepareText } from './text'
 import defined from '@/lib/defined'
 
+// Use this function to strip out the properties necessary from a mixmap
+// instance, so that we can pass them into a web worker and do the prepare
+// processing in parallel for tiles
 export const propsForMap = (map) => {
   const zoom = map.getZoom()
   return {
     viewbox: map.viewbox,
     zoom,
     size: map._size,
+  }
+}
+
+// styleTexture : Regl.Texture
+// we need our webgl context to produce the styleTexure, so we
+// must run this after prepare.update, on its output
+export const spreadStyleTexture = (styleTexture, props) => {
+  for (const drawType in props) {
+    if (drawType === 'label') continue
+    props[drawType].style = styleTexture
   }
 }
 

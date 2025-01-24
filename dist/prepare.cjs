@@ -3901,7 +3901,8 @@ var require_text = __commonJS({
 var prepare_exports = {};
 __export(prepare_exports, {
   default: () => Prepare,
-  propsForMap: () => propsForMap
+  propsForMap: () => propsForMap,
+  spreadStyleTexture: () => spreadStyleTexture
 });
 module.exports = __toCommonJS(prepare_exports);
 var import_partition_array = __toESM(require_partition(), 1);
@@ -3914,6 +3915,13 @@ var propsForMap = (map) => {
     zoom,
     size: map._size
   };
+};
+var spreadStyleTexture = (styleTexture, props) => {
+  for (const drawType in props) {
+    if (drawType === "label")
+      continue;
+    props[drawType].style = styleTexture;
+  }
 };
 function Prepare(opts) {
   if (!(this instanceof Prepare))

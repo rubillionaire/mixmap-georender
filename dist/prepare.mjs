@@ -3904,6 +3904,13 @@ var propsForMap = (map) => {
     size: map._size
   };
 };
+var spreadStyleTexture = (styleTexture, props) => {
+  for (const drawType in props) {
+    if (drawType === "label")
+      continue;
+    props[drawType].style = styleTexture;
+  }
+};
 function Prepare(opts) {
   if (!(this instanceof Prepare))
     return new Prepare(opts);
@@ -4359,5 +4366,6 @@ function makeIndexes(ids) {
 }
 export {
   Prepare as default,
-  propsForMap
+  propsForMap,
+  spreadStyleTexture
 };
