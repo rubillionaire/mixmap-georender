@@ -6,6 +6,7 @@ const decode = require('@rubenrodriguez/georender-pack/decode')
 const lpb = require('length-prefixed-buffers/without-count')
 const { decode: decodePng } = require('fast-png')
 const { default: makeGeoRender } = require('../dist/index.cjs')
+const { createGlyphProps } = require('../dist/text.cjs')
  
 const mix = mixmap(regl, {
   extensions: [
@@ -57,6 +58,7 @@ window.addEventListener('click', (event) => {
 })
 
 function ready({style, label, decoded}) {
+  draw.label = label.fontFamily.map(() => map.createDraw(geoRender.label))
   const prep = prepare({
     stylePixels: style.data,
     styleTexture: map.regl.texture(style),
@@ -82,7 +84,8 @@ function ready({style, label, decoded}) {
     draw.areaT.props = [props.areaT]
     draw.areaBorderP.props = [props.areaBorderP]
     draw.areaBorderT.props = [props.areaBorderT]
-    draw.label = props.label.atlas.map((prepared) => map.createDraw(geoRender.label(prepared)))
+    
+    createGlyphProps(props.label, map)
     for (let i = 0; i < draw.label.length; i++) {
       draw.label[i].props = props.label.glyphs[i]
     }
