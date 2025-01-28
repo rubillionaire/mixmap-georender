@@ -278,7 +278,8 @@ var require_text = __commonJS({
     var __toCommonJS2 = (mod) => __copyProps2(__defProp2({}, "__esModule", { value: true }), mod);
     var text_exports = {};
     __export2(text_exports, {
-      PrepareText: () => PrepareText2
+      PrepareText: () => PrepareText2,
+      createGlyphProps: () => createGlyphProps
     });
     module2.exports = __toCommonJS2(text_exports);
     var __create2 = Object.create;
@@ -3418,6 +3419,41 @@ var require_text = __commonJS({
         }
       }
     };
+    var createGlyphProps = (labelProps, map) => {
+      const baseGamma = 2 * 1.4142;
+      const glyphs = labelProps.glyphs = [];
+      for (let i = 0; i < labelProps.atlas.length; i++) {
+        const atlas = labelProps.atlas[i];
+        const atlasBaselineOffset = atlas.baselineOffset;
+        const atlasGlyphsTextureDim = [atlas.texture.width, atlas.texture.height];
+        const atlasGlyphsTexture = map.regl.texture(atlas.texture);
+        const glyphProps = [];
+        for (let j = 0; j < labelProps.atlas[i].glyphs.length; j++) {
+          const glyph = labelProps.atlas[i].glyphs[j];
+          const { fontSize, fillColor, strokeColor, strokeWidth } = glyph;
+          const gamma = baseGamma / fontSize;
+          const stroke = __spreadProps22(__spreadValues22({}, glyph), {
+            buffer: 0.75 - strokeWidth / fontSize,
+            gamma,
+            color: strokeColor,
+            atlasBaselineOffset,
+            atlasGlyphsTextureDim,
+            atlasGlyphsTexture
+          });
+          const fill = __spreadProps22(__spreadValues22({}, glyph), {
+            buffer: 0.75,
+            gamma,
+            color: fillColor,
+            atlasBaselineOffset,
+            atlasGlyphsTextureDim,
+            atlasGlyphsTexture
+          });
+          glyphProps.push(stroke);
+          glyphProps.push(fill);
+        }
+        glyphs.push(glyphProps);
+      }
+    };
     var Label = class {
       constructor(opts = {}) {
         if (Array.isArray(opts.fontFamily)) {
@@ -3470,6 +3506,7 @@ var require_text = __commonJS({
           const labels = [];
           for (let im = 0; im < measureLabels.length; im++) {
             const label = measureLabels[im];
+            console.log(label.fontFamilyIndex);
             if (i !== label.fontFamilyIndex)
               continue;
             measureIndexToPreparedIndex[im] = labels.length;
@@ -3568,10 +3605,11 @@ var require_text = __commonJS({
             }
           }
         }
-        return {
+        const labelProps = {
           labelEngine: this._labelEngine,
           atlas: prepared
         };
+        return labelProps;
       }
       _addPoint(mapProps, style, labels, p) {
         if (!(p == null ? void 0 : p.positions))
@@ -3853,7 +3891,7 @@ var require_text = __commonJS({
         }
         this.label = new Label(this._labelOpts);
       }
-      update(props, map, opts) {
+      update(props, mapProps, opts) {
         const style = opts.style || this.style;
         if (!this.label || !style)
           return {
@@ -3867,30 +3905,7 @@ var require_text = __commonJS({
             labelFontFamily
           })
         };
-        const labelProps = this.label.update(props, map, updateOpts);
-        const baseGamma = 2 * 1.4142;
-        const glyphs = labelProps.glyphs = [];
-        for (let i = 0; i < labelProps.atlas.length; i++) {
-          const glyphProps = [];
-          for (let j = 0; j < labelProps.atlas[i].glyphs.length; j++) {
-            const glyph = labelProps.atlas[i].glyphs[j];
-            const { fontSize, fillColor, strokeColor, strokeWidth } = glyph;
-            const gamma = baseGamma / fontSize;
-            const stroke = __spreadProps2(__spreadValues2({}, glyph), {
-              buffer: 0.75 - strokeWidth / fontSize,
-              gamma,
-              color: strokeColor
-            });
-            const fill = __spreadProps2(__spreadValues2({}, glyph), {
-              buffer: 0.75,
-              gamma,
-              color: fillColor
-            });
-            glyphProps.push(stroke);
-            glyphProps.push(fill);
-          }
-          glyphs.push(glyphProps);
-        }
+        const labelProps = this.label.update(props, mapProps, updateOpts);
         return labelProps;
       }
     };
