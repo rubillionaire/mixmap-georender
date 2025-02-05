@@ -1,6 +1,6 @@
-import { createGlyphProps, defaultLabelOpts, Label } from 'tiny-label'
+import { createGlyphProps, defaultLabelOpts, Label, propsIncludeLabels } from 'tiny-label'
 
-export { createGlyphProps }
+export { createGlyphProps, propsIncludeLabels }
 
 export class PrepareText {
   constructor(opts) {
