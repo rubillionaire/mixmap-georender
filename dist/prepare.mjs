@@ -274,7 +274,8 @@ var require_text = __commonJS({
     var text_exports = {};
     __export(text_exports, {
       PrepareText: () => PrepareText2,
-      createGlyphProps: () => createGlyphProps
+      createGlyphProps: () => createGlyphProps,
+      propsIncludeLabels: () => propsIncludeLabels
     });
     module.exports = __toCommonJS(text_exports);
     var __create2 = Object.create;
@@ -3393,6 +3394,7 @@ var require_text = __commonJS({
         fontFamily: "Arial"
       }],
       labelEngine: {
+        outlines: false,
         types: {
           bbox: labelPreset.bbox(),
           point: labelPreset.point({
@@ -3426,9 +3428,10 @@ var require_text = __commonJS({
         for (let j = 0; j < labelProps.atlas[i].glyphs.length; j++) {
           const glyph = labelProps.atlas[i].glyphs[j];
           const { fontSize, fillColor, strokeColor, strokeWidth } = glyph;
-          const gamma = baseGamma / fontSize;
+          const gamma = fontSize > 0 ? baseGamma / fontSize : 0;
+          const strokeBufferDelta = fontSize > 0 ? strokeWidth / fontSize : 0;
           const stroke = __spreadProps22(__spreadValues22({}, glyph), {
-            buffer: 0.75 - strokeWidth / fontSize,
+            buffer: 0.75 - strokeBufferDelta,
             gamma,
             color: strokeColor,
             atlasBaselineOffset,
@@ -3449,6 +3452,14 @@ var require_text = __commonJS({
         glyphs.push(glyphProps);
       }
     };
+    var propsIncludeLabels = (p) => {
+      var _a, _b;
+      return ((_b = (_a = p == null ? void 0 : p.label) == null ? void 0 : _a.atlas) == null ? void 0 : _b.length) > 0;
+    };
+    var updateOptions = {
+      labelFeatureTypes: ["point", "line", "area"],
+      measureLabels: null
+    };
     var Label = class {
       constructor(opts = {}) {
         if (Array.isArray(opts.fontFamily)) {
@@ -3468,27 +3479,67 @@ var require_text = __commonJS({
         this._labelEngine = (0, import_label_placement_engine.default)(__spreadValues22(__spreadValues22({}, defaultLabelOpts.labelEngine), opts.labelEngine));
         this.style = opts.style;
         this._props = {};
+        if (this.style) {
+          this._setStyleRead();
+        }
       }
-      update(props, mapProps, opts = {}) {
-        const style = opts.style || this.style;
+      _setStyleRead() {
+        const styleSettings = (0, import_settings.default)();
+        this.styleRead = (0, import_read2.default)({
+          pixels: this.style.data,
+          zoomCount: styleSettings.zoomCount,
+          imageWidth: styleSettings.imageWidth
+        });
+      }
+      update(props, mapProps, opts = updateOptions) {
+        var _a, _b, _c;
+        if (opts.style) {
+          this.style = opts.style;
+          this._setStyleRead();
+        }
         for (const index in this._atlas) {
           this._atlas[index].clear();
         }
-        const viewboxWidthLon = mapProps.viewbox[2] - mapProps.viewbox[0];
-        const viewboxHeightLat = mapProps.viewbox[3] - mapProps.viewbox[1];
-        const measureLabels = [];
-        const styleSettings = (0, import_settings.default)();
-        this.styleRead = (0, import_read2.default)({ pixels: style.data, zoomCount: styleSettings.zoomCount, imageWidth: styleSettings.imageWidth });
-        this._addPoint(mapProps, style, measureLabels, props.pointT);
-        this._addPoint(mapProps, style, measureLabels, props.pointP);
-        this._addLine(mapProps, style, measureLabels, props.lineT);
-        this._addLine(mapProps, style, measureLabels, props.lineP);
-        this._addArea(mapProps, style, measureLabels, props.areaT);
-        this._addArea(mapProps, style, measureLabels, props.areaP);
+        const measureLabels = (opts == null ? void 0 : opts.measureLabels) || [];
+        const style = this.style;
+        const labelFeatureTypes = {
+          point: (_a = opts == null ? void 0 : opts.labelFeatureTypes) == null ? void 0 : _a.includes("point"),
+          line: (_b = opts == null ? void 0 : opts.labelFeatureTypes) == null ? void 0 : _b.includes("line"),
+          area: (_c = opts == null ? void 0 : opts.labelFeatureTypes) == null ? void 0 : _c.includes("area")
+        };
+        const addPropsToMeasureLabels = (p) => {
+          if (!propsIncludeLabels(p))
+            return;
+          if (labelFeatureTypes.point) {
+            this._addPoint(mapProps, style, measureLabels, p.pointT);
+            this._addPoint(mapProps, style, measureLabels, p.pointP);
+          }
+          if (labelFeatureTypes.line) {
+            this._addLine(mapProps, style, measureLabels, p.lineT);
+            this._addLine(mapProps, style, measureLabels, p.lineP);
+          }
+          if (labelFeatureTypes.area) {
+            this._addArea(mapProps, style, measureLabels, p.areaT);
+            this._addArea(mapProps, style, measureLabels, p.areaP);
+          }
+        };
+        if (measureLabels.length > 0) {
+        }
+        if (Array.isArray(props)) {
+          props.forEach((p) => addPropsToMeasureLabels(p));
+        } else {
+          addPropsToMeasureLabels(props);
+        }
+        if (measureLabels.length === 0) {
+          const emptyResults = {
+            labelEngine: null,
+            atlas: []
+          };
+        }
         measureLabels.sort((a, b) => {
-          var _a, _b;
-          const ap = (_a = a.priority) != null ? _a : 1;
-          const bp = (_b = b.priority) != null ? _b : 1;
+          var _a2, _b2;
+          const ap = (_a2 = a.priority) != null ? _a2 : 1;
+          const bp = (_b2 = b.priority) != null ? _b2 : 1;
           if (ap > bp)
             return -1;
           if (ap < bp)
@@ -3501,7 +3552,6 @@ var require_text = __commonJS({
           const labels = [];
           for (let im = 0; im < measureLabels.length; im++) {
             const label = measureLabels[im];
-            console.log(label.fontFamilyIndex);
             if (i !== label.fontFamilyIndex)
               continue;
             measureIndexToPreparedIndex[im] = labels.length;
@@ -3633,6 +3683,8 @@ var require_text = __commonJS({
             strokeOpacity,
             pointSize
           } = this.styleRead.label("point", type, zoom);
+          if (fontSize === 0)
+            continue;
           labels.push({
             type: "point",
             point: [lon, lat],
@@ -3690,6 +3742,8 @@ var require_text = __commonJS({
             strokeColor,
             strokeOpacity
           } = this.styleRead.label("line", type, zoom);
+          if (fontSize === 0)
+            continue;
           labels.push({
             type: "line",
             text,
@@ -3748,6 +3802,8 @@ var require_text = __commonJS({
             strokeColor,
             strokeOpacity
           } = this.styleRead.label("area", type, zoom);
+          if (fontSize === 0)
+            continue;
           labels.push({
             type: "area",
             text,

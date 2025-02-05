@@ -2847,6 +2847,7 @@ var defaultLabelOpts = {
     fontFamily: "Arial"
   }],
   labelEngine: {
+    outlines: false,
     types: {
       bbox: labelPreset.bbox(),
       point: labelPreset.point({
