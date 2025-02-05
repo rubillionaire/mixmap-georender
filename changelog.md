@@ -1,3 +1,11 @@
+# 7.0.0
+
+The major revision here is allowing for `mixmap-georender` geo data preperation to happen within the context of a Web Worker. This is accomplished by splitting the `prepare` processes into two parts, bits that can be done off the main thread, and those parts that require access to the main thread and its WebGL context. Those main thread portions are mostly spreading values across the calculated props.
+
+- [minor] [prepare] add `propsForMaps` function, which expects a `mixmap` instance, pulls the relevant props required for geo data preperation such that they can be serialized into a Web Worker.
+- [minor] [prepare] add `spreadStyleTexture` function, which expects the data for a [georender style texture](https://github.com/rubillionaire/georender-style2png) output, and creates a GPU ready texture, and spreads that value throughout the props produced by the `prepare.update` method. This is intended to be done after Web Worker processing of geo data as the last step before passing props to their draw commands.
+- [minor] [prepare] adds `propsIncludeLabels` function, which expects the output of `prepare.update`. With this, it determines if there was any label data accumulated for display.
+
 # 6.0.1
 
 - [example] patch: remove picking example, this is covered in the render example
