@@ -2847,6 +2847,18 @@ function edt1d(grid, offset, stride, length, f, v, z) {
     grid[offset + q * stride] = f[r] + qr * qr;
   }
 }
+var TinySDFOffscreen = class extends TinySDF {
+  _createCanvas(size) {
+    if (typeof document !== "undefined") {
+      const canvas = document.createElement("canvas");
+      canvas.width = canvas.height = size;
+      return canvas;
+    } else if (typeof OffscreenCanvas !== "undefined") {
+      const canvas = new OffscreenCanvas(size, size);
+      return canvas;
+    }
+  }
+};
 function potpack(boxes) {
   let area = 0;
   let maxWidth = 0;
@@ -2902,7 +2914,7 @@ function potpack(boxes) {
 }
 var Atlas = class {
   constructor(opts) {
-    this._tinySdf = new TinySDF(opts);
+    this._tinySdf = new TinySDFOffscreen(opts);
     this._glyphsMap = /* @__PURE__ */ new Map();
     this._glyphsArray = [];
     this._labels = [];
@@ -3162,6 +3174,8 @@ var createGlyphProps = (labelProps, map) => {
   const glyphs = labelProps.glyphs = [];
   for (let i = 0; i < labelProps.atlas.length; i++) {
     const atlas = labelProps.atlas[i];
+    if (atlas.texture.width === 0)
+      continue;
     const atlasBaselineOffset = atlas.baselineOffset;
     const atlasGlyphsTextureDim = [atlas.texture.width, atlas.texture.height];
     const atlasGlyphsTexture = map.regl.texture(atlas.texture);
@@ -3249,8 +3263,6 @@ var Label = class {
       area: (_c = opts == null ? void 0 : opts.labelFeatureTypes) == null ? void 0 : _c.includes("area")
     };
     const addPropsToMeasureLabels = (p) => {
-      if (!propsIncludeLabels(p))
-        return;
       if (labelFeatureTypes.point) {
         this._addPoint(mapProps, style, measureLabels, p.pointT);
         this._addPoint(mapProps, style, measureLabels, p.pointP);
@@ -3276,6 +3288,7 @@ var Label = class {
         labelEngine: null,
         atlas: []
       };
+      return emptyResults;
     }
     measureLabels.sort((a, b) => {
       var _a2, _b2;
