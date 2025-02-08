@@ -36,6 +36,7 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // text.mjs
 var text_exports = {};
 __export(text_exports, {
+  Label: () => Label,
   PrepareText: () => PrepareText,
   createGlyphProps: () => createGlyphProps,
   propsIncludeLabels: () => propsIncludeLabels
@@ -3204,29 +3205,31 @@ var createGlyphProps = (labelProps, map) => {
     const atlasGlyphsTextureDim = [atlas.texture.width, atlas.texture.height];
     const atlasGlyphsTexture = map.regl.texture(atlas.texture);
     const glyphProps = [];
-    for (let j = 0; j < labelProps.atlas[i].glyphs.length; j++) {
-      const glyph = labelProps.atlas[i].glyphs[j];
-      const { fontSize, fillColor, strokeColor, strokeWidth } = glyph;
-      const gamma = fontSize > 0 ? baseGamma / fontSize : 0;
-      const strokeBufferDelta = fontSize > 0 ? strokeWidth / fontSize : 0;
-      const stroke = __spreadProps2(__spreadValues2({}, glyph), {
-        buffer: 0.75 - strokeBufferDelta,
-        gamma,
-        color: strokeColor,
-        atlasBaselineOffset,
-        atlasGlyphsTextureDim,
-        atlasGlyphsTexture
-      });
-      const fill = __spreadProps2(__spreadValues2({}, glyph), {
-        buffer: 0.75,
-        gamma,
-        color: fillColor,
-        atlasBaselineOffset,
-        atlasGlyphsTextureDim,
-        atlasGlyphsTexture
-      });
-      glyphProps.push(stroke);
-      glyphProps.push(fill);
+    for (const mapProps of map._props()) {
+      for (let j = 0; j < labelProps.atlas[i].glyphs.length; j++) {
+        const glyph = labelProps.atlas[i].glyphs[j];
+        const { fontSize, fillColor, strokeColor, strokeWidth } = glyph;
+        const gamma = fontSize > 0 ? baseGamma / fontSize : 0;
+        const strokeBufferDelta = fontSize > 0 ? strokeWidth / fontSize : 0;
+        const stroke = __spreadProps2(__spreadValues2(__spreadValues2({}, glyph), mapProps), {
+          buffer: 0.75 - strokeBufferDelta,
+          gamma,
+          color: strokeColor,
+          atlasBaselineOffset,
+          atlasGlyphsTextureDim,
+          atlasGlyphsTexture
+        });
+        const fill = __spreadProps2(__spreadValues2(__spreadValues2({}, glyph), mapProps), {
+          buffer: 0.75,
+          gamma,
+          color: fillColor,
+          atlasBaselineOffset,
+          atlasGlyphsTextureDim,
+          atlasGlyphsTexture
+        });
+        glyphProps.push(stroke);
+        glyphProps.push(fill);
+      }
     }
     glyphs.push(glyphProps);
   }
