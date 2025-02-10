@@ -1,7 +1,17 @@
-import { defaultLabelOpts, Label } from 'tiny-label'
+import {
+  createGlyphProps,
+  defaultLabelOpts,
+  Label,
+  propsIncludeLabels,
+  updateOptions,
+} from 'tiny-label'
 
+export { createGlyphProps, Label, propsIncludeLabels, updateOptions }
 
 export class PrepareText {
+  style
+  label
+  _labelOpts
   constructor(opts) {
     this.style = opts.style
     delete opts.style
@@ -23,7 +33,7 @@ export class PrepareText {
     this.label = new Label(this._labelOpts)
   }
 
-  update (props, map, opts) {
+  update (props, mapProps, opts) {
     const style = opts.style || this.style
 
     if (!this.label || !style) return {
@@ -32,40 +42,18 @@ export class PrepareText {
       glyphs: [],
     }
     const labelFontFamily = this._labelOpts.fontFamily
+    const labelFeatureTypes = opts.labelFeatureTypes ?? ['']
     const updateOpts = {
+      ...updateOptions,
+      ...opts,
       style: {
         ...style,
         labelFontFamily,
       }
     }
 
-    const labelProps = this.label.update(props, map, updateOpts)
-    const baseGamma = 2.0 * 1.4142
-    const glyphs = labelProps.glyphs =[]
-    for (let i = 0; i < labelProps.atlas.length; i++) {
-      const glyphProps = []
-      for (let j = 0; j < labelProps.atlas[i].glyphs.length; j++) {
-        const glyph = labelProps.atlas[i].glyphs[j]
-        const { fontSize, fillColor, strokeColor, strokeWidth } = glyph
-        const gamma = baseGamma/fontSize
-        const stroke = {
-          ...glyph,
-          buffer: 0.75 - (strokeWidth / fontSize),
-          gamma,
-          color: strokeColor
-        }
-        const fill = {
-          ...glyph,
-          buffer: 0.75,
-          gamma,
-          color: fillColor
-        }
-        glyphProps.push(stroke)
-        glyphProps.push(fill)
-      }
-      glyphs.push(glyphProps)
-    }
-
+    const labelProps = this.label.update(props, mapProps, updateOpts)
+    
     return labelProps
   }
 }

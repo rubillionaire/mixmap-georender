@@ -2660,10 +2660,10 @@ var require_settings = __commonJS2({
 var require_read = __commonJS2({
   "node_modules/@rubenrodriguez/georender-style2png/read.js"(exports, module2) {
     module2.exports = read;
-    function read({ pixels, zoomCount, imageWidth }) {
+    function read({ pixels, zoomCount, imageWidth, labelFontFamily = ["Arial"] }) {
       return {
         opacity: (key, type, zoom) => opacity(key, type, zoom, { pixels, imageWidth, zoomCount }),
-        label: (key, type, zoom) => label(key, type, zoom, { pixels, imageWidth, zoomCount }),
+        label: (key, type, zoom) => label(key, type, zoom, { pixels, imageWidth, zoomCount, labelFontFamily }),
         zindex: (key, type, zoom) => zindex(key, type, zoom, { pixels, imageWidth, zoomCount })
       };
     }
@@ -2696,13 +2696,13 @@ var require_read = __commonJS2({
         return zindex2;
       }
     }
-    function label(key, type, zoom, { pixels, imageWidth, zoomCount }) {
+    function label(key, type, zoom, { pixels, imageWidth, zoomCount, labelFontFamily }) {
       const y = yOffset(key, zoom, zoomCount);
       const fillColor = [];
       let fillOpacity;
       const strokeColor = [];
       let strokeOpacity;
-      let fontFamily;
+      let fontFamilyIndex;
       let fontSize;
       let priority;
       let constraints;
@@ -2730,7 +2730,7 @@ var require_read = __commonJS2({
         prevFkeyLoops += 1;
         const x6 = xOffset(type, prevFkeyLoops, imageWidth);
         const i6 = vec4Index(x6, y, imageWidth);
-        fontFamily = pixels[i6 + 0];
+        fontFamilyIndex = pixels[i6 + 0];
         fontSize = pixels[i6 + 1];
         priority = pixels[i6 + 2];
         constraints = pixels[i6 + 3];
@@ -2756,7 +2756,7 @@ var require_read = __commonJS2({
         prevFkeyLoops += 1;
         const x7 = xOffset(type, prevFkeyLoops, imageWidth);
         const i7 = vec4Index(x7, y, imageWidth);
-        fontFamily = pixels[i7 + 0];
+        fontFamilyIndex = pixels[i7 + 0];
         fontSize = pixels[i7 + 1];
         priority = pixels[i7 + 2];
         constraints = pixels[i7 + 3];
@@ -2786,17 +2786,21 @@ var require_read = __commonJS2({
         prevFkeyLoops += 1;
         const x5 = xOffset(type, prevFkeyLoops, imageWidth);
         const i5 = vec4Index(x5, y, imageWidth);
-        fontFamily = pixels[i5 + 0];
+        fontFamilyIndex = pixels[i5 + 0];
         fontSize = pixels[i5 + 1];
         priority = pixels[i5 + 2];
         constraints = pixels[i5 + 3];
       }
+      const fontFamilyName = labelFontFamily[fontFamilyIndex] || "Arial";
       return __spreadValues2({
         fillColor,
         fillOpacity,
         strokeColor,
         strokeOpacity,
-        fontFamily,
+        fontFamily: fontFamilyIndex,
+        // deprecated
+        fontFamilyIndex,
+        fontFamilyName,
         fontSize,
         priority,
         constraints,
@@ -2847,6 +2851,7 @@ var defaultLabelOpts = {
     fontFamily: "Arial"
   }],
   labelEngine: {
+    outlines: false,
     types: {
       bbox: labelPreset.bbox(),
       point: labelPreset.point({
@@ -2909,141 +2914,136 @@ var Shaders = (map) => {
         }
       `
     },
-    label: (prepared) => {
-      if (!prepared || !prepared.glyphs || prepared.glyphs.length === 0)
-        return {};
-      const glyphsTexture = map.regl.texture(prepared == null ? void 0 : prepared.texture);
-      return {
-        attributes: {
-          position: map.prop("positions"),
-          uv: [0, 0, 1, 0, 1, 1, 0, 1]
-        },
-        elements: [0, 1, 2, 0, 2, 3],
-        primitive: "triangles",
-        uniforms: {
-          baselineOffset: prepared.baselineOffset,
-          glyphsTexture,
-          buffer: map.prop("buffer"),
-          color: map.prop("color"),
-          gamma: map.prop("gamma"),
-          glyphInLabelStringOffset: map.prop("glyphInLabelStringOffset"),
-          glyphRasterDim: map.prop("glyphRasterDim"),
-          glyphRasterTop: map.prop("glyphRasterTop"),
-          glyphTexDim: map.prop("glyphTexDim"),
-          glyphTexOffset: map.prop("glyphTexOffset"),
-          isVisible: map.prop("isVisible"),
-          labelDim: map.prop("labelDim"),
-          letterSpacing: map.prop("letterSpacing"),
-          labelTexDim: [prepared.texture.width, prepared.texture.height],
-          viewport: (context) => [context.viewportWidth, context.viewportHeight],
-          zindex: map.prop("zindex"),
-          // map-uniforms:start
-          aspect: (context) => context.viewportWidth / context.viewportHeight,
-          viewbox: map.prop("viewbox"),
-          offset: map.prop("offset")
-          // map-uniforms:end
-        },
-        vert: `
-          precision highp float;
-          attribute vec2 position;
-          attribute vec2 uv;
+    label: {
+      attributes: {
+        position: map.prop("positions"),
+        uv: [0, 0, 1, 0, 1, 1, 0, 1]
+      },
+      elements: [0, 1, 2, 0, 2, 3],
+      primitive: "triangles",
+      uniforms: {
+        baselineOffset: map.prop("atlasBaselineOffset"),
+        glyphsTexture: map.prop("atlasGlyphsTexture"),
+        buffer: map.prop("buffer"),
+        color: map.prop("color"),
+        gamma: map.prop("gamma"),
+        glyphInLabelStringOffset: map.prop("glyphInLabelStringOffset"),
+        glyphRasterDim: map.prop("glyphRasterDim"),
+        glyphRasterTop: map.prop("glyphRasterTop"),
+        glyphTexDim: map.prop("glyphTexDim"),
+        glyphTexOffset: map.prop("glyphTexOffset"),
+        isVisible: map.prop("isVisible"),
+        labelDim: map.prop("labelDim"),
+        letterSpacing: map.prop("letterSpacing"),
+        labelTexDim: map.prop("atlasGlyphsTextureDim"),
+        viewport: (context) => [context.viewportWidth, context.viewportHeight],
+        zindex: map.prop("zindex"),
+        // map-uniforms:start
+        aspect: (context) => context.viewportWidth / context.viewportHeight,
+        viewbox: map.prop("viewbox"),
+        offset: map.prop("offset")
+        // map-uniforms:end
+      },
+      vert: `
+        precision highp float;
+        attribute vec2 position;
+        attribute vec2 uv;
 
-          // map-uniforms:start
-          uniform float aspect;
-          uniform vec2 offset;
-          uniform vec4 viewbox;
-          // map-uniforms:end
-          
-          uniform vec2 baselineOffset;
-          uniform vec2 glyphInLabelStringOffset;
-          uniform vec2 glyphRasterDim;
-          uniform float glyphRasterTop;
-          uniform vec2 glyphTexDim;
-          uniform vec2 glyphTexOffset;
-          uniform vec2 labelDim;
-          uniform float letterSpacing;
-          uniform vec2 labelTexDim;
-          uniform vec2 viewport;
-          uniform float zindex;
+        // map-uniforms:start
+        uniform float aspect;
+        uniform vec2 offset;
+        uniform vec4 viewbox;
+        // map-uniforms:end
+        
+        uniform vec2 baselineOffset;
+        uniform vec2 glyphInLabelStringOffset;
+        uniform vec2 glyphRasterDim;
+        uniform float glyphRasterTop;
+        uniform vec2 glyphTexDim;
+        uniform vec2 glyphTexOffset;
+        uniform vec2 labelDim;
+        uniform float letterSpacing;
+        uniform vec2 labelTexDim;
+        uniform vec2 viewport;
+        uniform float zindex;
 
-          varying vec4 vGlyphOffset;
-          varying vec2 vGlyphTexOffset;
-          varying vec2 vGlyphTexDim;
-          varying vec2 vLabelTexDim;
-          varying vec2 vUv;
+        varying vec4 vGlyphOffset;
+        varying vec2 vGlyphTexOffset;
+        varying vec2 vGlyphTexDim;
+        varying vec2 vLabelTexDim;
+        varying vec2 vUv;
 
-          void main() {
-            /// glyphOffset
-            /// .x = x offset into label
-            /// .y = x offset + x width into label
-            /// .z = y baseline top offset
-            /// .w = y baseline bottom offset
-            vec4 glyphOffset = vec4(
-              glyphInLabelStringOffset.x / labelDim.x * letterSpacing,
-              (glyphInLabelStringOffset.x / labelDim.x * letterSpacing) + (glyphRasterDim.x / labelDim.x),
-              (glyphRasterTop - baselineOffset.y) / labelDim.y,
-              (glyphRasterTop - baselineOffset.y - glyphRasterDim.y) / labelDim.y
-            );
+        void main() {
+          /// glyphOffset
+          /// .x = x offset into label
+          /// .y = x offset + x width into label
+          /// .z = y baseline top offset
+          /// .w = y baseline bottom offset
+          vec4 glyphOffset = vec4(
+            glyphInLabelStringOffset.x / labelDim.x * letterSpacing,
+            (glyphInLabelStringOffset.x / labelDim.x * letterSpacing) + (glyphRasterDim.x / labelDim.x),
+            (glyphRasterTop - baselineOffset.y) / labelDim.y,
+            (glyphRasterTop - baselineOffset.y - glyphRasterDim.y) / labelDim.y
+          );
 
-            vec2 p = position + offset;
-            gl_Position = vec4(
-              (p.x - viewbox.x) / (viewbox.z - viewbox.x) * 2.0 - 1.0,
-              ((p.y - viewbox.y) / (viewbox.w - viewbox.y) * 2.0 - 1.0) * aspect,
-              1.0/(1.0 + zindex),
-              1.0
-            );
+          vec2 p = position + offset;
+          gl_Position = vec4(
+            (p.x - viewbox.x) / (viewbox.z - viewbox.x) * 2.0 - 1.0,
+            ((p.y - viewbox.y) / (viewbox.w - viewbox.y) * 2.0 - 1.0) * aspect,
+            1.0/(1.0 + zindex),
+            1.0
+          );
 
-            vGlyphOffset = glyphOffset;
-            vUv = uv;
-            vGlyphTexOffset = glyphTexOffset;
-            vGlyphTexDim = glyphTexDim;
-            vLabelTexDim = labelTexDim;
-          }
-        `,
-        frag: `
-          precision highp float;
-          uniform sampler2D glyphsTexture;
-          uniform float buffer, gamma;
-          uniform float isVisible;
-          uniform vec4 color;
-
-          varying vec4 vGlyphOffset;
-          varying vec2 vGlyphTexOffset;
-          varying vec2 vGlyphTexDim;
-          varying vec2 vLabelTexDim;
-          varying vec2 vUv;
-
-          // https://github.com/msfeldstein/glsl-map/blob/master/index.glsl
-          vec2 map (vec2 value, vec2 inMin, vec2 inMax, vec2 outMin, vec2 outMax) {
-            return outMin + (outMax - outMin) * (value - inMin) / (inMax - inMin);
-          }
-
-          void main () {
-            float drawGlyph = step(vGlyphOffset.x, vUv.x) * step(vUv.x, vGlyphOffset.y);
-            if (drawGlyph < 0.5) {
-              discard;
-            }
-            // the vUv spans the entire label position space, and we only want to account
-            // for an individual glyph, so we map our glyph offsets within the label space
-            // onto a normalized uv range, and use that to sample our glyphs texture
-            vec2 uv = map(vUv, vGlyphOffset.xz, vGlyphOffset.yw, vec2(0.0), vec2(1.0));
-            uv = clamp(uv, vec2(0.0), vec2(1.0));
-            vec2 tcoord = (vGlyphTexOffset + (vGlyphTexDim * uv)) / vLabelTexDim;
-            float dist = texture2D(glyphsTexture, tcoord).a;
-
-            float alpha = smoothstep(buffer - gamma, buffer + gamma, dist);
-            gl_FragColor = color * alpha;
-          }
-        `,
-        depth: { enable: false },
-        blend: {
-          enable: true,
-          func: {
-            src: "src alpha",
-            dst: "one minus src alpha"
-          }
+          vGlyphOffset = glyphOffset;
+          vUv = uv;
+          vGlyphTexOffset = glyphTexOffset;
+          vGlyphTexDim = glyphTexDim;
+          vLabelTexDim = labelTexDim;
         }
-      };
+      `,
+      frag: `
+        precision highp float;
+        uniform sampler2D glyphsTexture;
+        uniform float buffer, gamma;
+        uniform float isVisible;
+        uniform vec4 color;
+
+        varying vec4 vGlyphOffset;
+        varying vec2 vGlyphTexOffset;
+        varying vec2 vGlyphTexDim;
+        varying vec2 vLabelTexDim;
+        varying vec2 vUv;
+
+        // https://github.com/msfeldstein/glsl-map/blob/master/index.glsl
+        vec2 map (vec2 value, vec2 inMin, vec2 inMax, vec2 outMin, vec2 outMax) {
+          return outMin + (outMax - outMin) * (value - inMin) / (inMax - inMin);
+        }
+
+        void main () {
+          float drawGlyph = step(vGlyphOffset.x, vUv.x) * step(vUv.x, vGlyphOffset.y);
+          if (drawGlyph < 0.5) {
+            discard;
+          }
+          // the vUv spans the entire label position space, and we only want to account
+          // for an individual glyph, so we map our glyph offsets within the label space
+          // onto a normalized uv range, and use that to sample our glyphs texture
+          vec2 uv = map(vUv, vGlyphOffset.xz, vGlyphOffset.yw, vec2(0.0), vec2(1.0));
+          uv = clamp(uv, vec2(0.0), vec2(1.0));
+          vec2 tcoord = (vGlyphTexOffset + (vGlyphTexDim * uv)) / vLabelTexDim;
+          float dist = texture2D(glyphsTexture, tcoord).a;
+
+          float alpha = smoothstep(buffer - gamma, buffer + gamma, dist);
+          gl_FragColor = color * alpha;
+        }
+      `,
+      depth: { enable: false },
+      blend: {
+        enable: true,
+        func: {
+          src: "src alpha",
+          dst: "one minus src alpha"
+        }
+      }
     }
   };
 };
@@ -3755,14 +3755,13 @@ Line readLine(sampler2D styleTexture, float featureType, float zoom, vec2 imageS
 
         
 
-Area readArea(sampler2D styleTexture, float featureType, float zoom, vec2 imageSize) {
-  
-  float zoomStart = 1.0;
-  float zoomCount = 21.0;
-  float pointHeight = 7.0*zoomCount;
-  float lineHeight = 8.0*zoomCount;
-  float areaStart = pointHeight + lineHeight;
+float zoomStart = 1.0;
+float zoomCount = 21.0;
+float pointHeight = 7.0*zoomCount;
+float lineHeight = 8.0*zoomCount;
+float areaStart = pointHeight + lineHeight;
 
+Area readArea(sampler2D styleTexture, float featureType, float zoom, vec2 imageSize) {
   float n = 6.0;
   float px = featureType; //pixel x
   float py = areaStart + n * (floor(zoom)-zoomStart); //pixel y

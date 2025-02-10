@@ -1,6 +1,6 @@
 {
   "name": "@rubenrodriguez/mixmap-georender",
-  "version": "6.0.1",
+  "version": "7.0.0",
   "description": "a mixmap layer for rendering peermaps georender data",
   "type": "module",
   "main": "dist/index.cjs",
@@ -35,7 +35,7 @@
     "glsl-georender-style-texture": "^5.0.0",
     "int-pack-vec": "^1.0.1",
     "partition-array": "^1.0.0",
-    "tiny-label": "^1.0.2"
+    "tiny-label": "^2.0.1"
   },
   "devDependencies": {
     "@rubenrodriguez/esbuild-plugin-glslify": "^1.0.0",

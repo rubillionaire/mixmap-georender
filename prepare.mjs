@@ -3,6 +3,28 @@ import Read from '@rubenrodriguez/georender-style2png/read'
 import { PrepareText } from './text'
 import defined from '@/lib/defined'
 
+// Use this function to strip out the properties necessary from a mixmap
+// instance, so that we can pass them into a web worker and do the prepare
+// processing in parallel for tiles
+export const propsForMap = (map) => {
+  const zoom = map.getZoom()
+  return {
+    viewbox: map.viewbox,
+    zoom,
+    size: map._size,
+  }
+}
+
+// styleTexture : Regl.Texture
+// we need our webgl context to produce the styleTexure, so we
+// must run this after prepare.update, on its output
+export const spreadStyleTexture = (styleTexture, props) => {
+  for (const drawType in props) {
+    if (drawType === 'label') continue
+    props[drawType].style = styleTexture
+  }
+}
+
 export default function Prepare(opts) {
   if (!(this instanceof Prepare)) return new Prepare(opts)
   this.style = opts.styleTexture
@@ -430,8 +452,15 @@ Prepare.prototype._splitSortArea = function (key, zoom) {
   }
 }
 
-Prepare.prototype.update = function (map) {
-  const zoom = Math.round(map.getZoom())
+// map | maProps
+// for single threaded work, its fine to accept a mixmap instance
+// for Web Worker based implementations, we want mapProps which
+//  are serializable
+Prepare.prototype.update = function (mapProps, { labels={} }={}) {
+  if (typeof mapProps?.getZoom === 'function') {
+    mapProps = propsForMap(mapProps)
+  }
+  const zoom = Math.round(mapProps.zoom)
   var self = this
   this._splitSort('point', zoom)
   this._splitSort('line', zoom)
@@ -443,7 +472,11 @@ Prepare.prototype.update = function (map) {
       width: this.imageSize[0],
       height: this.imageSize[1],
     }
-    this.props.label = this.label.update(this.props, map, { style })
+
+    this.props.label = this.label.update(this.props, mapProps, {
+      style,
+      ...labels,
+    })
   }
   return this.props
 }

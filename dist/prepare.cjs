@@ -73,10 +73,10 @@ var require_partition = __commonJS({
 var require_read = __commonJS({
   "node_modules/@rubenrodriguez/georender-style2png/read.js"(exports, module2) {
     module2.exports = read;
-    function read({ pixels, zoomCount, imageWidth }) {
+    function read({ pixels, zoomCount, imageWidth, labelFontFamily = ["Arial"] }) {
       return {
         opacity: (key, type, zoom) => opacity(key, type, zoom, { pixels, imageWidth, zoomCount }),
-        label: (key, type, zoom) => label(key, type, zoom, { pixels, imageWidth, zoomCount }),
+        label: (key, type, zoom) => label(key, type, zoom, { pixels, imageWidth, zoomCount, labelFontFamily }),
         zindex: (key, type, zoom) => zindex(key, type, zoom, { pixels, imageWidth, zoomCount })
       };
     }
@@ -109,13 +109,13 @@ var require_read = __commonJS({
         return zindex2;
       }
     }
-    function label(key, type, zoom, { pixels, imageWidth, zoomCount }) {
+    function label(key, type, zoom, { pixels, imageWidth, zoomCount, labelFontFamily }) {
       const y = yOffset(key, zoom, zoomCount);
       const fillColor = [];
       let fillOpacity;
       const strokeColor = [];
       let strokeOpacity;
-      let fontFamily;
+      let fontFamilyIndex;
       let fontSize;
       let priority;
       let constraints;
@@ -143,7 +143,7 @@ var require_read = __commonJS({
         prevFkeyLoops += 1;
         const x6 = xOffset(type, prevFkeyLoops, imageWidth);
         const i6 = vec4Index(x6, y, imageWidth);
-        fontFamily = pixels[i6 + 0];
+        fontFamilyIndex = pixels[i6 + 0];
         fontSize = pixels[i6 + 1];
         priority = pixels[i6 + 2];
         constraints = pixels[i6 + 3];
@@ -169,7 +169,7 @@ var require_read = __commonJS({
         prevFkeyLoops += 1;
         const x7 = xOffset(type, prevFkeyLoops, imageWidth);
         const i7 = vec4Index(x7, y, imageWidth);
-        fontFamily = pixels[i7 + 0];
+        fontFamilyIndex = pixels[i7 + 0];
         fontSize = pixels[i7 + 1];
         priority = pixels[i7 + 2];
         constraints = pixels[i7 + 3];
@@ -199,17 +199,21 @@ var require_read = __commonJS({
         prevFkeyLoops += 1;
         const x5 = xOffset(type, prevFkeyLoops, imageWidth);
         const i5 = vec4Index(x5, y, imageWidth);
-        fontFamily = pixels[i5 + 0];
+        fontFamilyIndex = pixels[i5 + 0];
         fontSize = pixels[i5 + 1];
         priority = pixels[i5 + 2];
         constraints = pixels[i5 + 3];
       }
+      const fontFamilyName = labelFontFamily[fontFamilyIndex] || "Arial";
       return __spreadValues({
         fillColor,
         fillOpacity,
         strokeColor,
         strokeOpacity,
-        fontFamily,
+        fontFamily: fontFamilyIndex,
+        // deprecated
+        fontFamilyIndex,
+        fontFamilyName,
         fontSize,
         priority,
         constraints,
@@ -2812,10 +2816,10 @@ var require_text = __commonJS({
     var require_read2 = __commonJS2({
       "node_modules/@rubenrodriguez/georender-style2png/read.js"(exports2, module22) {
         module22.exports = read;
-        function read({ pixels, zoomCount, imageWidth }) {
+        function read({ pixels, zoomCount, imageWidth, labelFontFamily = ["Arial"] }) {
           return {
             opacity: (key, type, zoom) => opacity(key, type, zoom, { pixels, imageWidth, zoomCount }),
-            label: (key, type, zoom) => label(key, type, zoom, { pixels, imageWidth, zoomCount }),
+            label: (key, type, zoom) => label(key, type, zoom, { pixels, imageWidth, zoomCount, labelFontFamily }),
             zindex: (key, type, zoom) => zindex(key, type, zoom, { pixels, imageWidth, zoomCount })
           };
         }
@@ -2848,13 +2852,13 @@ var require_text = __commonJS({
             return zindex2;
           }
         }
-        function label(key, type, zoom, { pixels, imageWidth, zoomCount }) {
+        function label(key, type, zoom, { pixels, imageWidth, zoomCount, labelFontFamily }) {
           const y = yOffset(key, zoom, zoomCount);
           const fillColor = [];
           let fillOpacity;
           const strokeColor = [];
           let strokeOpacity;
-          let fontFamily;
+          let fontFamilyIndex;
           let fontSize;
           let priority;
           let constraints;
@@ -2882,7 +2886,7 @@ var require_text = __commonJS({
             prevFkeyLoops += 1;
             const x6 = xOffset(type, prevFkeyLoops, imageWidth);
             const i6 = vec4Index(x6, y, imageWidth);
-            fontFamily = pixels[i6 + 0];
+            fontFamilyIndex = pixels[i6 + 0];
             fontSize = pixels[i6 + 1];
             priority = pixels[i6 + 2];
             constraints = pixels[i6 + 3];
@@ -2908,7 +2912,7 @@ var require_text = __commonJS({
             prevFkeyLoops += 1;
             const x7 = xOffset(type, prevFkeyLoops, imageWidth);
             const i7 = vec4Index(x7, y, imageWidth);
-            fontFamily = pixels[i7 + 0];
+            fontFamilyIndex = pixels[i7 + 0];
             fontSize = pixels[i7 + 1];
             priority = pixels[i7 + 2];
             constraints = pixels[i7 + 3];
@@ -2938,17 +2942,21 @@ var require_text = __commonJS({
             prevFkeyLoops += 1;
             const x5 = xOffset(type, prevFkeyLoops, imageWidth);
             const i5 = vec4Index(x5, y, imageWidth);
-            fontFamily = pixels[i5 + 0];
+            fontFamilyIndex = pixels[i5 + 0];
             fontSize = pixels[i5 + 1];
             priority = pixels[i5 + 2];
             constraints = pixels[i5 + 3];
           }
+          const fontFamilyName = labelFontFamily[fontFamilyIndex] || "Arial";
           return __spreadValues22({
             fillColor,
             fillOpacity,
             strokeColor,
             strokeOpacity,
-            fontFamily,
+            fontFamily: fontFamilyIndex,
+            // deprecated
+            fontFamilyIndex,
+            fontFamilyName,
             fontSize,
             priority,
             constraints,
@@ -3109,6 +3117,18 @@ var require_text = __commonJS({
         grid[offset + q * stride] = f[r] + qr * qr;
       }
     }
+    var TinySDFOffscreen = class extends TinySDF {
+      _createCanvas(size) {
+        if (typeof document !== "undefined") {
+          const canvas = document.createElement("canvas");
+          canvas.width = canvas.height = size;
+          return canvas;
+        } else if (typeof OffscreenCanvas !== "undefined") {
+          const canvas = new OffscreenCanvas(size, size);
+          return canvas;
+        }
+      }
+    };
     function potpack(boxes) {
       let area = 0;
       let maxWidth = 0;
@@ -3164,7 +3184,7 @@ var require_text = __commonJS({
     }
     var Atlas = class {
       constructor(opts) {
-        this._tinySdf = new TinySDF(opts);
+        this._tinySdf = new TinySDFOffscreen(opts);
         this._glyphsMap = /* @__PURE__ */ new Map();
         this._glyphsArray = [];
         this._labels = [];
@@ -3397,6 +3417,7 @@ var require_text = __commonJS({
         fontFamily: "Arial"
       }],
       labelEngine: {
+        outlines: false,
         types: {
           bbox: labelPreset.bbox(),
           point: labelPreset.point({
@@ -3418,6 +3439,10 @@ var require_text = __commonJS({
         }
       }
     };
+    var updateOptions = {
+      labelFeatureTypes: ["point", "line", "area"],
+      measureLabels: null
+    };
     var Label = class {
       constructor(opts = {}) {
         if (Array.isArray(opts.fontFamily)) {
@@ -3426,6 +3451,7 @@ var require_text = __commonJS({
               fontFamily
             });
           });
+          this._fontFamily = opts.fontFamily;
         }
         if (!opts.atlas)
           opts.atlas = defaultLabelOpts.atlas;
@@ -3437,27 +3463,69 @@ var require_text = __commonJS({
         this._labelEngine = (0, import_label_placement_engine.default)(__spreadValues22(__spreadValues22({}, defaultLabelOpts.labelEngine), opts.labelEngine));
         this.style = opts.style;
         this._props = {};
+        if (this.style) {
+          this._setStyleRead();
+        }
       }
-      update(props, map, opts = {}) {
-        const style = opts.style || this.style;
+      _setStyleRead() {
+        var _a;
+        const styleSettings = (0, import_settings.default)();
+        const labelFontFamily = ((_a = this.style) == null ? void 0 : _a.labelFontFamily) || this._fontFamily || ["Arial"];
+        this.styleRead = (0, import_read2.default)({
+          pixels: this.style.data,
+          zoomCount: styleSettings.zoomCount,
+          imageWidth: styleSettings.imageWidth,
+          labelFontFamily
+        });
+      }
+      update(props, mapProps, opts = updateOptions) {
+        var _a, _b, _c;
+        if (opts.style) {
+          this.style = opts.style;
+          this._setStyleRead();
+        }
         for (const index in this._atlas) {
           this._atlas[index].clear();
         }
-        const viewboxWidthLon = map.viewbox[2] - map.viewbox[0];
-        const viewboxHeightLat = map.viewbox[3] - map.viewbox[1];
-        const measureLabels = [];
-        const styleSettings = (0, import_settings.default)();
-        this.styleRead = (0, import_read2.default)({ pixels: style.data, zoomCount: styleSettings.zoomCount, imageWidth: styleSettings.imageWidth });
-        this._addPoint(map, style, measureLabels, props.pointT);
-        this._addPoint(map, style, measureLabels, props.pointP);
-        this._addLine(map, style, measureLabels, props.lineT);
-        this._addLine(map, style, measureLabels, props.lineP);
-        this._addArea(map, style, measureLabels, props.areaT);
-        this._addArea(map, style, measureLabels, props.areaP);
+        const measureLabels = (opts == null ? void 0 : opts.measureLabels) || [];
+        const style = this.style;
+        const labelFeatureTypes = {
+          point: (_a = opts == null ? void 0 : opts.labelFeatureTypes) == null ? void 0 : _a.includes("point"),
+          line: (_b = opts == null ? void 0 : opts.labelFeatureTypes) == null ? void 0 : _b.includes("line"),
+          area: (_c = opts == null ? void 0 : opts.labelFeatureTypes) == null ? void 0 : _c.includes("area")
+        };
+        const addPropsToMeasureLabels = (p) => {
+          if (labelFeatureTypes.point) {
+            this._addPoint(mapProps, style, measureLabels, p.pointT);
+            this._addPoint(mapProps, style, measureLabels, p.pointP);
+          }
+          if (labelFeatureTypes.line) {
+            this._addLine(mapProps, style, measureLabels, p.lineT);
+            this._addLine(mapProps, style, measureLabels, p.lineP);
+          }
+          if (labelFeatureTypes.area) {
+            this._addArea(mapProps, style, measureLabels, p.areaT);
+            this._addArea(mapProps, style, measureLabels, p.areaP);
+          }
+        };
+        if (measureLabels.length > 0) {
+        }
+        if (Array.isArray(props)) {
+          props.forEach((p) => addPropsToMeasureLabels(p));
+        } else {
+          addPropsToMeasureLabels(props);
+        }
+        if (measureLabels.length === 0) {
+          const emptyResults = {
+            labelEngine: null,
+            atlas: []
+          };
+          return emptyResults;
+        }
         measureLabels.sort((a, b) => {
-          var _a, _b;
-          const ap = (_a = a.priority) != null ? _a : 1;
-          const bp = (_b = b.priority) != null ? _b : 1;
+          var _a2, _b2;
+          const ap = (_a2 = a.priority) != null ? _a2 : 1;
+          const bp = (_b2 = b.priority) != null ? _b2 : 1;
           if (ap > bp)
             return -1;
           if (ap < bp)
@@ -3482,20 +3550,20 @@ var require_text = __commonJS({
           const preparedLabel = prepared[label.fontFamilyIndex].labels[measureIndexToPreparedIndex[im]];
           switch (label.type) {
             case "point":
-              this._measurePoint(map, prepared[label.fontFamilyIndex], preparedLabel);
+              this._measurePoint(mapProps, prepared[label.fontFamilyIndex], preparedLabel);
               break;
             case "line":
-              this._measureLine(map, prepared[label.fontFamilyIndex], preparedLabel);
+              this._measureLine(mapProps, prepared[label.fontFamilyIndex], preparedLabel);
               break;
             case "area":
-              this._measureArea(map, prepared[label.fontFamilyIndex], preparedLabel);
+              this._measureArea(mapProps, prepared[label.fontFamilyIndex], preparedLabel);
               break;
             default:
               throw new Error("implement measure for type=", label.type);
           }
           Object.assign(label, preparedLabel);
         }
-        const placedLabels = [{ type: "bbox", bounds: map.viewbox }].concat(measureLabels);
+        const placedLabels = [{ type: "bbox", bounds: mapProps.viewbox }].concat(measureLabels);
         this._labelEngine.update(placedLabels);
         const ilabels = [];
         const idLabels = {};
@@ -3568,15 +3636,16 @@ var require_text = __commonJS({
             }
           }
         }
-        return {
+        const labelProps = {
           labelEngine: this._labelEngine,
           atlas: prepared
         };
+        return labelProps;
       }
-      _addPoint(map, style, labels, p) {
+      _addPoint(mapProps, style, labels, p) {
         if (!(p == null ? void 0 : p.positions))
           return;
-        const zoom = Math.round(map.getZoom());
+        const zoom = Math.round(mapProps.zoom);
         for (let ix = 0; ix < p.id.length; ix++) {
           const id = p.id[ix];
           if (!p.labels.hasOwnProperty(id) || p.labels[id].length === 0)
@@ -3584,15 +3653,16 @@ var require_text = __commonJS({
           const text = this._getLabel(p.labels[id]);
           const lon = p.positions[ix * 2 + 0];
           const lat = p.positions[ix * 2 + 1];
-          if (map.viewbox[0] > lon || lon > map.viewbox[2])
+          if (mapProps.viewbox[0] > lon || lon > mapProps.viewbox[2])
             continue;
-          if (map.viewbox[1] > lat || lat > map.viewbox[3])
+          if (mapProps.viewbox[1] > lat || lat > mapProps.viewbox[3])
             continue;
           const type = p.types[ix];
           const {
             fillColor,
             fillOpacity,
-            fontFamily,
+            fontFamilyIndex,
+            fontFamilyName,
             fontSize,
             priority,
             strokeWidth,
@@ -3600,14 +3670,16 @@ var require_text = __commonJS({
             strokeOpacity,
             pointSize
           } = this.styleRead.label("point", type, zoom);
+          if (fontSize === 0)
+            continue;
           labels.push({
             type: "point",
             point: [lon, lat],
             pointSizePx: [pointSize, pointSize],
             id,
             text,
-            fontFamilyIndex: fontFamily,
-            fontFamily: style.labelFontFamily[fontFamily] || "Arial",
+            fontFamilyIndex,
+            fontFamilyName,
             fontSize,
             priority,
             strokeWidth,
@@ -3623,12 +3695,12 @@ var require_text = __commonJS({
           });
         }
       }
-      _addLine(map, style, labels, p) {
+      _addLine(mapProps, style, labels, p) {
         if (!(p == null ? void 0 : p.positions))
           return;
         let start = 0;
         let prev = null;
-        const zoom = Math.round(map.getZoom());
+        const zoom = Math.round(mapProps.zoom);
         for (let ix = 0; ix < p.id.length; ix++) {
           const id = p.id[ix];
           if ((prev === null || prev === id) && ix !== p.id.length - 1) {
@@ -3650,19 +3722,22 @@ var require_text = __commonJS({
           const {
             fillColor,
             fillOpacity,
-            fontFamily,
+            fontFamilyIndex,
+            fontFamilyName,
             fontSize,
             priority,
             strokeWidth,
             strokeColor,
             strokeOpacity
           } = this.styleRead.label("line", type, zoom);
+          if (fontSize === 0)
+            continue;
           labels.push({
             type: "line",
             text,
             positions,
-            fontFamilyIndex: fontFamily,
-            fontFamily: style.labelFontFamily[fontFamily] || "Arial",
+            fontFamilyIndex,
+            fontFamilyName,
             fontSize,
             priority,
             strokeWidth,
@@ -3678,12 +3753,12 @@ var require_text = __commonJS({
           });
         }
       }
-      _addArea(map, style, labels, p) {
+      _addArea(mapProps, style, labels, p) {
         if (!(p == null ? void 0 : p.positions))
           return;
         let start = 0;
         let prev = null;
-        const zoom = Math.round(map.getZoom());
+        const zoom = Math.round(mapProps.zoom);
         for (let ix = 0; ix < p.id.length; ix++) {
           const id = p.id[ix];
           if ((prev === null || prev === id) && ix !== p.id.length - 1) {
@@ -3701,27 +3776,30 @@ var require_text = __commonJS({
           if (text === null)
             continue;
           const end = ix;
-          const vb = map.viewbox;
+          const vb = mapProps.viewbox;
           const positions = p.positions.slice(start * 2, end * 2 + 2);
           start = ix;
           const type = p.types[ix];
           const {
             fillColor,
             fillOpacity,
-            fontFamily,
+            fontFamilyIndex,
+            fontFamilyName,
             fontSize,
             priority,
             strokeWidth,
             strokeColor,
             strokeOpacity
           } = this.styleRead.label("area", type, zoom);
+          if (fontSize === 0)
+            continue;
           labels.push({
             type: "area",
             text,
             positions,
             id,
-            fontFamilyIndex: fontFamily,
-            fontFamily: style.labelFontFamily[fontFamily] || "Arial",
+            fontFamilyIndex,
+            fontFamilyName,
             fontSize,
             priority,
             strokeWidth,
@@ -3735,7 +3813,7 @@ var require_text = __commonJS({
           });
         }
       }
-      _measurePoint(map, prepared, label, { pw = 2, ph = 2 } = {}) {
+      _measurePoint(mapProps, prepared, label, { pw = 2, ph = 2 } = {}) {
         const { glyphIndicies } = label;
         const {
           labelDim,
@@ -3743,9 +3821,9 @@ var require_text = __commonJS({
           fontSize,
           letterSpacing
         } = prepared.glyphs[glyphIndicies[0]];
-        const pxToLon = (map.viewbox[2] - map.viewbox[0]) / map._size[0];
-        const pxToLat = (map.viewbox[3] - map.viewbox[1]) / map._size[1];
-        const aspect = map._size[0] / map._size[1];
+        const pxToLon = (mapProps.viewbox[2] - mapProps.viewbox[0]) / mapProps.size[0];
+        const pxToLat = (mapProps.viewbox[3] - mapProps.viewbox[1]) / mapProps.size[1];
+        const aspect = mapProps.size[0] / mapProps.size[1];
         const widthPx = label.widthPx = fontSize * labelDim[0] * letterSpacing / labelDim[1];
         const heightPx = label.heightPx = fontSize;
         const widthLon = (widthPx + pw + 1) * pxToLon;
@@ -3764,7 +3842,7 @@ var require_text = __commonJS({
           label.pointMarginPx[1] * pxToLat
         ];
       }
-      _measureLine(map, prepared, label, { pw = 2, ph = 2 } = {}) {
+      _measureLine(mapProps, prepared, label, { pw = 2, ph = 2 } = {}) {
         const { glyphIndicies } = label;
         const {
           labelDim,
@@ -3772,9 +3850,9 @@ var require_text = __commonJS({
           fontSize,
           letterSpacing
         } = prepared.glyphs[glyphIndicies[0]];
-        const pxToLon = (map.viewbox[2] - map.viewbox[0]) / map._size[0];
-        const pxToLat = (map.viewbox[3] - map.viewbox[1]) / map._size[1];
-        const aspect = map._size[0] / map._size[1];
+        const pxToLon = (mapProps.viewbox[2] - mapProps.viewbox[0]) / mapProps.size[0];
+        const pxToLat = (mapProps.viewbox[3] - mapProps.viewbox[1]) / mapProps.size[1];
+        const aspect = mapProps.size[0] / mapProps.size[1];
         const widthPx = label.widthPx = fontSize * labelDim[0] * letterSpacing / labelDim[1];
         const heightPx = label.heightPx = fontSize;
         const widthLon = (widthPx + pw + 1) * pxToLon;
@@ -3789,7 +3867,7 @@ var require_text = __commonJS({
           label.labelLineMarginPx[1] * pxToLat
         ];
       }
-      _measureArea(map, prepared, label, { pw = 2, ph = 2 } = {}) {
+      _measureArea(mapProps, prepared, label, { pw = 2, ph = 2 } = {}) {
         const { glyphIndicies } = label;
         const {
           labelDim,
@@ -3797,9 +3875,9 @@ var require_text = __commonJS({
           fontSize,
           letterSpacing
         } = prepared.glyphs[glyphIndicies[0]];
-        const pxToLon = (map.viewbox[2] - map.viewbox[0]) / map._size[0];
-        const pxToLat = (map.viewbox[3] - map.viewbox[1]) / map._size[1];
-        const aspect = map._size[0] / map._size[1];
+        const pxToLon = (mapProps.viewbox[2] - mapProps.viewbox[0]) / mapProps.size[0];
+        const pxToLat = (mapProps.viewbox[3] - mapProps.viewbox[1]) / mapProps.size[1];
+        const aspect = mapProps.size[0] / mapProps.size[1];
         const widthPx = label.widthPx = fontSize * labelDim[0] * letterSpacing / labelDim[1];
         const heightPx = label.heightPx = fontSize;
         const widthLon = (widthPx + pw + 1) * pxToLon;
@@ -3900,12 +3978,29 @@ var require_text = __commonJS({
 // prepare.mjs
 var prepare_exports = {};
 __export(prepare_exports, {
-  default: () => Prepare
+  default: () => Prepare,
+  propsForMap: () => propsForMap,
+  spreadStyleTexture: () => spreadStyleTexture
 });
 module.exports = __toCommonJS(prepare_exports);
 var import_partition_array = __toESM(require_partition(), 1);
 var import_read = __toESM(require_read(), 1);
 var import_text = __toESM(require_text(), 1);
+var propsForMap = (map) => {
+  const zoom = map.getZoom();
+  return {
+    viewbox: map.viewbox,
+    zoom,
+    size: map._size
+  };
+};
+var spreadStyleTexture = (styleTexture, props) => {
+  for (const drawType in props) {
+    if (drawType === "label")
+      continue;
+    props[drawType].style = styleTexture;
+  }
+};
 function Prepare(opts) {
   if (!(this instanceof Prepare))
     return new Prepare(opts);
@@ -4318,8 +4413,11 @@ Prepare.prototype._splitSortArea = function(key, zoom) {
     }
   }
 };
-Prepare.prototype.update = function(map) {
-  const zoom = Math.round(map.getZoom());
+Prepare.prototype.update = function(mapProps, { labels = {} } = {}) {
+  if (typeof (mapProps == null ? void 0 : mapProps.getZoom) === "function") {
+    mapProps = propsForMap(mapProps);
+  }
+  const zoom = Math.round(mapProps.zoom);
   var self = this;
   this._splitSort("point", zoom);
   this._splitSort("line", zoom);
@@ -4331,7 +4429,9 @@ Prepare.prototype.update = function(map) {
       width: this.imageSize[0],
       height: this.imageSize[1]
     };
-    this.props.label = this.label.update(this.props, map, { style });
+    this.props.label = this.label.update(this.props, mapProps, __spreadValues({
+      style
+    }, labels));
   }
   return this.props;
 };

@@ -1,11 +1,11 @@
 const mixmap = require('@rubenrodriguez/mixmap')
 const regl = require('regl')
-const { default: prepare } = require('../dist/prepare.cjs')
-const { pickfb } = require('../dist/index.cjs')
+const resl = require('resl')
 const decode = require('@rubenrodriguez/georender-pack/decode')
-const lpb = require('length-prefixed-buffers/without-count')
 const { decode: decodePng } = require('fast-png')
-const { default: makeGeoRender } = require('../dist/index.cjs')
+const { default: prepare, propsForMap } = require('../dist/prepare.cjs')
+const { default: GeorenderShaders, pickfb } = require('../dist/index.cjs')
+const { createGlyphProps } = require('../dist/text.cjs')
  
 const mix = mixmap(regl, {
   extensions: [
@@ -18,7 +18,7 @@ const map = mix.create({
   backgroundColor: [0.9, 0.9, 0.9, 1.0],
   pickfb,
 })
-const geoRender = makeGeoRender(map)
+const geoRender = GeorenderShaders(map)
 
 const draw = {
   areaP: map.createDraw(geoRender.areas),
@@ -57,6 +57,7 @@ window.addEventListener('click', (event) => {
 })
 
 function ready({style, label, decoded}) {
+  draw.label = label.fontFamily.map(() => map.createDraw(geoRender.label))
   const prep = prepare({
     stylePixels: style.data,
     styleTexture: map.regl.texture(style),
@@ -70,8 +71,12 @@ function ready({style, label, decoded}) {
   map.on('viewbox', function () {
     update()
   })
-  function update(zoom) {
-    const props = prep.update(map)
+  function update() {
+    const props = prep.update(propsForMap(map), {
+      labels: {
+        labelFeatureTypes: ['point'],
+      }
+    })
     draw.pointP.props = [props.pointP]
     draw.pointT.props = [props.pointT]
     draw.lineFillP.props = [props.lineP]
@@ -82,7 +87,8 @@ function ready({style, label, decoded}) {
     draw.areaT.props = [props.areaT]
     draw.areaBorderP.props = [props.areaBorderP]
     draw.areaBorderT.props = [props.areaBorderT]
-    draw.label = props.label.atlas.map((prepared) => map.createDraw(geoRender.label(prepared)))
+
+    createGlyphProps(props.label, map)
     for (let i = 0; i < draw.label.length; i++) {
       draw.label[i].props = props.label.glyphs[i]
     }
@@ -106,7 +112,7 @@ require('resl')({
     },
     decoded: {
       type: 'text',
-      src: 'https://rr-studio-assets.nyc3.digitaloceanspaces.com/mixmap-georender/example/basic-stack-georender.nlb64' || location.search.slice(1),
+      src: 'https://rr-studio-assets.nyc3.digitaloceanspaces.com/mixmap-georender/example/basic-stack-georender.nlb64',
       parser: (data) => {
         const bufs = []
         for (const enc of data.split('\n')) {
