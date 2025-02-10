@@ -131,7 +131,7 @@ module.exports = __toCommonJS(mixmap_georender_exports);
 var import_glslify = __toESM(require_browser(), 1);
 var import_int_pack_vec = __toESM(require_int_pack_vec(), 1);
 
-// ../tiny-label/dist/index.mjs
+// node_modules/tiny-label/dist/index.mjs
 var __create2 = Object.create;
 var __defProp2 = Object.defineProperty;
 var __getOwnPropDesc2 = Object.getOwnPropertyDescriptor;
@@ -2660,10 +2660,10 @@ var require_settings = __commonJS2({
 var require_read = __commonJS2({
   "node_modules/@rubenrodriguez/georender-style2png/read.js"(exports, module2) {
     module2.exports = read;
-    function read({ pixels, zoomCount, imageWidth }) {
+    function read({ pixels, zoomCount, imageWidth, labelFontFamily = ["Arial"] }) {
       return {
         opacity: (key, type, zoom) => opacity(key, type, zoom, { pixels, imageWidth, zoomCount }),
-        label: (key, type, zoom) => label(key, type, zoom, { pixels, imageWidth, zoomCount }),
+        label: (key, type, zoom) => label(key, type, zoom, { pixels, imageWidth, zoomCount, labelFontFamily }),
         zindex: (key, type, zoom) => zindex(key, type, zoom, { pixels, imageWidth, zoomCount })
       };
     }
@@ -2696,13 +2696,13 @@ var require_read = __commonJS2({
         return zindex2;
       }
     }
-    function label(key, type, zoom, { pixels, imageWidth, zoomCount }) {
+    function label(key, type, zoom, { pixels, imageWidth, zoomCount, labelFontFamily }) {
       const y = yOffset(key, zoom, zoomCount);
       const fillColor = [];
       let fillOpacity;
       const strokeColor = [];
       let strokeOpacity;
-      let fontFamily;
+      let fontFamilyIndex;
       let fontSize;
       let priority;
       let constraints;
@@ -2730,7 +2730,7 @@ var require_read = __commonJS2({
         prevFkeyLoops += 1;
         const x6 = xOffset(type, prevFkeyLoops, imageWidth);
         const i6 = vec4Index(x6, y, imageWidth);
-        fontFamily = pixels[i6 + 0];
+        fontFamilyIndex = pixels[i6 + 0];
         fontSize = pixels[i6 + 1];
         priority = pixels[i6 + 2];
         constraints = pixels[i6 + 3];
@@ -2756,7 +2756,7 @@ var require_read = __commonJS2({
         prevFkeyLoops += 1;
         const x7 = xOffset(type, prevFkeyLoops, imageWidth);
         const i7 = vec4Index(x7, y, imageWidth);
-        fontFamily = pixels[i7 + 0];
+        fontFamilyIndex = pixels[i7 + 0];
         fontSize = pixels[i7 + 1];
         priority = pixels[i7 + 2];
         constraints = pixels[i7 + 3];
@@ -2786,17 +2786,21 @@ var require_read = __commonJS2({
         prevFkeyLoops += 1;
         const x5 = xOffset(type, prevFkeyLoops, imageWidth);
         const i5 = vec4Index(x5, y, imageWidth);
-        fontFamily = pixels[i5 + 0];
+        fontFamilyIndex = pixels[i5 + 0];
         fontSize = pixels[i5 + 1];
         priority = pixels[i5 + 2];
         constraints = pixels[i5 + 3];
       }
+      const fontFamilyName = labelFontFamily[fontFamilyIndex] || "Arial";
       return __spreadValues2({
         fillColor,
         fillOpacity,
         strokeColor,
         strokeOpacity,
-        fontFamily,
+        fontFamily: fontFamilyIndex,
+        // deprecated
+        fontFamilyIndex,
+        fontFamilyName,
         fontSize,
         priority,
         constraints,

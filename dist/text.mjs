@@ -17,8 +17,12 @@ var __spreadValues = (a, b) => {
   return a;
 };
 var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
+var __publicField = (obj, key, value) => {
+  __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+  return value;
+};
 
-// ../tiny-label/dist/index.mjs
+// node_modules/tiny-label/dist/index.mjs
 var __create = Object.create;
 var __defProp2 = Object.defineProperty;
 var __defProps2 = Object.defineProperties;
@@ -2550,10 +2554,10 @@ var require_settings = __commonJS({
 var require_read = __commonJS({
   "node_modules/@rubenrodriguez/georender-style2png/read.js"(exports, module) {
     module.exports = read;
-    function read({ pixels, zoomCount, imageWidth }) {
+    function read({ pixels, zoomCount, imageWidth, labelFontFamily = ["Arial"] }) {
       return {
         opacity: (key, type, zoom) => opacity(key, type, zoom, { pixels, imageWidth, zoomCount }),
-        label: (key, type, zoom) => label(key, type, zoom, { pixels, imageWidth, zoomCount }),
+        label: (key, type, zoom) => label(key, type, zoom, { pixels, imageWidth, zoomCount, labelFontFamily }),
         zindex: (key, type, zoom) => zindex(key, type, zoom, { pixels, imageWidth, zoomCount })
       };
     }
@@ -2586,13 +2590,13 @@ var require_read = __commonJS({
         return zindex2;
       }
     }
-    function label(key, type, zoom, { pixels, imageWidth, zoomCount }) {
+    function label(key, type, zoom, { pixels, imageWidth, zoomCount, labelFontFamily }) {
       const y = yOffset(key, zoom, zoomCount);
       const fillColor = [];
       let fillOpacity;
       const strokeColor = [];
       let strokeOpacity;
-      let fontFamily;
+      let fontFamilyIndex;
       let fontSize;
       let priority;
       let constraints;
@@ -2620,7 +2624,7 @@ var require_read = __commonJS({
         prevFkeyLoops += 1;
         const x6 = xOffset(type, prevFkeyLoops, imageWidth);
         const i6 = vec4Index(x6, y, imageWidth);
-        fontFamily = pixels[i6 + 0];
+        fontFamilyIndex = pixels[i6 + 0];
         fontSize = pixels[i6 + 1];
         priority = pixels[i6 + 2];
         constraints = pixels[i6 + 3];
@@ -2646,7 +2650,7 @@ var require_read = __commonJS({
         prevFkeyLoops += 1;
         const x7 = xOffset(type, prevFkeyLoops, imageWidth);
         const i7 = vec4Index(x7, y, imageWidth);
-        fontFamily = pixels[i7 + 0];
+        fontFamilyIndex = pixels[i7 + 0];
         fontSize = pixels[i7 + 1];
         priority = pixels[i7 + 2];
         constraints = pixels[i7 + 3];
@@ -2676,17 +2680,21 @@ var require_read = __commonJS({
         prevFkeyLoops += 1;
         const x5 = xOffset(type, prevFkeyLoops, imageWidth);
         const i5 = vec4Index(x5, y, imageWidth);
-        fontFamily = pixels[i5 + 0];
+        fontFamilyIndex = pixels[i5 + 0];
         fontSize = pixels[i5 + 1];
         priority = pixels[i5 + 2];
         constraints = pixels[i5 + 3];
       }
+      const fontFamilyName = labelFontFamily[fontFamilyIndex] || "Arial";
       return __spreadValues2({
         fillColor,
         fillOpacity,
         strokeColor,
         strokeOpacity,
-        fontFamily,
+        fontFamily: fontFamilyIndex,
+        // deprecated
+        fontFamilyIndex,
+        fontFamilyName,
         fontSize,
         priority,
         constraints,
@@ -3225,6 +3233,7 @@ var Label = class {
           fontFamily
         });
       });
+      this._fontFamily = opts.fontFamily;
     }
     if (!opts.atlas)
       opts.atlas = defaultLabelOpts.atlas;
@@ -3241,11 +3250,14 @@ var Label = class {
     }
   }
   _setStyleRead() {
+    var _a;
     const styleSettings = (0, import_settings.default)();
+    const labelFontFamily = ((_a = this.style) == null ? void 0 : _a.labelFontFamily) || this._fontFamily || ["Arial"];
     this.styleRead = (0, import_read.default)({
       pixels: this.style.data,
       zoomCount: styleSettings.zoomCount,
-      imageWidth: styleSettings.imageWidth
+      imageWidth: styleSettings.imageWidth,
+      labelFontFamily
     });
   }
   update(props, mapProps, opts = updateOptions) {
@@ -3431,7 +3443,8 @@ var Label = class {
       const {
         fillColor,
         fillOpacity,
-        fontFamily,
+        fontFamilyIndex,
+        fontFamilyName,
         fontSize,
         priority,
         strokeWidth,
@@ -3447,8 +3460,8 @@ var Label = class {
         pointSizePx: [pointSize, pointSize],
         id,
         text,
-        fontFamilyIndex: fontFamily,
-        fontFamily: style.labelFontFamily[fontFamily] || "Arial",
+        fontFamilyIndex,
+        fontFamilyName,
         fontSize,
         priority,
         strokeWidth,
@@ -3491,7 +3504,8 @@ var Label = class {
       const {
         fillColor,
         fillOpacity,
-        fontFamily,
+        fontFamilyIndex,
+        fontFamilyName,
         fontSize,
         priority,
         strokeWidth,
@@ -3504,8 +3518,8 @@ var Label = class {
         type: "line",
         text,
         positions,
-        fontFamilyIndex: fontFamily,
-        fontFamily: style.labelFontFamily[fontFamily] || "Arial",
+        fontFamilyIndex,
+        fontFamilyName,
         fontSize,
         priority,
         strokeWidth,
@@ -3551,7 +3565,8 @@ var Label = class {
       const {
         fillColor,
         fillOpacity,
-        fontFamily,
+        fontFamilyIndex,
+        fontFamilyName,
         fontSize,
         priority,
         strokeWidth,
@@ -3565,8 +3580,8 @@ var Label = class {
         text,
         positions,
         id,
-        fontFamilyIndex: fontFamily,
-        fontFamily: style.labelFontFamily[fontFamily] || "Arial",
+        fontFamilyIndex,
+        fontFamilyName,
         fontSize,
         priority,
         strokeWidth,
@@ -3687,6 +3702,9 @@ var Label = class {
 // text.mjs
 var PrepareText = class {
   constructor(opts) {
+    __publicField(this, "style");
+    __publicField(this, "label");
+    __publicField(this, "_labelOpts");
     this.style = opts.style;
     delete opts.style;
     this.label = null;
@@ -3701,6 +3719,7 @@ var PrepareText = class {
     this.label = new Label(this._labelOpts);
   }
   update(props, mapProps, opts) {
+    var _a;
     const style = opts.style || this.style;
     if (!this.label || !style)
       return {
@@ -3709,11 +3728,12 @@ var PrepareText = class {
         glyphs: []
       };
     const labelFontFamily = this._labelOpts.fontFamily;
-    const updateOpts = {
+    const labelFeatureTypes = (_a = opts.labelFeatureTypes) != null ? _a : [""];
+    const updateOpts = __spreadProps(__spreadValues(__spreadValues({}, updateOptions), opts), {
       style: __spreadProps(__spreadValues({}, style), {
         labelFontFamily
       })
-    };
+    });
     const labelProps = this.label.update(props, mapProps, updateOpts);
     return labelProps;
   }
@@ -3722,5 +3742,6 @@ export {
   Label,
   PrepareText,
   createGlyphProps,
-  propsIncludeLabels
+  propsIncludeLabels,
+  updateOptions
 };

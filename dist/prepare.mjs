@@ -68,10 +68,10 @@ var require_partition = __commonJS({
 var require_read = __commonJS({
   "node_modules/@rubenrodriguez/georender-style2png/read.js"(exports, module) {
     module.exports = read;
-    function read({ pixels, zoomCount, imageWidth }) {
+    function read({ pixels, zoomCount, imageWidth, labelFontFamily = ["Arial"] }) {
       return {
         opacity: (key, type, zoom) => opacity(key, type, zoom, { pixels, imageWidth, zoomCount }),
-        label: (key, type, zoom) => label(key, type, zoom, { pixels, imageWidth, zoomCount }),
+        label: (key, type, zoom) => label(key, type, zoom, { pixels, imageWidth, zoomCount, labelFontFamily }),
         zindex: (key, type, zoom) => zindex(key, type, zoom, { pixels, imageWidth, zoomCount })
       };
     }
@@ -104,13 +104,13 @@ var require_read = __commonJS({
         return zindex2;
       }
     }
-    function label(key, type, zoom, { pixels, imageWidth, zoomCount }) {
+    function label(key, type, zoom, { pixels, imageWidth, zoomCount, labelFontFamily }) {
       const y = yOffset(key, zoom, zoomCount);
       const fillColor = [];
       let fillOpacity;
       const strokeColor = [];
       let strokeOpacity;
-      let fontFamily;
+      let fontFamilyIndex;
       let fontSize;
       let priority;
       let constraints;
@@ -138,7 +138,7 @@ var require_read = __commonJS({
         prevFkeyLoops += 1;
         const x6 = xOffset(type, prevFkeyLoops, imageWidth);
         const i6 = vec4Index(x6, y, imageWidth);
-        fontFamily = pixels[i6 + 0];
+        fontFamilyIndex = pixels[i6 + 0];
         fontSize = pixels[i6 + 1];
         priority = pixels[i6 + 2];
         constraints = pixels[i6 + 3];
@@ -164,7 +164,7 @@ var require_read = __commonJS({
         prevFkeyLoops += 1;
         const x7 = xOffset(type, prevFkeyLoops, imageWidth);
         const i7 = vec4Index(x7, y, imageWidth);
-        fontFamily = pixels[i7 + 0];
+        fontFamilyIndex = pixels[i7 + 0];
         fontSize = pixels[i7 + 1];
         priority = pixels[i7 + 2];
         constraints = pixels[i7 + 3];
@@ -194,17 +194,21 @@ var require_read = __commonJS({
         prevFkeyLoops += 1;
         const x5 = xOffset(type, prevFkeyLoops, imageWidth);
         const i5 = vec4Index(x5, y, imageWidth);
-        fontFamily = pixels[i5 + 0];
+        fontFamilyIndex = pixels[i5 + 0];
         fontSize = pixels[i5 + 1];
         priority = pixels[i5 + 2];
         constraints = pixels[i5 + 3];
       }
+      const fontFamilyName = labelFontFamily[fontFamilyIndex] || "Arial";
       return __spreadValues({
         fillColor,
         fillOpacity,
         strokeColor,
         strokeOpacity,
-        fontFamily,
+        fontFamily: fontFamilyIndex,
+        // deprecated
+        fontFamilyIndex,
+        fontFamilyName,
         fontSize,
         priority,
         constraints,
@@ -271,12 +275,17 @@ var require_text = __commonJS({
       return to;
     };
     var __toCommonJS = (mod) => __copyProps2(__defProp2({}, "__esModule", { value: true }), mod);
+    var __publicField = (obj, key, value) => {
+      __defNormalProp2(obj, typeof key !== "symbol" ? key + "" : key, value);
+      return value;
+    };
     var text_exports = {};
     __export(text_exports, {
       Label: () => Label,
       PrepareText: () => PrepareText2,
       createGlyphProps: () => createGlyphProps,
-      propsIncludeLabels: () => propsIncludeLabels
+      propsIncludeLabels: () => propsIncludeLabels,
+      updateOptions: () => updateOptions
     });
     module.exports = __toCommonJS(text_exports);
     var __create2 = Object.create;
@@ -2810,10 +2819,10 @@ var require_text = __commonJS({
     var require_read2 = __commonJS2({
       "node_modules/@rubenrodriguez/georender-style2png/read.js"(exports2, module2) {
         module2.exports = read;
-        function read({ pixels, zoomCount, imageWidth }) {
+        function read({ pixels, zoomCount, imageWidth, labelFontFamily = ["Arial"] }) {
           return {
             opacity: (key, type, zoom) => opacity(key, type, zoom, { pixels, imageWidth, zoomCount }),
-            label: (key, type, zoom) => label(key, type, zoom, { pixels, imageWidth, zoomCount }),
+            label: (key, type, zoom) => label(key, type, zoom, { pixels, imageWidth, zoomCount, labelFontFamily }),
             zindex: (key, type, zoom) => zindex(key, type, zoom, { pixels, imageWidth, zoomCount })
           };
         }
@@ -2846,13 +2855,13 @@ var require_text = __commonJS({
             return zindex2;
           }
         }
-        function label(key, type, zoom, { pixels, imageWidth, zoomCount }) {
+        function label(key, type, zoom, { pixels, imageWidth, zoomCount, labelFontFamily }) {
           const y = yOffset(key, zoom, zoomCount);
           const fillColor = [];
           let fillOpacity;
           const strokeColor = [];
           let strokeOpacity;
-          let fontFamily;
+          let fontFamilyIndex;
           let fontSize;
           let priority;
           let constraints;
@@ -2880,7 +2889,7 @@ var require_text = __commonJS({
             prevFkeyLoops += 1;
             const x6 = xOffset(type, prevFkeyLoops, imageWidth);
             const i6 = vec4Index(x6, y, imageWidth);
-            fontFamily = pixels[i6 + 0];
+            fontFamilyIndex = pixels[i6 + 0];
             fontSize = pixels[i6 + 1];
             priority = pixels[i6 + 2];
             constraints = pixels[i6 + 3];
@@ -2906,7 +2915,7 @@ var require_text = __commonJS({
             prevFkeyLoops += 1;
             const x7 = xOffset(type, prevFkeyLoops, imageWidth);
             const i7 = vec4Index(x7, y, imageWidth);
-            fontFamily = pixels[i7 + 0];
+            fontFamilyIndex = pixels[i7 + 0];
             fontSize = pixels[i7 + 1];
             priority = pixels[i7 + 2];
             constraints = pixels[i7 + 3];
@@ -2936,17 +2945,21 @@ var require_text = __commonJS({
             prevFkeyLoops += 1;
             const x5 = xOffset(type, prevFkeyLoops, imageWidth);
             const i5 = vec4Index(x5, y, imageWidth);
-            fontFamily = pixels[i5 + 0];
+            fontFamilyIndex = pixels[i5 + 0];
             fontSize = pixels[i5 + 1];
             priority = pixels[i5 + 2];
             constraints = pixels[i5 + 3];
           }
+          const fontFamilyName = labelFontFamily[fontFamilyIndex] || "Arial";
           return __spreadValues22({
             fillColor,
             fillOpacity,
             strokeColor,
             strokeOpacity,
-            fontFamily,
+            fontFamily: fontFamilyIndex,
+            // deprecated
+            fontFamilyIndex,
+            fontFamilyName,
             fontSize,
             priority,
             constraints,
@@ -3485,6 +3498,7 @@ var require_text = __commonJS({
               fontFamily
             });
           });
+          this._fontFamily = opts.fontFamily;
         }
         if (!opts.atlas)
           opts.atlas = defaultLabelOpts.atlas;
@@ -3501,11 +3515,14 @@ var require_text = __commonJS({
         }
       }
       _setStyleRead() {
+        var _a;
         const styleSettings = (0, import_settings.default)();
+        const labelFontFamily = ((_a = this.style) == null ? void 0 : _a.labelFontFamily) || this._fontFamily || ["Arial"];
         this.styleRead = (0, import_read2.default)({
           pixels: this.style.data,
           zoomCount: styleSettings.zoomCount,
-          imageWidth: styleSettings.imageWidth
+          imageWidth: styleSettings.imageWidth,
+          labelFontFamily
         });
       }
       update(props, mapProps, opts = updateOptions) {
@@ -3691,7 +3708,8 @@ var require_text = __commonJS({
           const {
             fillColor,
             fillOpacity,
-            fontFamily,
+            fontFamilyIndex,
+            fontFamilyName,
             fontSize,
             priority,
             strokeWidth,
@@ -3707,8 +3725,8 @@ var require_text = __commonJS({
             pointSizePx: [pointSize, pointSize],
             id,
             text,
-            fontFamilyIndex: fontFamily,
-            fontFamily: style.labelFontFamily[fontFamily] || "Arial",
+            fontFamilyIndex,
+            fontFamilyName,
             fontSize,
             priority,
             strokeWidth,
@@ -3751,7 +3769,8 @@ var require_text = __commonJS({
           const {
             fillColor,
             fillOpacity,
-            fontFamily,
+            fontFamilyIndex,
+            fontFamilyName,
             fontSize,
             priority,
             strokeWidth,
@@ -3764,8 +3783,8 @@ var require_text = __commonJS({
             type: "line",
             text,
             positions,
-            fontFamilyIndex: fontFamily,
-            fontFamily: style.labelFontFamily[fontFamily] || "Arial",
+            fontFamilyIndex,
+            fontFamilyName,
             fontSize,
             priority,
             strokeWidth,
@@ -3811,7 +3830,8 @@ var require_text = __commonJS({
           const {
             fillColor,
             fillOpacity,
-            fontFamily,
+            fontFamilyIndex,
+            fontFamilyName,
             fontSize,
             priority,
             strokeWidth,
@@ -3825,8 +3845,8 @@ var require_text = __commonJS({
             text,
             positions,
             id,
-            fontFamilyIndex: fontFamily,
-            fontFamily: style.labelFontFamily[fontFamily] || "Arial",
+            fontFamilyIndex,
+            fontFamilyName,
             fontSize,
             priority,
             strokeWidth,
@@ -3945,6 +3965,9 @@ var require_text = __commonJS({
     };
     var PrepareText2 = class {
       constructor(opts) {
+        __publicField(this, "style");
+        __publicField(this, "label");
+        __publicField(this, "_labelOpts");
         this.style = opts.style;
         delete opts.style;
         this.label = null;
@@ -3959,6 +3982,7 @@ var require_text = __commonJS({
         this.label = new Label(this._labelOpts);
       }
       update(props, mapProps, opts) {
+        var _a;
         const style = opts.style || this.style;
         if (!this.label || !style)
           return {
@@ -3967,11 +3991,12 @@ var require_text = __commonJS({
             glyphs: []
           };
         const labelFontFamily = this._labelOpts.fontFamily;
-        const updateOpts = {
+        const labelFeatureTypes = (_a = opts.labelFeatureTypes) != null ? _a : [""];
+        const updateOpts = __spreadProps2(__spreadValues2(__spreadValues2({}, updateOptions), opts), {
           style: __spreadProps2(__spreadValues2({}, style), {
             labelFontFamily
           })
-        };
+        });
         const labelProps = this.label.update(props, mapProps, updateOpts);
         return labelProps;
       }
@@ -4410,7 +4435,7 @@ Prepare.prototype._splitSortArea = function(key, zoom) {
     }
   }
 };
-Prepare.prototype.update = function(mapProps) {
+Prepare.prototype.update = function(mapProps, { labels = {} } = {}) {
   if (typeof (mapProps == null ? void 0 : mapProps.getZoom) === "function") {
     mapProps = propsForMap(mapProps);
   }
@@ -4426,7 +4451,9 @@ Prepare.prototype.update = function(mapProps) {
       width: this.imageSize[0],
       height: this.imageSize[1]
     };
-    this.props.label = this.label.update(this.props, mapProps, { style });
+    this.props.label = this.label.update(this.props, mapProps, __spreadValues({
+      style
+    }, labels));
   }
   return this.props;
 };
