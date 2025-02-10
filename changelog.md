@@ -5,6 +5,7 @@ The major revision here is allowing for `mixmap-georender` geo data preperation 
 - [minor] [prepare] add `propsForMaps` function, which expects a `mixmap` instance, pulls the relevant props required for geo data preperation such that they can be serialized into a Web Worker.
 - [minor] [prepare] add `spreadStyleTexture` function, which expects the data for a [georender style texture](https://github.com/rubillionaire/georender-style2png) output, and creates a GPU ready texture, and spreads that value throughout the props produced by the `prepare.update` method. This is intended to be done after Web Worker processing of geo data as the last step before passing props to their draw commands.
 - [minor] [prepare] adds `propsIncludeLabels` function, which expects the output of `prepare.update`. With this, it determines if there was any label data accumulated for display.
+- [minor] [prepare] [text] allow for label update options to be pass through.
 
 # 6.0.1
 
