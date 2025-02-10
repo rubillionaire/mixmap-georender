@@ -1,8 +1,17 @@
-import { createGlyphProps, defaultLabelOpts, Label, propsIncludeLabels } from 'tiny-label'
+import {
+  createGlyphProps,
+  defaultLabelOpts,
+  Label,
+  propsIncludeLabels,
+  updateOptions,
+} from 'tiny-label'
 
-export { createGlyphProps, Label, propsIncludeLabels }
+export { createGlyphProps, Label, propsIncludeLabels, updateOptions }
 
 export class PrepareText {
+  style
+  label
+  _labelOpts
   constructor(opts) {
     this.style = opts.style
     delete opts.style
@@ -33,7 +42,10 @@ export class PrepareText {
       glyphs: [],
     }
     const labelFontFamily = this._labelOpts.fontFamily
+    const labelFeatureTypes = opts.labelFeatureTypes ?? ['']
     const updateOpts = {
+      ...updateOptions,
+      ...opts,
       style: {
         ...style,
         labelFontFamily,
@@ -41,7 +53,7 @@ export class PrepareText {
     }
 
     const labelProps = this.label.update(props, mapProps, updateOpts)
-
+    
     return labelProps
   }
 }
