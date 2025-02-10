@@ -456,7 +456,7 @@ Prepare.prototype._splitSortArea = function (key, zoom) {
 // for single threaded work, its fine to accept a mixmap instance
 // for Web Worker based implementations, we want mapProps which
 //  are serializable
-Prepare.prototype.update = function (mapProps) {
+Prepare.prototype.update = function (mapProps, { labels={} }={}) {
   if (typeof mapProps?.getZoom === 'function') {
     mapProps = propsForMap(mapProps)
   }
@@ -472,7 +472,11 @@ Prepare.prototype.update = function (mapProps) {
       width: this.imageSize[0],
       height: this.imageSize[1],
     }
-    this.props.label = this.label.update(this.props, mapProps, { style })
+
+    this.props.label = this.label.update(this.props, mapProps, {
+      style,
+      ...labels,
+    })
   }
   return this.props
 }
